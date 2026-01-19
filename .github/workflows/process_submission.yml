@@ -1,0 +1,78 @@
+name: Process Sequence Submission
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  validate-and-prepare:
+    if: github.event.label.name == 'submission'
+    runs-on: [self-hosted, af3-runner]
+
+    permissions:
+      issues: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Create submission directory
+        run: |
+          SUBMISSION_ID="submission_${{ github.event.issue.number }}"
+          mkdir -p results/${SUBMISSION_ID}
+          echo "SUBMISSION_ID=${SUBMISSION_ID}" >> $GITHUB_ENV
+          echo "SUBMISSION_DIR=results/${SUBMISSION_ID}" >> $GITHUB_ENV
+
+      - name: Parse submission from issue
+        id: parse
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          python scripts/parse_submission.py \
+            --issue-body "$ISSUE_BODY" \
+            --issue-number "$ISSUE_NUMBER" \
+            --output-dir "$SUBMISSION_DIR"
+
+      - name: Prepare AF3 input
+        id: prepare
+        run: |
+          python scripts/prepare_af3_input.py \
+            --submission-dir "$SUBMISSION_DIR" \
+            --submission-id "$SUBMISSION_ID"
+
+      - name: Comment on success
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Submission Received\n\nYour sequence has been validated and queued for AlphaFold3 processing.\n\n**Submission ID:** \`${{ env.SUBMISSION_ID }}\`\n\nYou will receive your results privately once processing is complete.`
+            })
+
+      - name: Comment on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Submission Error\n\nThere was an error processing your submission. Please check:\n- Your sequence contains only valid amino acid letters (A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y)\n- All required fields are filled out\n\nPlease create a new submission with corrected information.`
+            })
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['invalid']
+            })

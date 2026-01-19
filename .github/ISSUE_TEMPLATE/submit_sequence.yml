@@ -1,0 +1,53 @@
+name: Submit Protein Sequence
+description: Submit an amino acid sequence for AlphaFold3 structure prediction
+title: "[SUBMISSION] "
+labels: ["submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Protein Design Competition - Sequence Submission
+        Submit your amino acid sequence for structure prediction using AlphaFold3.
+        Results will be returned privately until the competition ends.
+
+  - type: input
+    id: participant_id
+    attributes:
+      label: Participant ID
+      description: Your unique participant identifier
+      placeholder: e.g., participant_001
+    validations:
+      required: true
+
+  - type: input
+    id: sequence_name
+    attributes:
+      label: Sequence Name
+      description: A descriptive name for your protein design
+      placeholder: e.g., my_protein_v1
+    validations:
+      required: true
+
+  - type: textarea
+    id: amino_acid_sequence
+    attributes:
+      label: Amino Acid Sequence
+      description: |
+        Enter your amino acid sequence using standard single-letter codes.
+        Valid amino acids: A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y
+        Whitespace will be automatically removed.
+      placeholder: MKTLLILAVVAAALA...
+      render: text
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Submission Confirmation
+      description: Please confirm the following
+      options:
+        - label: I confirm this is my original protein design
+          required: true
+        - label: I understand results will be returned privately
+          required: true
