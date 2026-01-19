@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Structure Viewer - Protein Competition</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/molstar@latest/build/viewer/molstar.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+        }
+        .header {
+            background: #16213e;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #0f3460;
+        }
+        .header h1 {
+            font-size: 1.5rem;
+            color: #e94560;
+        }
+        .submission-info {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        .container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+        .viewer-panel {
+            flex: 1;
+            position: relative;
+        }
+        #molstar-viewer {
+            width: 100%;
+            height: 100%;
+        }
+        .sidebar {
+            width: 300px;
+            background: #16213e;
+            padding: 1.5rem;
+            overflow-y: auto;
+            border-left: 1px solid #0f3460;
+        }
+        .sidebar h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #e94560;
+        }
+        .info-card {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .info-card h3 {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 0.5rem;
+        }
+        .info-card p {
+            font-size: 1rem;
+        }
+        .plddt-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .plddt-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+        .plddt-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        .download-btn {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 1rem;
+        }
+        .download-btn:hover {
+            background: #ff6b6b;
+        }
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-size: 1.2rem;
+        }
+        .error {
+            color: #e94560;
+            padding: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Protein Structure Viewer</h1>
+        <div class="submission-info" id="submission-info">Loading...</div>
+    </div>
+
+    <div class="container">
+        <div class="viewer-panel">
+            <div id="molstar-viewer">
+                <div class="loading">Loading structure...</div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <h2>Structure Info</h2>
+
+            <div class="info-card">
+                <h3>Sequence Name</h3>
+                <p id="sequence-name">-</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Sequence Length</h3>
+                <p id="sequence-length">-</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Mean pLDDT</h3>
+                <p id="mean-plddt">-</p>
+            </div>
+
+            <div class="info-card">
+                <h3>pLDDT Color Scale</h3>
+                <div class="plddt-legend">
+                    <div class="plddt-item">
+                        <div class="plddt-color" style="background: #0053d6;"></div>
+                        <span>Very high (pLDDT > 90)</span>
+                    </div>
+                    <div class="plddt-item">
+                        <div class="plddt-color" style="background: #65cbf3;"></div>
+                        <span>High (90 > pLDDT > 70)</span>
+                    </div>
+                    <div class="plddt-item">
+                        <div class="plddt-color" style="background: #ffdb13;"></div>
+                        <span>Low (70 > pLDDT > 50)</span>
+                    </div>
+                    <div class="plddt-item">
+                        <div class="plddt-color" style="background: #ff7d45;"></div>
+                        <span>Very low (pLDDT < 50)</span>
+                    </div>
+                </div>
+            </div>
+
+            <a id="download-cif" class="download-btn" href="#" download>Download Structure (CIF)</a>
+            <a id="download-json" class="download-btn" href="#" download style="background: #0f3460;">Download Metadata (JSON)</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/molstar@latest/build/viewer/molstar.js"></script>
+    <script>
+        // Get token from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        // Base URL for results (configure this for your deployment)
+        const RESULTS_BASE_URL = window.location.origin + '/results/';
+
+        async function loadStructure() {
+            if (!token) {
+                document.getElementById('molstar-viewer').innerHTML =
+                    '<div class="error">No token provided. Please use the link from your submission.</div>';
+                return;
+            }
+
+            try {
+                // Load metadata
+                const metadataUrl = `${RESULTS_BASE_URL}${token}/metadata.json`;
+                const metadataResponse = await fetch(metadataUrl);
+
+                if (!metadataResponse.ok) {
+                    throw new Error('Results not found. The link may have expired or be invalid.');
+                }
+
+                const metadata = await metadataResponse.json();
+
+                // Load submission info
+                const submissionUrl = `${RESULTS_BASE_URL}${token}/submission.json`;
+                const submissionResponse = await fetch(submissionUrl);
+                const submission = await submissionResponse.json();
+
+                // Update UI
+                document.getElementById('submission-info').textContent =
+                    `Submission: ${submission.participant_id} / ${submission.sequence_name}`;
+                document.getElementById('sequence-name').textContent = submission.sequence_name;
+                document.getElementById('sequence-length').textContent = `${submission.sequence_length} residues`;
+
+                // Find CIF file
+                const cifFile = metadata.files.find(f => f.endsWith('.cif'));
+                if (!cifFile) {
+                    throw new Error('No structure file found in results.');
+                }
+
+                const cifUrl = `${RESULTS_BASE_URL}${token}/${cifFile}`;
+
+                // Set download links
+                document.getElementById('download-cif').href = cifUrl;
+                document.getElementById('download-json').href = submissionUrl;
+
+                // Initialize Mol* viewer
+                const viewerContainer = document.getElementById('molstar-viewer');
+                viewerContainer.innerHTML = '';
+
+                const viewer = await molstar.Viewer.create(viewerContainer, {
+                    layoutIsExpanded: false,
+                    layoutShowControls: true,
+                    layoutShowRemoteState: false,
+                    layoutShowSequence: true,
+                    layoutShowLog: false,
+                    layoutShowLeftPanel: false,
+                    viewportShowExpand: true,
+                    viewportShowSelectionMode: true,
+                    viewportShowAnimation: false,
+                });
+
+                // Load structure
+                await viewer.loadStructureFromUrl(cifUrl, 'mmcif');
+
+                // Apply pLDDT coloring (uses B-factor which contains pLDDT)
+                // Mol* has built-in AlphaFold confidence coloring
+                const state = viewer.plugin.state.data;
+                const structures = state.select(molstar.StateSelection.Generators.rootsOfType(
+                    molstar.PluginStateObject.Molecule.Structure
+                ));
+
+                if (structures.length > 0) {
+                    // Apply pLDDT coloring
+                    await viewer.plugin.builders.structure.representation.applyPreset(
+                        structures[0],
+                        'polymer-cartoon',
+                        {
+                            theme: {
+                                globalName: 'plddt-confidence',
+                                carbonColor: 'plddt-confidence'
+                            }
+                        }
+                    );
+                }
+
+            } catch (error) {
+                document.getElementById('molstar-viewer').innerHTML =
+                    `<div class="error">${error.message}</div>`;
+                console.error('Error loading structure:', error);
+            }
+        }
+
+        // Load on page ready
+        loadStructure();
+    </script>
+</body>
+</html>

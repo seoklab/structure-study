@@ -1,0 +1,70 @@
+name: End Competition
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "END" to confirm ending the competition'
+        required: true
+        type: string
+
+jobs:
+  end-competition:
+    if: github.event.inputs.confirm == 'END'
+    runs-on: [self-hosted, af3-runner]
+
+    permissions:
+      contents: write
+      pages: write
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Publish all results
+        run: |
+          python3 scripts/end_competition.py \
+            --results-dir results \
+            --public-dir docs \
+            --results-url results
+
+      - name: Update all issues
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get all issues with 'submission' label
+          gh issue list --label submission --state all --json number,title --limit 1000 | \
+          python3 -c "
+          import json, sys
+          issues = json.load(sys.stdin)
+          for issue in issues:
+              print(issue['number'])
+          " | while read ISSUE_NUM; do
+            gh issue comment "$ISSUE_NUM" --body "## Competition Ended
+
+The protein design competition has concluded. All results are now public.
+
+View the final results and all submissions at the competition gallery:
+**[View All Results](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/)**
+
+Thank you for participating!"
+
+            gh issue edit "$ISSUE_NUM" --add-label "competition-ended"
+          done
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          git commit -m "End competition - publish all results"
+          git push
+
+      - name: Summary
+        run: |
+          echo "## Competition Ended" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All results have been published to GitHub Pages." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "View at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" >> $GITHUB_STEP_SUMMARY

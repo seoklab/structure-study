@@ -45,14 +45,17 @@ def create_af3_input(
 
     af3_input = {
         "name": submission_id,
+        "modelSeeds": model_seeds,
         "sequences": [
             {
                 "protein": {
+                    "id": "A",
                     "sequence": sequence,
                 }
             }
         ],
-        "modelSeeds": model_seeds,
+        "dialect": "alphafold3",
+        "version": 1,
     }
 
     return af3_input

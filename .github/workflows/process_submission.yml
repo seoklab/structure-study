@@ -5,7 +5,7 @@ on:
     types: [labeled]
 
 jobs:
-  validate-and-prepare:
+  validate-and-run:
     if: github.event.label.name == 'submission'
     runs-on: [self-hosted, af3-runner]
 
@@ -16,11 +16,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
 
       - name: Create submission directory
         run: |
@@ -35,7 +30,7 @@ jobs:
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
-          python scripts/parse_submission.py \
+          python3 scripts/parse_submission.py \
             --issue-body "$ISSUE_BODY" \
             --issue-number "$ISSUE_NUMBER" \
             --output-dir "$SUBMISSION_DIR"
@@ -43,9 +38,32 @@ jobs:
       - name: Prepare AF3 input
         id: prepare
         run: |
-          python scripts/prepare_af3_input.py \
+          python3 scripts/prepare_af3_input.py \
             --submission-dir "$SUBMISSION_DIR" \
             --submission-id "$SUBMISSION_ID"
+
+      - name: Submit AF3 job to SLURM
+        id: submit
+        run: |
+          python3 scripts/run_af3.py \
+            --submission-dir "$SUBMISSION_DIR" \
+            --submission-id "$SUBMISSION_ID" \
+            --mode full \
+            --submit 2>&1 | tee submit_output.txt
+
+          # Extract job ID from sbatch output
+          JOB_ID=$(grep -oP 'Submitted batch job \K\d+' submit_output.txt || echo "unknown")
+          echo "SLURM_JOB_ID=${JOB_ID}" >> $GITHUB_ENV
+
+          # Save status file for tracking
+          cat > "$SUBMISSION_DIR/status.json" << EOF
+          {
+            "status": "processing",
+            "slurm_job_id": "${JOB_ID}",
+            "issue_number": ${{ github.event.issue.number }},
+            "submitted_at": "$(date -Iseconds)"
+          }
+          EOF
 
       - name: Comment on success
         if: success()
@@ -56,7 +74,13 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## Submission Received\n\nYour sequence has been validated and queued for AlphaFold3 processing.\n\n**Submission ID:** \`${{ env.SUBMISSION_ID }}\`\n\nYou will receive your results privately once processing is complete.`
+              body: `## Submission Received\n\nYour sequence has been validated and submitted to AlphaFold3.\n\n**Submission ID:** \`${{ env.SUBMISSION_ID }}\`\n**SLURM Job ID:** \`${{ env.SLURM_JOB_ID }}\`\n\nYou will receive your results privately once processing is complete.`
+            })
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['processing']
             })
 
       - name: Comment on failure

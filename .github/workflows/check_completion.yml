@@ -1,0 +1,126 @@
+name: Check Job Completion
+
+on:
+  # Run every 15 minutes
+  schedule:
+    - cron: '*/15 * * * *'
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  check-jobs:
+    runs-on: [self-hosted, af3-runner]
+
+    permissions:
+      issues: write
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find processing submissions
+        id: find
+        run: |
+          # Find all submissions with processing status
+          PROCESSING_DIRS=""
+          for dir in results/submission_*; do
+            if [ -d "$dir" ]; then
+              STATUS_FILE="$dir/status.json"
+              if [ -f "$STATUS_FILE" ]; then
+                STATUS=$(python3 -c "import json; print(json.load(open('$STATUS_FILE')).get('status', 'unknown'))" 2>/dev/null || echo "unknown")
+                if [ "$STATUS" = "processing" ] || [ "$STATUS" = "submitted" ]; then
+                  PROCESSING_DIRS="$PROCESSING_DIRS $dir"
+                fi
+              fi
+            fi
+          done
+          echo "dirs=$PROCESSING_DIRS" >> $GITHUB_OUTPUT
+
+      - name: Check each job
+        if: steps.find.outputs.dirs != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RESULTS_URL: ${{ vars.RESULTS_URL || 'https://YOUR_GITHUB_PAGES_URL/results' }}
+        run: |
+          for dir in ${{ steps.find.outputs.dirs }}; do
+            echo "Checking $dir..."
+
+            # Read status file
+            STATUS_FILE="$dir/status.json"
+            if [ ! -f "$STATUS_FILE" ]; then
+              continue
+            fi
+
+            JOB_ID=$(python3 -c "import json; print(json.load(open('$STATUS_FILE')).get('slurm_job_id', ''))" 2>/dev/null)
+            ISSUE_NUM=$(python3 -c "import json; print(json.load(open('$STATUS_FILE')).get('issue_number', ''))" 2>/dev/null)
+
+            if [ -z "$JOB_ID" ] || [ -z "$ISSUE_NUM" ]; then
+              echo "Missing job_id or issue_number in $STATUS_FILE"
+              continue
+            fi
+
+            # Check job status
+            python3 scripts/check_job_status.py \
+              --submission-dir "$dir" \
+              --job-id "$JOB_ID" \
+              --results-dir "public_results" \
+              --output-format json > job_result.json 2>&1 || true
+
+            COMPLETED=$(python3 -c "import json; print(json.load(open('job_result.json')).get('completed', False))")
+            SUCCESS=$(python3 -c "import json; print(json.load(open('job_result.json')).get('success', False))")
+            TOKEN=$(python3 -c "import json; print(json.load(open('job_result.json')).get('result_token', '') or '')")
+
+            if [ "$COMPLETED" = "True" ]; then
+              if [ "$SUCCESS" = "True" ] && [ -n "$TOKEN" ]; then
+                # Success - notify participant with private link
+                VIEWER_URL="${RESULTS_URL}/../viewer.html?token=${TOKEN}"
+
+                gh issue comment "$ISSUE_NUM" --body "## Results Ready
+
+Your AlphaFold3 prediction has completed successfully.
+
+**View your structure:** [Open in Mol* Viewer](${VIEWER_URL})
+
+**Download files:**
+- [Structure (CIF)](${RESULTS_URL}/${TOKEN}/)
+
+> Note: This link is unique to your submission. Please save it for your records.
+
+Results will remain private until the competition ends."
+
+                gh issue edit "$ISSUE_NUM" --remove-label "processing" --add-label "completed"
+
+              else
+                # Failed
+                ERROR=$(python3 -c "import json; print(json.load(open('job_result.json')).get('error', 'Unknown error'))")
+
+                gh issue comment "$ISSUE_NUM" --body "## Prediction Failed
+
+Unfortunately, your AlphaFold3 prediction encountered an error:
+
+\`\`\`
+${ERROR}
+\`\`\`
+
+Please check your sequence and try submitting again. Common issues:
+- Sequence too long (>5000 residues)
+- Invalid amino acid characters
+- Server resource limitations
+
+If the problem persists, please contact the organizers."
+
+                gh issue edit "$ISSUE_NUM" --remove-label "processing" --add-label "failed"
+              fi
+            fi
+
+            rm -f job_result.json
+          done
+
+      - name: Commit status updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A results/ public_results/ || true
+          git diff --staged --quiet || git commit -m "Update job statuses [skip ci]"
+          git push || true
