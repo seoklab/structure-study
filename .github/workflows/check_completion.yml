@@ -19,7 +19,7 @@ jobs:
       SUBMISSIONS_BASE: /data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions
       PUBLIC_RESULTS: /data/galaxy4/user/j2ho/kidds2026/protein-competition/public_results
       # Netlify URL for serving results
-      SITE_URL: https://kidds2026.netlify.app
+      SITE_URL: https://696f07c48b8f75aceed24ce1--kidds2026.netlify.app
 
     steps:
       - name: Checkout repository
