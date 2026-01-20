@@ -66,6 +66,16 @@ jobs:
           # Save status file for tracking
           echo '{"status": "queued", "issue_number": ${{ github.event.issue.number }}, "submitted_at": "'$(date -Iseconds)'"}' > "$SUBMISSION_DIR/status.json"
 
+      - name: Send confirmation email
+        if: success()
+        run: |
+          EMAIL=$(python3 -c "import json; print(json.load(open('$SUBMISSION_DIR/submission.json')).get('email', ''))" 2>/dev/null)
+          SEQ_NAME=$(python3 -c "import json; print(json.load(open('$SUBMISSION_DIR/submission.json')).get('sequence_name', ''))" 2>/dev/null)
+          if [ -n "$EMAIL" ]; then
+            printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Submission Received - KIDDS 2026\n\nHello,\n\nYour sequence \"%s\" has been received and queued for AlphaFold3 structure prediction.\n\nSubmission ID: %s\n\nYou will receive another email when your results are ready.\n\nBest regards,\nKIDDS 2026 Winter Workshop\n" "$EMAIL" "$SEQ_NAME" "$SUBMISSION_ID" | sendmail -t
+            echo "Confirmation email sent to $EMAIL"
+          fi
+
       - name: Comment on success
         if: success()
         uses: actions/github-script@v7
@@ -75,7 +85,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## Submission Received\n\nYour sequence has been validated and queued for AlphaFold3 processing.\n\n**Submission ID:** \`${{ env.SUBMISSION_ID }}\`\n\nYou will receive your results privately once processing is complete.`
+              body: `## Submission Received\n\nYour sequence has been validated and queued for AlphaFold3 processing.\n\n**Submission ID:** \`${{ env.SUBMISSION_ID }}\`\n\nYou will receive your results via email once processing is complete.`
             })
             github.rest.issues.addLabels({
               issue_number: context.issue.number,
