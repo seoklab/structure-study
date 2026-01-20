@@ -1,7 +1,9 @@
 # Results and submissions directories (contains AF3 outputs)
-results/
-submissions/
-public_results/
+/results/
+/submissions/
+/public_results/
+# But allow docs/results for Netlify serving
+!docs/results/
 
 # Python
 __pycache__/

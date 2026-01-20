@@ -18,17 +18,20 @@ jobs:
     env:
       SUBMISSIONS_BASE: /data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions
       PUBLIC_RESULTS: /data/galaxy4/user/j2ho/kidds2026/protein-competition/public_results
+      # Netlify URL for serving results
+      SITE_URL: https://kidds2026.netlify.app
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Check submissions and package results
+        id: check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RESULTS_URL: ${{ vars.RESULTS_URL || 'https://seoklab.github.io/design-test/results' }}
-          VIEWER_URL: ${{ vars.VIEWER_URL || 'https://seoklab.github.io/design-test/viewer.html' }}
         run: |
+          RESULTS_UPDATED=false
+
           for dir in ${SUBMISSIONS_BASE}/submission_*; do
             if [ ! -d "$dir" ]; then
               continue
@@ -56,7 +59,7 @@ jobs:
             if [ -n "$MODEL_FILE" ]; then
               echo "Found completed output: $MODEL_FILE"
 
-              # Package results with secret token
+              # Package results with secret token to public_results/
               python3 scripts/package_results.py \
                 --submission-dir "$dir" \
                 --output-dir "${PUBLIC_RESULTS}" \
@@ -68,13 +71,18 @@ jobs:
               if [ -n "$TOKEN" ]; then
                 echo "Results packaged with token: $TOKEN"
 
+                # Copy to docs/results/ for Netlify to serve
+                mkdir -p docs/results/${TOKEN}
+                cp -r ${PUBLIC_RESULTS}/${TOKEN}/* docs/results/${TOKEN}/
+                RESULTS_UPDATED=true
+
                 # Comment on issue with private link
                 gh issue comment "$ISSUE_NUM" --body "## Results Ready
 
 Your AlphaFold3 prediction has completed!
 
-**View Structure:** [Mol* Viewer](${VIEWER_URL}?token=${TOKEN})
-**Download Files:** [Results](${RESULTS_URL}/${TOKEN}/)
+**View Structure:** [Mol* Viewer](${SITE_URL}/viewer.html?token=${TOKEN})
+**Download Files:** [Results](${SITE_URL}/results/${TOKEN}/)
 
 > Results are private until the competition ends."
 
@@ -87,8 +95,8 @@ Your AlphaFold3 prediction has completed!
               # Check if job failed (log exists but no output)
               LOG_FILE=$(find "$dir/logs" -name "*.log" -type f 2>/dev/null | head -1)
               if [ -n "$LOG_FILE" ]; then
-                # Check if log indicates failure
-                if grep -q "Error\|FAILED\|Traceback" "$LOG_FILE" 2>/dev/null; then
+                # Check if log indicates failure (but not just warnings)
+                if grep -q "FAILED\|Traceback\|Exception" "$LOG_FILE" 2>/dev/null; then
                   echo "Job appears to have failed"
 
                   # Update status
@@ -112,3 +120,14 @@ If the problem persists, please contact the organizers."
               fi
             fi
           done
+
+          echo "results_updated=$RESULTS_UPDATED" >> $GITHUB_OUTPUT
+
+      - name: Commit and push results
+        if: steps.check.outputs.results_updated == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/results/
+          git diff --staged --quiet || git commit -m "Add completed results [skip ci]"
+          git push
