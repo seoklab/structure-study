@@ -11,7 +11,7 @@ on:
 jobs:
   end-competition:
     if: github.event.inputs.confirm == 'END'
-    runs-on: [self-hosted, af3-runner]
+    runs-on: [self-hosted, galaxy4]
 
     permissions:
       contents: write

@@ -7,7 +7,7 @@ on:
 jobs:
   validate-and-run:
     if: github.event.label.name == 'submission'
-    runs-on: [self-hosted, af3-runner]
+    runs-on: [self-hosted, galaxy4]
 
     permissions:
       issues: write
