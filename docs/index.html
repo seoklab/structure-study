@@ -263,7 +263,7 @@
 
         <div id="success-message" class="message success">
             <h3>Submission Received!</h3>
-            <p id="success-text">Your sequence has been submitted and will be processed shortly.</p>
+            <p id="success-text">Your sequence has been submitted and will be processed shortly. <strong>Check your email for results!</strong></p>
         </div>
 
         <div id="error-message" class="message error">
@@ -489,7 +489,7 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    showSuccess(data.message || 'Your sequence has been submitted and will be processed shortly.');
+                    showSuccess('Your sequence has been submitted and will be processed shortly. Check your email for results!');
                     form.reset();
                     charCount.textContent = '0 residues';
                     charCount.className = 'char-count';
