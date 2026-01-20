@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Structure Viewer - Protein Competition</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/molstar@latest/build/viewer/molstar.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/molstar@3.46.0/build/viewer/molstar.css">
     <style>
         * {
             margin: 0;
@@ -176,7 +176,7 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/molstar@latest/build/viewer/molstar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/molstar@3.46.0/build/viewer/molstar.js"></script>
     <script>
         // Get token from URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -242,29 +242,15 @@
                     viewportShowAnimation: false,
                 });
 
-                // Load structure
-                await viewer.loadStructureFromUrl(cifUrl, 'mmcif');
-
-                // Apply pLDDT coloring (uses B-factor which contains pLDDT)
-                // Mol* has built-in AlphaFold confidence coloring
-                const state = viewer.plugin.state.data;
-                const structures = state.select(molstar.StateSelection.Generators.rootsOfType(
-                    molstar.PluginStateObject.Molecule.Structure
-                ));
-
-                if (structures.length > 0) {
-                    // Apply pLDDT coloring
-                    await viewer.plugin.builders.structure.representation.applyPreset(
-                        structures[0],
-                        'polymer-cartoon',
-                        {
-                            theme: {
-                                globalName: 'plddt-confidence',
-                                carbonColor: 'plddt-confidence'
-                            }
+                // Load structure with AlphaFold preset (includes pLDDT coloring)
+                await viewer.loadStructureFromUrl(cifUrl, 'mmcif', false, {
+                    representationParams: {
+                        theme: {
+                            globalName: 'plddt-confidence',
+                            carbonColor: 'plddt-confidence'
                         }
-                    );
-                }
+                    }
+                });
 
             } catch (error) {
                 document.getElementById('molstar-viewer').innerHTML =
