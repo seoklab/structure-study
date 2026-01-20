@@ -1,6 +1,7 @@
 name: Check Job Completion
 
 on:
+  # Runs every minute when enabled
   schedule:
     - cron: '* * * * *'
   workflow_dispatch:

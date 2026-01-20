@@ -1,134 +1,94 @@
-# Protein Design Competition Platform
+# KIDDS 2026 Winter Workshop - Protein Design Competition
 
-A GitHub-hosted platform for protein design competitions using AlphaFold3 structure prediction.
+A platform for protein design competitions using AlphaFold3 structure prediction.
 
-## Overview
+**"Become the best human ProteinMPNN!"**
 
-Participants submit amino acid sequences via GitHub Issues. Sequences are validated and processed through AlphaFold3 on an HPC cluster, with results returned privately to participants.
+## Quick Links
+
+| Resource | URL |
+|----------|-----|
+| Submission Form | [seoklab.github.io/design-test](https://seoklab.github.io/design-test/) |
+| Structure Viewer | [seoklab.github.io/design-test/viewer.html](https://seoklab.github.io/design-test/viewer.html?token=TOKEN) |
+| System Documentation | [docs/SYSTEM_OVERVIEW.md](docs/SYSTEM_OVERVIEW.md) |
+
+## How It Works
+
+1. **Submit** - Participants submit amino acid sequences via web form
+2. **Validate** - System validates sequence and queues for processing
+3. **Predict** - AlphaFold3 runs on HPC cluster
+4. **Notify** - Results emailed privately to participant
+5. **View** - Interactive 3D structure viewer with pLDDT coloring
 
 ## Project Structure
 
 ```
 protein-competition/
-├── .github/
-│   ├── ISSUE_TEMPLATE/
-│   │   ├── submit_sequence.yml    # Submission form template
-│   │   └── config.yml             # Issue template configuration
-│   └── workflows/
-│       └── process_submission.yml # Submission processing workflow
+├── .github/workflows/
+│   ├── process_submission.yml    # Handles new submissions
+│   └── check_completion.yml      # Checks for completed jobs
+├── docs/                         # GitHub Pages
+│   ├── index.html                # Submission form
+│   ├── viewer.html               # Mol* structure viewer
+│   └── results/                  # Packaged results
+├── netlify/functions/
+│   └── submit.js                 # Form submission API
 ├── scripts/
-│   ├── parse_submission.py        # Parse and validate submissions
-│   └── prepare_af3_input.py       # Generate AF3 input JSON
-├── results/                       # AF3 outputs (gitignored)
-├── templates/                     # HTML templates for viewer (Phase 3)
-└── README.md
+│   ├── parse_submission.py       # Parse submissions
+│   ├── prepare_af3_input.py      # Generate AF3 input
+│   ├── run_af3.py                # Generate SLURM script
+│   └── package_results.py        # Package results with token
+├── submissions/                  # (gitignored) Active submissions
+└── public_results/               # (gitignored) Packaged results
 ```
 
-## Setup Instructions
+## Sequence Requirements
 
-### 1. Repository Setup
+- **Length**: 10 - 5,000 residues
+- **Valid amino acids**: A C D E F G H I K L M N P Q R S T V W Y
 
-1. Create a new GitHub repository
-2. Copy all files from this directory to the repository
-3. Enable GitHub Actions in repository settings
+## For Administrators
 
-### 2. Self-Hosted Runner Configuration
+### Enable/Disable Scheduled Checks
 
-The workflow runs on a self-hosted runner with the `af3-runner` label. To set up:
-
-1. Navigate to repository Settings > Actions > Runners
-2. Click "New self-hosted runner"
-3. Follow instructions for your HPC environment
-4. Add the label `af3-runner` to the runner
-
-### 3. Runner Requirements
-
-The self-hosted runner needs:
-
-- Python 3.11+
-- Access to AlphaFold3 installation (for Phase 2)
-- Sufficient disk space for results
-
-### 4. Environment Variables (Phase 2)
-
-For Phase 2, configure these secrets in repository settings:
-
-- `AF3_PATH`: Path to AlphaFold3 installation
-- `AF3_DATA_DIR`: Path to AF3 model weights
-
-## Submission Process
-
-1. Participants create a new issue using the "Submit Protein Sequence" template
-2. They provide:
-   - **Participant ID**: Unique identifier
-   - **Sequence Name**: Descriptive name for the design
-   - **Amino Acid Sequence**: The protein sequence (A-Y single letter codes)
-3. GitHub Actions automatically:
-   - Validates the sequence
-   - Prepares AF3 input JSON
-   - (Phase 2) Submits job to HPC via sbatch
-   - Comments on the issue with status
-
-## Valid Amino Acids
-
-Sequences must contain only standard amino acid single-letter codes:
-
-| Code | Amino Acid    | Code | Amino Acid    |
-|------|---------------|------|---------------|
-| A    | Alanine       | M    | Methionine    |
-| C    | Cysteine      | N    | Asparagine    |
-| D    | Aspartic acid | P    | Proline       |
-| E    | Glutamic acid | Q    | Glutamine     |
-| F    | Phenylalanine | R    | Arginine      |
-| G    | Glycine       | S    | Serine        |
-| H    | Histidine     | T    | Threonine     |
-| I    | Isoleucine    | V    | Valine        |
-| K    | Lysine        | W    | Tryptophan    |
-| L    | Leucine       | Y    | Tyrosine      |
-
-## Sequence Constraints
-
-- Minimum length: 10 residues
-- Maximum length: 5000 residues
-- No non-standard amino acids
-
-## Local Development
-
-### Testing the parser
-
-```bash
-# Test with a sample issue body
-python scripts/parse_submission.py \
-  --issue-body "### Participant ID
-
-participant_001
-
-### Sequence Name
-
-test_protein
-
-### Amino Acid Sequence
-
-MKTLLILAVVAAALA" \
-  --issue-number 1 \
-  --output-dir results/test
+Edit `.github/workflows/check_completion.yml`:
+```yaml
+on:
+  # Uncomment when competition starts
+  # schedule:
+  #   - cron: '* * * * *'
+  workflow_dispatch:
 ```
 
-### Testing AF3 input generation
+### Manual Workflow Triggers
 
-```bash
-python scripts/prepare_af3_input.py \
-  --submission-dir results/test \
-  --submission-id submission_1
-```
+- **Actions** → **Check Job Completion** → **Run workflow**
+
+### Deploy Changes
+
+- **GitHub Pages** (index.html, viewer.html): Auto-deploys on push
+- **Netlify Function** (submit.js): Requires manual redeploy
+
+## Technology Stack
+
+- **Frontend**: HTML/CSS/JavaScript (GitHub Pages)
+- **API**: Netlify Functions
+- **CI/CD**: GitHub Actions (self-hosted runner)
+- **Structure Prediction**: AlphaFold3 on SLURM cluster
+- **Visualization**: PDBe-Molstar
+- **Notifications**: sendmail
 
 ## Roadmap
 
-- [x] **Phase 1**: Core structure and validation
-- [ ] **Phase 2**: AlphaFold3 execution via sbatch
-- [ ] **Phase 3**: Mol* web viewer with pLDDT coloring
-- [ ] **Phase 4**: Results aggregation and leaderboard
+- [x] Web submission form
+- [x] GitHub Issues integration
+- [x] AlphaFold3 execution via SLURM
+- [x] Mol* viewer with pLDDT coloring
+- [x] Email notifications
+- [x] Private results with token URLs
+- [ ] Results aggregation and leaderboard
+- [ ] Competition end: publish all results
 
-## License
+## Supported by
 
-[Add your license here]
+[SeokLab](https://seoklab.org)
