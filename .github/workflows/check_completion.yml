@@ -84,7 +84,7 @@ Your AlphaFold3 prediction has completed!
 **View Structure:** [Mol* Viewer](${SITE_URL}/viewer.html?token=${TOKEN})
 **Download Files:** [Results](${SITE_URL}/results/${TOKEN}/)
 
-> Results are private until the competition ends."
+_Results are private until the competition ends._"
 
                 # Update labels
                 gh issue edit "$ISSUE_NUM" --remove-label "processing" --add-label "completed" 2>/dev/null || true
