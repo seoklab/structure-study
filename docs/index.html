@@ -284,6 +284,14 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" name="email"
+                           placeholder="your.email@example.com" required>
+                    <p class="hint">Results will be sent to this email when ready</p>
+                    <p class="error-msg" id="email_error"></p>
+                </div>
+
+                <div class="form-group">
                     <label for="sequence_name">Sequence Name <span class="required">*</span></label>
                     <input type="text" id="sequence_name" name="sequence_name"
                            placeholder="e.g., designed_helix_v1, novel_enzyme"
@@ -423,6 +431,7 @@
             hideMessages();
 
             const participantId = document.getElementById('participant_id').value.trim();
+            const email = document.getElementById('email').value.trim();
             const sequenceName = document.getElementById('sequence_name').value.trim();
             const sequence = sequenceInput.value;
 
@@ -435,6 +444,14 @@
                 valid = false;
             } else {
                 document.getElementById('participant_id_error').style.display = 'none';
+            }
+
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('email_error').textContent = 'Please enter a valid email address';
+                document.getElementById('email_error').style.display = 'block';
+                valid = false;
+            } else {
+                document.getElementById('email_error').style.display = 'none';
             }
 
             if (!validateId(sequenceName)) {
@@ -463,6 +480,7 @@
                     },
                     body: JSON.stringify({
                         participant_id: participantId,
+                        email: email,
                         sequence_name: sequenceName,
                         sequence: seqResult.cleaned
                     })

@@ -161,6 +161,7 @@ def main():
 
     # Extract required fields
     participant_id = fields.get("participant_id", "").strip()
+    email = fields.get("email", "").strip()
     sequence_name = fields.get("sequence_name", "").strip()
     amino_acid_sequence = fields.get("amino_acid_sequence", "")
 
@@ -170,6 +171,10 @@ def main():
     # Validate identifiers
     all_errors.extend(validate_identifier(participant_id, "participant_id"))
     all_errors.extend(validate_identifier(sequence_name, "sequence_name"))
+
+    # Validate email
+    if not email or not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
+        all_errors.append("Valid email address is required")
 
     # Validate and clean sequence
     cleaned_sequence, seq_errors = validate_amino_acid_sequence(amino_acid_sequence)
@@ -187,6 +192,7 @@ def main():
     submission_data = {
         "issue_number": args.issue_number,
         "participant_id": participant_id,
+        "email": email,
         "sequence_name": sequence_name,
         "sequence": cleaned_sequence,
         "sequence_length": len(cleaned_sequence),

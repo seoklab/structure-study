@@ -43,9 +43,40 @@ jobs:
                 mkdir -p docs/results/${TOKEN}
                 cp -r ${PUBLIC_RESULTS}/${TOKEN}/* docs/results/${TOKEN}/
                 RESULTS_UPDATED=true
-                gh issue comment "$ISSUE_NUM" --body "## Results Ready - [View Structure](${SITE_URL}/viewer.html?token=${TOKEN}) | [Download](${SITE_URL}/results/${TOKEN}/)"
+
+                # Get email from submission.json
+                SUBMISSION_FILE="$dir/submission.json"
+                EMAIL=$(python3 -c "import json; print(json.load(open('$SUBMISSION_FILE')).get('email', ''))" 2>/dev/null)
+                SEQ_NAME=$(python3 -c "import json; print(json.load(open('$SUBMISSION_FILE')).get('sequence_name', 'your sequence'))" 2>/dev/null)
+
+                # Send email notification if email exists
+                if [ -n "$EMAIL" ]; then
+                  echo "Sending results email to: $EMAIL"
+                  sendmail -t <<EMAILEOF
+To: $EMAIL
+From: noreply@seoklab.org
+Subject: Your Protein Structure Results are Ready
+
+Hello,
+
+Your AlphaFold3 structure prediction for "$SEQ_NAME" is now complete!
+
+View your results:
+${SITE_URL}/viewer.html?token=${TOKEN}
+
+Download files:
+${SITE_URL}/results/${TOKEN}/
+
+This is a private link - only you have access to these results until the competition ends.
+
+Best regards,
+Protein Design Competition
+EMAILEOF
+                  echo "Email sent to $EMAIL"
+                fi
+
                 gh issue edit "$ISSUE_NUM" --remove-label "processing" --add-label "completed" 2>/dev/null || true
-                echo "Notified issue #$ISSUE_NUM"
+                echo "Processed issue #$ISSUE_NUM"
               fi
             fi
           done

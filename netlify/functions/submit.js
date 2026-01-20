@@ -30,11 +30,15 @@ function validateId(id) {
   return typeof id === 'string' && /^[A-Za-z0-9_-]+$/.test(id) && id.length > 0 && id.length <= 100;
 }
 
-async function createGitHubIssue(participantId, sequenceName, sequence) {
+async function createGitHubIssue(participantId, email, sequenceName, sequence) {
   const issueTitle = `[Submission] ${sequenceName} by ${participantId}`;
   const issueBody = `### Participant ID
 
 ${participantId}
+
+### Email
+
+${email}
 
 ### Sequence Name
 
@@ -96,7 +100,7 @@ exports.handler = async (event, context) => {
 
   try {
     const body = JSON.parse(event.body);
-    const { participant_id, sequence_name, sequence } = body;
+    const { participant_id, email, sequence_name, sequence } = body;
 
     // Validate participant_id
     if (!validateId(participant_id)) {
@@ -106,6 +110,18 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({
           success: false,
           error: 'Invalid participant ID. Use only letters, numbers, underscores, and hyphens.'
+        })
+      };
+    }
+
+    // Validate email
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          error: 'Please provide a valid email address.'
         })
       };
     }
@@ -141,7 +157,7 @@ exports.handler = async (event, context) => {
     }
 
     // Create GitHub issue
-    const issue = await createGitHubIssue(participant_id, sequence_name, seqResult.cleaned);
+    const issue = await createGitHubIssue(participant_id, email, sequence_name, seqResult.cleaned);
 
     return {
       statusCode: 200,
