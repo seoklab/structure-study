@@ -268,6 +268,12 @@ def main():
         help="Base URL for results (relative or absolute)",
     )
     parser.add_argument(
+        "--public-results-dir",
+        type=Path,
+        default=Path("public_results"),
+        help="Directory containing packaged results with tokens",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Show what would be done without making changes",
@@ -301,13 +307,12 @@ def main():
         logger.info(f"Copied viewer to {viewer_dst}")
 
     # Copy public_results to docs/results for GitHub Pages
-    public_results = Path("public_results")
-    if public_results.exists():
+    if args.public_results_dir.exists():
         import shutil
         dest = args.public_dir / "results"
         if dest.exists():
             shutil.rmtree(dest)
-        shutil.copytree(public_results, dest)
+        shutil.copytree(args.public_results_dir, dest)
         logger.info(f"Copied results to {dest}")
 
     logger.info("Competition ended. Results published to docs/")
