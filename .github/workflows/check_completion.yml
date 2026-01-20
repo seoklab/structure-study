@@ -76,40 +76,14 @@ jobs:
                 # Success - notify participant with private link
                 VIEWER_URL="${RESULTS_URL}/../viewer.html?token=${TOKEN}"
 
-                gh issue comment "$ISSUE_NUM" --body "## Results Ready
-
-Your AlphaFold3 prediction has completed successfully.
-
-**View your structure:** [Open in Mol* Viewer](${VIEWER_URL})
-
-**Download files:**
-- [Structure (CIF)](${RESULTS_URL}/${TOKEN}/)
-
-> Note: This link is unique to your submission. Please save it for your records.
-
-Results will remain private until the competition ends."
-
+                gh issue comment "$ISSUE_NUM" --body "## Results Ready - Your AlphaFold3 prediction completed! **View:** [Mol* Viewer](${VIEWER_URL}) | **Download:** [CIF](${RESULTS_URL}/${TOKEN}/) | Results private until competition ends."
                 gh issue edit "$ISSUE_NUM" --remove-label "processing" --add-label "completed"
 
               else
                 # Failed
                 ERROR=$(python3 -c "import json; print(json.load(open('job_result.json')).get('error', 'Unknown error'))")
 
-                gh issue comment "$ISSUE_NUM" --body "## Prediction Failed
-
-Unfortunately, your AlphaFold3 prediction encountered an error:
-
-\`\`\`
-${ERROR}
-\`\`\`
-
-Please check your sequence and try submitting again. Common issues:
-- Sequence too long (>5000 residues)
-- Invalid amino acid characters
-- Server resource limitations
-
-If the problem persists, please contact the organizers."
-
+                gh issue comment "$ISSUE_NUM" --body "## Prediction Failed - Error: ${ERROR}. Please check your sequence and try again."
                 gh issue edit "$ISSUE_NUM" --remove-label "processing" --add-label "failed"
               fi
             fi

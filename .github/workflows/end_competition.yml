@@ -32,24 +32,10 @@ jobs:
       - name: Update all issues
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAGES_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
         run: |
-          # Get all issues with 'submission' label
-          gh issue list --label submission --state all --json number,title --limit 1000 | \
-          python3 -c "
-          import json, sys
-          issues = json.load(sys.stdin)
-          for issue in issues:
-              print(issue['number'])
-          " | while read ISSUE_NUM; do
-            gh issue comment "$ISSUE_NUM" --body "## Competition Ended
-
-The protein design competition has concluded. All results are now public.
-
-View the final results and all submissions at the competition gallery:
-**[View All Results](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/)**
-
-Thank you for participating!"
-
+          gh issue list --label submission --state all --json number --jq '.[].number' | while read ISSUE_NUM; do
+            gh issue comment "$ISSUE_NUM" --body "## Competition Ended - All results are now public. View at: ${PAGES_URL}"
             gh issue edit "$ISSUE_NUM" --add-label "competition-ended"
           done
 
