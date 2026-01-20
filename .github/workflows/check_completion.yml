@@ -75,6 +75,8 @@ EMAILEOF
                   echo "Email sent to $EMAIL"
                 fi
 
+                # Also comment on GitHub issue
+                gh issue comment "$ISSUE_NUM" --body "## Results Ready - [View Structure](${SITE_URL}/viewer.html?token=${TOKEN}) | [Download](${SITE_URL}/results/${TOKEN}/)"
                 gh issue edit "$ISSUE_NUM" --remove-label "processing" --add-label "completed" 2>/dev/null || true
                 echo "Processed issue #$ISSUE_NUM"
               fi
