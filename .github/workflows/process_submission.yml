@@ -24,6 +24,7 @@ jobs:
           mkdir -p "${SUBMISSION_DIR}"
           mkdir -p "${SUBMISSION_DIR}/scripts"
           mkdir -p "${SUBMISSION_DIR}/logs"
+          chmod 777 "${SUBMISSION_DIR}" "${SUBMISSION_DIR}/scripts" "${SUBMISSION_DIR}/logs"
           echo "SUBMISSION_ID=${SUBMISSION_ID}" >> $GITHUB_ENV
           echo "SUBMISSION_DIR=${SUBMISSION_DIR}" >> $GITHUB_ENV
 
