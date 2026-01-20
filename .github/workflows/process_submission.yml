@@ -63,13 +63,7 @@ jobs:
           echo "JOB_QUEUED=true" >> $GITHUB_ENV
 
           # Save status file for tracking
-          cat > "$SUBMISSION_DIR/status.json" << EOF
-{
-  "status": "queued",
-  "issue_number": ${{ github.event.issue.number }},
-  "submitted_at": "$(date -Iseconds)"
-}
-EOF
+          echo '{"status": "queued", "issue_number": ${{ github.event.issue.number }}, "submitted_at": "'$(date -Iseconds)'"}' > "$SUBMISSION_DIR/status.json"
 
       - name: Comment on success
         if: success()
