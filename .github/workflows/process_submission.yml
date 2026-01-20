@@ -13,10 +13,6 @@ jobs:
       issues: write
       contents: read
 
-    env:
-      # Stable base directory for all submissions (owned by j2ho)
-      SUBMISSIONS_BASE: /data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,7 +20,7 @@ jobs:
       - name: Create submission directory
         run: |
           SUBMISSION_ID="submission_${{ github.event.issue.number }}"
-          SUBMISSION_DIR="${SUBMISSIONS_BASE}/${SUBMISSION_ID}"
+          SUBMISSION_DIR="/data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions/${SUBMISSION_ID}"
           mkdir -p "${SUBMISSION_DIR}"
           mkdir -p "${SUBMISSION_DIR}/scripts"
           mkdir -p "${SUBMISSION_DIR}/logs"
