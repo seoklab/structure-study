@@ -77,14 +77,7 @@ jobs:
                 RESULTS_UPDATED=true
 
                 # Comment on issue with private link
-                gh issue comment "$ISSUE_NUM" --body "## Results Ready
-
-Your AlphaFold3 prediction has completed!
-
-**View Structure:** [Mol* Viewer](${SITE_URL}/viewer.html?token=${TOKEN})
-**Download Files:** [Results](${SITE_URL}/results/${TOKEN}/)
-
-_Results are private until the competition ends._"
+                gh issue comment "$ISSUE_NUM" --body "## Results Ready - Your AlphaFold3 prediction has completed! [View Structure](${SITE_URL}/viewer.html?token=${TOKEN}) | [Download](${SITE_URL}/results/${TOKEN}/)"
 
                 # Update labels
                 gh issue edit "$ISSUE_NUM" --remove-label "processing" --add-label "completed" 2>/dev/null || true
@@ -109,11 +102,7 @@ with open('$STATUS_FILE', 'w') as f:
     json.dump(data, f, indent=2)
 "
 
-                  gh issue comment "$ISSUE_NUM" --body "## Prediction Failed
-
-There was an error processing your sequence. Please check your input and try again.
-
-If the problem persists, please contact the organizers."
+                  gh issue comment "$ISSUE_NUM" --body "## Prediction Failed - There was an error processing your sequence. Please check your input and try again."
 
                   gh issue edit "$ISSUE_NUM" --remove-label "processing" --add-label "failed" 2>/dev/null || true
                 fi
