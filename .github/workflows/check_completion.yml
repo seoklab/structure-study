@@ -14,7 +14,7 @@ jobs:
     env:
       SUBMISSIONS_BASE: /data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions
       PUBLIC_RESULTS: /data/galaxy4/user/j2ho/kidds2026/protein-competition/public_results
-      SITE_URL: https://seoklab.github.io/design-test
+      SITE_URL: https://kidds2026.netlify.app
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
