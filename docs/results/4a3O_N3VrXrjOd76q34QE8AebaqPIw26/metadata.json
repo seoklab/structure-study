@@ -2,14 +2,21 @@
   "token": "4a3O_N3VrXrjOd76q34QE8AebaqPIw26",
   "participant_id": "admin",
   "total_problems": 5,
-  "completed_problems": 1,
+  "completed_problems": 3,
   "all_complete": false,
   "files": [
-    "admin_problem_1_confidences.json",
-    "admin_problem_1_model.cif",
-    "submission.json",
+    "admin_problem_2_confidences.json",
+    "admin_problem_2_model.cif",
+    "admin_problem_3_model.cif",
+    "admin_problem_3_ranking_scores.csv",
+    "admin_problem_1_summary_confidences.json",
     "admin_problem_1_ranking_scores.csv",
-    "admin_problem_1_summary_confidences.json"
+    "admin_problem_2_ranking_scores.csv",
+    "admin_problem_1_confidences.json",
+    "admin_problem_3_summary_confidences.json",
+    "admin_problem_1_model.cif",
+    "admin_problem_2_summary_confidences.json",
+    "submission.json"
   ],
   "problems": {
     "problem_1": {
@@ -18,6 +25,22 @@
         "admin_problem_1_confidences.json",
         "admin_problem_1_summary_confidences.json",
         "admin_problem_1_ranking_scores.csv"
+      ]
+    },
+    "problem_2": {
+      "files": [
+        "admin_problem_2_model.cif",
+        "admin_problem_2_confidences.json",
+        "admin_problem_2_summary_confidences.json",
+        "admin_problem_2_ranking_scores.csv"
+      ]
+    },
+    "problem_3": {
+      "files": [
+        "admin_problem_3_model.cif",
+        "admin_problem_3_summary_confidences.json",
+        "admin_problem_3_summary_confidences.json",
+        "admin_problem_3_ranking_scores.csv"
       ]
     }
   },
