@@ -15,6 +15,7 @@ jobs:
       SUBMISSIONS_BASE: /data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions
       PUBLIC_RESULTS: /data/galaxy4/user/j2ho/kidds2026/protein-competition/public_results
       SITE_URL: https://kidds2026.netlify.app
+      ADMIN_EMAIL: jihosim1010@gmail.com
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,32 +35,65 @@ jobs:
             # Read status
             STATUS=$(python3 -c "import json; print(json.load(open('$STATUS_FILE')).get('status', 'unknown'))" 2>/dev/null || echo "unknown")
 
-            # Skip if already completed or failed
-            [ "$STATUS" = "completed" ] || [ "$STATUS" = "failed" ] && continue
+            # Skip if already completed or notified_partial or notified_failed
+            [ "$STATUS" = "completed" ] || [ "$STATUS" = "notified_partial" ] || [ "$STATUS" = "notified_failed" ] && continue
 
             SUBMISSION_ID=$(basename "$dir")
             echo "Checking $SUBMISSION_ID (status: $STATUS)..."
 
+            # Get submission info
+            SUBMISSION_FILE="$dir/submission.json"
+            EMAIL=$(python3 -c "import json; print(json.load(open('$SUBMISSION_FILE')).get('email', ''))" 2>/dev/null || echo "")
+            PARTICIPANT_ID=$(python3 -c "import json; print(json.load(open('$SUBMISSION_FILE')).get('participant_id', 'unknown'))" 2>/dev/null || echo "unknown")
+
             # Check for multi-problem submission
-            PROBLEM_DIRS=$(find "$dir" -maxdepth 1 -type d -name "problem_*" 2>/dev/null | wc -l)
+            PROBLEM_DIRS=$(find "$dir" -maxdepth 1 -type d -name "problem_*" 2>/dev/null | sort)
+            PROBLEM_COUNT=$(echo "$PROBLEM_DIRS" | grep -c "problem_" || echo "0")
 
-            if [ "$PROBLEM_DIRS" -gt 0 ]; then
-              # Multi-problem submission: check each problem directory
-              TOTAL_PROBLEMS=$(python3 -c "import json; print(len(json.load(open('$STATUS_FILE')).get('sequences', json.load(open('$dir/submission.json')).get('sequences', {}))))" 2>/dev/null || echo "$PROBLEM_DIRS")
-              COMPLETED=0
+            if [ "$PROBLEM_COUNT" -gt 0 ]; then
+              # Multi-problem submission
+              TOTAL_PROBLEMS=$(python3 -c "import json; d=json.load(open('$SUBMISSION_FILE')); print(len(d.get('sequences', {})))" 2>/dev/null || echo "$PROBLEM_COUNT")
 
-              for problem_dir in "$dir"/problem_*; do
+              COMPLETED_LIST=""
+              FAILED_LIST=""
+              PENDING_LIST=""
+              COMPLETED_COUNT=0
+              FAILED_COUNT=0
+
+              for problem_dir in $PROBLEM_DIRS; do
                 [ ! -d "$problem_dir" ] && continue
-                # Check for model.cif in problem directory or nested
+                PROBLEM_ID=$(basename "$problem_dir")
+
+                # Check for model.cif (success)
                 if find "$problem_dir" -maxdepth 2 -name "*_model.cif" -type f 2>/dev/null | head -1 | grep -q .; then
-                  COMPLETED=$((COMPLETED + 1))
+                  COMPLETED_COUNT=$((COMPLETED_COUNT + 1))
+                  COMPLETED_LIST="${COMPLETED_LIST}${PROBLEM_ID}, "
+                else
+                  # Check SLURM job status for this problem
+                  JOB_NAME="${SUBMISSION_ID}_${PROBLEM_ID}"
+                  # Check if job failed (look for FAILED status in sacct)
+                  JOB_STATUS=$(sacct --name="$JOB_NAME" --format=State --noheader 2>/dev/null | head -1 | tr -d ' ')
+
+                  if [ "$JOB_STATUS" = "FAILED" ] || [ "$JOB_STATUS" = "CANCELLED" ] || [ "$JOB_STATUS" = "TIMEOUT" ]; then
+                    FAILED_COUNT=$((FAILED_COUNT + 1))
+                    FAILED_LIST="${FAILED_LIST}${PROBLEM_ID} (${JOB_STATUS}), "
+                  else
+                    PENDING_LIST="${PENDING_LIST}${PROBLEM_ID}, "
+                  fi
                 fi
               done
 
-              echo "  Problems completed: $COMPLETED/$TOTAL_PROBLEMS"
+              # Remove trailing commas
+              COMPLETED_LIST=$(echo "$COMPLETED_LIST" | sed 's/, $//')
+              FAILED_LIST=$(echo "$FAILED_LIST" | sed 's/, $//')
+              PENDING_LIST=$(echo "$PENDING_LIST" | sed 's/, $//')
 
-              # Package when all problems are done
-              if [ "$COMPLETED" -ge "$TOTAL_PROBLEMS" ] && [ "$COMPLETED" -gt 0 ]; then
+              echo "  Completed: $COMPLETED_COUNT/$TOTAL_PROBLEMS ($COMPLETED_LIST)"
+              echo "  Failed: $FAILED_COUNT ($FAILED_LIST)"
+              echo "  Pending: ($PENDING_LIST)"
+
+              # Case 1: All problems completed successfully
+              if [ "$COMPLETED_COUNT" -ge "$TOTAL_PROBLEMS" ] && [ "$COMPLETED_COUNT" -gt 0 ]; then
                 echo "All problems completed, packaging results..."
                 python3 scripts/package_results.py \
                   --submission-dir "$dir" \
@@ -74,20 +108,60 @@ jobs:
                   cp -r ${PUBLIC_RESULTS}/${TOKEN}/* docs/results/${TOKEN}/
                   RESULTS_UPDATED=true
 
-                  # Send results email
-                  SUBMISSION_FILE="$dir/submission.json"
-                  EMAIL=$(python3 -c "import json; print(json.load(open('$SUBMISSION_FILE')).get('email', ''))" 2>/dev/null)
-                  PARTICIPANT_ID=$(python3 -c "import json; print(json.load(open('$SUBMISSION_FILE')).get('participant_id', ''))" 2>/dev/null)
-
+                  # Send success email to participant
                   if [ -n "$EMAIL" ]; then
                     echo "Sending results email to: $EMAIL"
-                    printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Your Protein Structure Results are Ready\n\nHello %s,\n\nYour AlphaFold3 structure predictions are now complete!\n\nYou submitted %s problems and all have been processed.\n\nView your results:\n%s/viewer.html?token=%s\n\nDownload all files:\n%s/results/%s/\n\nFile naming convention:\n- %s_problem_1_model.cif (your predicted structure for Problem 1)\n- %s_problem_2_model.cif (your predicted structure for Problem 2)\n- etc.\n\nThis is a private link - only you have access to these results until the competition ends.\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$PARTICIPANT_ID" "$COMPLETED" "${SITE_URL}" "$TOKEN" "${SITE_URL}" "$TOKEN" "$PARTICIPANT_ID" "$PARTICIPANT_ID" | sendmail -t
-                    echo "Email sent to $EMAIL"
+                    printf "To: %s\nFrom: noreply@seoklab.org\nSubject: All Results Ready - KIDDS 2026\n\nHello %s,\n\nGreat news! All %s of your AlphaFold3 structure predictions are complete.\n\nCompleted: %s\n\nView your results:\n%s/viewer.html?token=%s\n\nDownload all files:\n%s/results/%s/\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$PARTICIPANT_ID" "$COMPLETED_COUNT" "$COMPLETED_LIST" "${SITE_URL}" "$TOKEN" "${SITE_URL}" "$TOKEN" | sendmail -t
                   fi
 
                   echo "Processed submission: $SUBMISSION_ID"
                 fi
+
+              # Case 2: Some failed, some completed (no pending)
+              elif [ "$FAILED_COUNT" -gt 0 ] && [ -z "$PENDING_LIST" ]; then
+                echo "Some problems failed, packaging partial results..."
+
+                if [ "$COMPLETED_COUNT" -gt 0 ]; then
+                  # Package partial results
+                  python3 scripts/package_results.py \
+                    --submission-dir "$dir" \
+                    --output-dir "${PUBLIC_RESULTS}" \
+                    --status-file "$STATUS_FILE" || true
+
+                  TOKEN=$(python3 -c "import json; print(json.load(open('$STATUS_FILE')).get('result_token', ''))" 2>/dev/null)
+
+                  if [ -n "$TOKEN" ]; then
+                    mkdir -p docs/results/${TOKEN}
+                    cp -r ${PUBLIC_RESULTS}/${TOKEN}/* docs/results/${TOKEN}/ 2>/dev/null || true
+                    RESULTS_UPDATED=true
+                  fi
+                fi
+
+                # Update status to notified_partial
+                python3 -c "import json; f=open('$STATUS_FILE'); d=json.load(f); f.close(); d['status']='notified_partial'; d['completed']='$COMPLETED_LIST'; d['failed']='$FAILED_LIST'; f=open('$STATUS_FILE','w'); json.dump(d,f,indent=2); f.close()"
+
+                # Send partial results email to participant
+                if [ -n "$EMAIL" ]; then
+                  echo "Sending partial results email to: $EMAIL"
+                  if [ -n "$TOKEN" ]; then
+                    printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Partial Results Ready - KIDDS 2026\n\nHello %s,\n\nYour AlphaFold3 predictions have finished processing, but some problems encountered errors.\n\nCompleted (%s): %s\nFailed (%s): %s\n\nView your completed results:\n%s/viewer.html?token=%s\n\nThe workshop organizers have been notified about the failures. You may resubmit if needed.\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$PARTICIPANT_ID" "$COMPLETED_COUNT" "$COMPLETED_LIST" "$FAILED_COUNT" "$FAILED_LIST" "${SITE_URL}" "$TOKEN" | sendmail -t
+                  else
+                    printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Submission Failed - KIDDS 2026\n\nHello %s,\n\nUnfortunately, your AlphaFold3 predictions encountered errors.\n\nFailed (%s): %s\n\nThe workshop organizers have been notified and will investigate. You may resubmit if needed.\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$PARTICIPANT_ID" "$FAILED_COUNT" "$FAILED_LIST" | sendmail -t
+                  fi
+                fi
+
+                # Send admin notification
+                echo "Sending admin notification to: ${ADMIN_EMAIL}"
+                printf "To: %s\nFrom: noreply@seoklab.org\nSubject: [ADMIN] Submission Failure - %s\n\nSubmission ID: %s\nParticipant: %s\nEmail: %s\n\nCompleted (%s): %s\nFailed (%s): %s\n\nPlease check the logs at:\n%s/\n" "${ADMIN_EMAIL}" "$SUBMISSION_ID" "$SUBMISSION_ID" "$PARTICIPANT_ID" "$EMAIL" "$COMPLETED_COUNT" "$COMPLETED_LIST" "$FAILED_COUNT" "$FAILED_LIST" "$dir" | sendmail -t
+
+                echo "Notified about partial/failed submission: $SUBMISSION_ID"
+
+              # Case 3: Some completed, still have pending (partial progress)
+              elif [ "$COMPLETED_COUNT" -gt 0 ] && [ -n "$PENDING_LIST" ] && [ "$FAILED_COUNT" -eq 0 ]; then
+                echo "Partial progress, waiting for remaining jobs..."
+                # Don't notify yet, jobs still running
               fi
+
             else
               # Single-problem submission (backward compatibility)
               MODEL_FILE=$(find "$dir" -maxdepth 2 -name "*_model.cif" -type f 2>/dev/null | head -1)
@@ -106,15 +180,10 @@ jobs:
                   cp -r ${PUBLIC_RESULTS}/${TOKEN}/* docs/results/${TOKEN}/
                   RESULTS_UPDATED=true
 
-                  # Send email
-                  SUBMISSION_FILE="$dir/submission.json"
-                  EMAIL=$(python3 -c "import json; print(json.load(open('$SUBMISSION_FILE')).get('email', ''))" 2>/dev/null)
                   SEQ_NAME=$(python3 -c "import json; print(json.load(open('$SUBMISSION_FILE')).get('sequence_name', 'your sequence'))" 2>/dev/null)
 
                   if [ -n "$EMAIL" ]; then
-                    echo "Sending results email to: $EMAIL"
-                    printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Your Protein Structure Results are Ready\n\nHello,\n\nYour AlphaFold3 structure prediction for \"%s\" is now complete!\n\nView your results:\n%s/viewer.html?token=%s\n\nDownload files:\n%s/results/%s/\n\nThis is a private link - only you have access to these results until the competition ends.\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$SEQ_NAME" "${SITE_URL}" "$TOKEN" "${SITE_URL}" "$TOKEN" | sendmail -t
-                    echo "Email sent to $EMAIL"
+                    printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Your Protein Structure Results are Ready\n\nHello,\n\nYour AlphaFold3 structure prediction for \"%s\" is now complete!\n\nView your results:\n%s/viewer.html?token=%s\n\nDownload files:\n%s/results/%s/\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$SEQ_NAME" "${SITE_URL}" "$TOKEN" "${SITE_URL}" "$TOKEN" | sendmail -t
                   fi
 
                   echo "Processed submission: $SUBMISSION_ID"
