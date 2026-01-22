@@ -21,3 +21,6 @@ venv/
 # IDE
 .vscode/
 .idea/
+# Vim undo files
+*.un~
+.*.un~
