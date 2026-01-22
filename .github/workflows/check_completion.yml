@@ -16,6 +16,9 @@ jobs:
       PUBLIC_RESULTS: /data/galaxy4/user/j2ho/kidds2026/protein-competition/public_results
       SITE_URL: https://kidds2026.netlify.app
       ADMIN_EMAIL: jihosim1010@gmail.com
+      # Set to "true" for email after each problem (uses more Netlify deploys)
+      # Set to "false" for single email when all problems complete (default)
+      INCREMENTAL_NOTIFICATIONS: "false"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -102,15 +105,32 @@ jobs:
               echo "  Failed: $FAILED_COUNT ($FAILED_LIST)"
               echo "  Pending: ($PENDING_LIST)"
 
-              # Skip if no new completions
-              if [ -z "$NEW_COMPLETED_LIST" ] && [ "$FAILED_COUNT" -eq 0 ]; then
-                echo "  No new completions to process"
+              # Check if we should process this submission
+              # INCREMENTAL_NOTIFICATIONS=false: only when all done or failures with no pending
+              # INCREMENTAL_NOTIFICATIONS=true: on each new completion
+              SHOULD_PROCESS=false
+              if [ "$INCREMENTAL_NOTIFICATIONS" = "true" ]; then
+                # Incremental mode: process if any new completions
+                if [ -n "$NEW_COMPLETED_LIST" ] || [ "$FAILED_COUNT" -gt 0 ]; then
+                  SHOULD_PROCESS=true
+                fi
+              else
+                # Non-incremental mode: only process when all done or all finished (with failures)
+                if [ "$COMPLETED_COUNT" -ge "$TOTAL_PROBLEMS" ]; then
+                  SHOULD_PROCESS=true
+                elif [ "$FAILED_COUNT" -gt 0 ] && [ -z "$PENDING_LIST" ]; then
+                  SHOULD_PROCESS=true
+                fi
+              fi
+
+              if [ "$SHOULD_PROCESS" = "false" ]; then
+                echo "  Waiting for more completions (incremental=$INCREMENTAL_NOTIFICATIONS)..."
                 continue
               fi
 
-              # Package results (incremental - adds to existing token)
-              if [ -n "$NEW_COMPLETED_LIST" ] || [ "$COMPLETED_COUNT" -gt 0 ]; then
-                echo "Packaging results incrementally..."
+              # Package results
+              if [ "$COMPLETED_COUNT" -gt 0 ]; then
+                echo "Packaging results..."
                 python3 scripts/package_results.py \
                   --submission-dir "$dir" \
                   --output-dir "${PUBLIC_RESULTS}" \
@@ -127,29 +147,20 @@ jobs:
                 fi
               fi
 
-              # Determine email type and send
-              if [ -n "$NEW_COMPLETED_LIST" ] && [ -n "$EMAIL" ] && [ -n "$TOKEN" ]; then
-                # Update notified_problems list
-                if [ -n "$NOTIFIED_PROBLEMS" ]; then
-                  NEW_NOTIFIED="${NOTIFIED_PROBLEMS},$(echo $NEW_COMPLETED_LIST | tr ', ' ',')"
-                else
-                  NEW_NOTIFIED=$(echo $NEW_COMPLETED_LIST | tr ', ' ',')
-                fi
-                # Clean up the list
-                NEW_NOTIFIED=$(echo "$NEW_NOTIFIED" | tr ',' '\n' | grep -v '^$' | sort -u | tr '\n' ',' | sed 's/,$//')
-                python3 -c "import json; f=open('$STATUS_FILE'); d=json.load(f); f.close(); d['notified_problems']='$NEW_NOTIFIED'.split(','); f=open('$STATUS_FILE','w'); json.dump(d,f,indent=2); f.close()"
-
+              # Send email based on mode
+              if [ -n "$EMAIL" ] && [ -n "$TOKEN" ]; then
                 if [ "$COMPLETED_COUNT" -ge "$TOTAL_PROBLEMS" ]; then
                   # All done - send final email
                   echo "Sending FINAL results email to: $EMAIL"
                   python3 -c "import json; f=open('$STATUS_FILE'); d=json.load(f); f.close(); d['status']='completed'; f=open('$STATUS_FILE','w'); json.dump(d,f,indent=2); f.close()"
                   printf "To: %s\nFrom: noreply@seoklab.org\nSubject: All Results Ready - KIDDS 2026\n\nHello %s,\n\nGreat news! All %s of your AlphaFold3 structure predictions are complete.\n\nCompleted: %s\n\nView your results:\n%s/viewer.html?token=%s\n\nDownload all files:\n%s/results/%s/\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$PARTICIPANT_ID" "$COMPLETED_COUNT" "$COMPLETED_LIST" "${SITE_URL}" "$TOKEN" "${SITE_URL}" "$TOKEN" | sendmail -t
-                else
-                  # Incremental update - send progress email
+                  echo "Processed submission: $SUBMISSION_ID"
+                elif [ "$INCREMENTAL_NOTIFICATIONS" = "true" ] && [ -n "$NEW_COMPLETED_LIST" ]; then
+                  # Incremental mode: send progress email
                   echo "Sending PROGRESS email to: $EMAIL ($COMPLETED_COUNT/$TOTAL_PROBLEMS)"
                   printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Progress Update (%s/%s) - KIDDS 2026\n\nHello %s,\n\nYour AlphaFold3 predictions are in progress.\n\nCompleted: %s/%s (%s)\nJust finished: %s\nStill running: %s\n\nView your results (updates as more complete):\n%s/viewer.html?token=%s\n\nYou will receive another email when more results are ready.\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$COMPLETED_COUNT" "$TOTAL_PROBLEMS" "$PARTICIPANT_ID" "$COMPLETED_COUNT" "$TOTAL_PROBLEMS" "$COMPLETED_LIST" "$NEW_COMPLETED_LIST" "$PENDING_LIST" "${SITE_URL}" "$TOKEN" | sendmail -t
+                  echo "Processed submission: $SUBMISSION_ID"
                 fi
-                echo "Processed submission: $SUBMISSION_ID"
               fi
 
               # Handle failures (only when no more pending jobs)
