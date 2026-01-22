@@ -99,10 +99,15 @@ def create_af3_input_monomer(
     # Apply MSA mode
     if msa_mode == "none" and output_dir:
         # Create single-sequence MSA file to skip MSA search
+        # Must set all three: unpairedMsa, pairedMsa, templates
         single_msa = create_single_seq_msa(sequence, output_dir, "A")
         protein_entry["unpairedMsaPath"] = single_msa
+        protein_entry["pairedMsa"] = ""
+        protein_entry["templates"] = []
     elif msa_mode == "precomputed" and msa_file:
         protein_entry["unpairedMsaPath"] = msa_file
+        protein_entry["pairedMsa"] = ""
+        protein_entry["templates"] = []
 
     # If msa_mode == "search", don't add MSA fields (AF3 default behavior)
 
@@ -151,8 +156,11 @@ def create_af3_input_binder(
     }
     if binder_msa_mode == "none" and output_dir:
         # Create single-sequence MSA file to skip MSA search
+        # Must set all three: unpairedMsa, pairedMsa, templates
         single_msa = create_single_seq_msa(binder_sequence, output_dir, "A")
         binder_entry["unpairedMsaPath"] = single_msa
+        binder_entry["pairedMsa"] = ""
+        binder_entry["templates"] = []
 
     # Chain B: Given target (typically with pre-computed MSA)
     target_entry = {
@@ -162,8 +170,12 @@ def create_af3_input_binder(
     if target_msa_mode == "none" and output_dir:
         single_msa = create_single_seq_msa(target_sequence, output_dir, "B")
         target_entry["unpairedMsaPath"] = single_msa
+        target_entry["pairedMsa"] = ""
+        target_entry["templates"] = []
     elif target_msa_mode == "precomputed" and target_msa_file:
         target_entry["unpairedMsaPath"] = target_msa_file
+        target_entry["pairedMsa"] = ""
+        target_entry["templates"] = []
 
     return {
         "name": job_name,
