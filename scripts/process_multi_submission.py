@@ -99,11 +99,14 @@ def main():
     for problem_id, sequence in sequences.items():
         logger.info(f"Processing {problem_id}: {len(sequence)} residues")
 
-        # Create problem directory
+        # Create problem directory with group write permissions for j2ho SLURM jobs
         problem_dir = args.submission_dir / problem_id
         problem_dir.mkdir(parents=True, exist_ok=True)
+        problem_dir.chmod(0o775)
         (problem_dir / "scripts").mkdir(exist_ok=True)
+        (problem_dir / "scripts").chmod(0o775)
         (problem_dir / "logs").mkdir(exist_ok=True)
+        (problem_dir / "logs").chmod(0o775)
 
         # Create job name: participant_problem
         job_name = f"{participant_id}_{problem_id}"

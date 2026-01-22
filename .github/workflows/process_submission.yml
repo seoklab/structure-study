@@ -29,10 +29,10 @@ jobs:
 
           echo "Processing submission: $SUBMISSION_ID from $PARTICIPANT_ID"
 
-          # Create submission directory
+          # Create submission directory with group write permissions
           SUBMISSION_DIR="${SUBMISSIONS_BASE}/${SUBMISSION_ID}"
           mkdir -p "${SUBMISSION_DIR}"
-          chmod 755 "${SUBMISSION_DIR}"
+          chmod 775 "${SUBMISSION_DIR}"
 
           echo "SUBMISSION_ID=${SUBMISSION_ID}" >> $GITHUB_ENV
           echo "SUBMISSION_DIR=${SUBMISSION_DIR}" >> $GITHUB_ENV
