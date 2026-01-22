@@ -270,6 +270,32 @@
             padding-right: 80px;
         }
 
+        /* Problem type badges */
+        .problem-type {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+        .problem-type.monomer {
+            background: #2a3f5f;
+            color: #65cbf3;
+        }
+        .problem-type.binder {
+            background: #4a2c5a;
+            color: #d4a5ff;
+        }
+
+        /* Read-only target sequence */
+        .target-sequence-readonly {
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 0.85rem;
+            word-break: break-all;
+        }
+
         /* Modal for structure viewer */
         .modal-overlay {
             display: none;
@@ -506,17 +532,57 @@
         function renderProblems() {
             if (!problemsConfig || !problemsConfig.problems) return;
 
-            const html = problemsConfig.problems.map((problem, index) => {
+            // Filter out example problems (those starting with _)
+            const problems = problemsConfig.problems.filter(p => !p.id.startsWith('_'));
+
+            const html = problems.map((problem, index) => {
                 const residueInfo = problem.residue_count
                     ? `<span class="residue-info">${problem.residue_count} residues</span>`
                     : '';
 
+                const isBinder = problem.type === 'binder';
+                const problemType = isBinder
+                    ? '<span class="problem-type binder">Binder Design</span>'
+                    : '<span class="problem-type monomer">Structure Prediction</span>';
+
+                // For binder problems, show expected binder length if specified
+                let binderLengthHint = '';
+                if (isBinder && problem.expected_binder_length) {
+                    const [minLen, maxLen] = problem.expected_binder_length;
+                    binderLengthHint = `<p class="hint" style="margin-top: 0.5rem;">Suggested binder length: ${minLen}-${maxLen} residues</p>`;
+                }
+
+                // For binder problems, show the given target sequence (read-only)
+                let targetSequenceSection = '';
+                if (isBinder && problem.target_sequence) {
+                    targetSequenceSection = `
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label>Given Target Sequence (Chain B) - Read Only</label>
+                            <textarea
+                                readonly
+                                class="target-sequence-readonly"
+                                style="background: #1a1a2e; color: #888; cursor: not-allowed; min-height: 60px;"
+                            >${problem.target_sequence}</textarea>
+                            <div class="char-count" style="color: #666;">${problem.target_sequence.length} residues (given)</div>
+                        </div>
+                    `;
+                }
+
+                const sequenceLabel = isBinder
+                    ? 'Your Binder Sequence (Chain A)'
+                    : 'Your Sequence';
+
+                const sequencePlaceholder = isBinder
+                    ? 'Enter your designed binder sequence...'
+                    : 'Enter your designed amino acid sequence...';
+
                 return `
-                    <div class="problem-card" data-problem-id="${problem.id}">
+                    <div class="problem-card" data-problem-id="${problem.id}" data-problem-type="${problem.type || 'monomer'}">
                         <div class="problem-header">
                             <div class="problem-title">
                                 <h3>${problem.name}${residueInfo}</h3>
                                 <p>${problem.description}</p>
+                                ${problemType}
                             </div>
                             <div class="problem-actions">
                                 <button type="button" class="btn btn-secondary btn-small" onclick="openViewerModal('${problem.id}', '${problem.name}', '${problem.target_file}')">
@@ -527,18 +593,20 @@
                                 </a>
                             </div>
                         </div>
+                        ${targetSequenceSection}
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label for="sequence_${problem.id}">Your Sequence <span class="required">*</span></label>
+                            <label for="sequence_${problem.id}">${sequenceLabel} <span class="required">*</span></label>
                             <div class="sequence-input-wrapper">
                                 <textarea
                                     id="sequence_${problem.id}"
                                     name="sequence_${problem.id}"
-                                    placeholder="Enter your designed amino acid sequence..."
+                                    placeholder="${sequencePlaceholder}"
                                     required
                                     oninput="updateCharCount('${problem.id}')"
                                 ></textarea>
                             </div>
                             <div class="char-count" id="char-count-${problem.id}">0 residues</div>
+                            ${binderLengthHint}
                             <p class="error-msg" id="error-${problem.id}"></p>
                         </div>
                     </div>
@@ -712,9 +780,10 @@
                 document.getElementById('email_error').style.display = 'none';
             }
 
-            // Collect and validate all sequences
+            // Collect and validate all sequences (skip example problems)
             const sequences = {};
-            for (const problem of problemsConfig.problems) {
+            const activeProblems = problemsConfig.problems.filter(p => !p.id.startsWith('_'));
+            for (const problem of activeProblems) {
                 const textarea = document.getElementById(`sequence_${problem.id}`);
                 const errorEl = document.getElementById(`error-${problem.id}`);
 
@@ -758,7 +827,8 @@
                     showSuccess(`Your sequences have been submitted successfully!<br><strong>Submission ID:</strong> ${data.submission_id}<br><strong>Check your email for results!</strong>`);
                     form.reset();
                     // Reset all char counts
-                    for (const problem of problemsConfig.problems) {
+                    const activeProblems = problemsConfig.problems.filter(p => !p.id.startsWith('_'));
+                    for (const problem of activeProblems) {
                         const charCountEl = document.getElementById(`char-count-${problem.id}`);
                         if (charCountEl) {
                             charCountEl.textContent = '0 residues';
@@ -780,7 +850,8 @@
             form.reset();
             hideMessages();
             if (problemsConfig) {
-                for (const problem of problemsConfig.problems) {
+                const activeProblems = problemsConfig.problems.filter(p => !p.id.startsWith('_'));
+                for (const problem of activeProblems) {
                     const charCountEl = document.getElementById(`char-count-${problem.id}`);
                     const errorEl = document.getElementById(`error-${problem.id}`);
                     if (charCountEl) {
@@ -800,3 +871,4 @@
     </script>
 </body>
 </html>
+
