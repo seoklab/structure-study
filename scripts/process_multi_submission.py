@@ -78,11 +78,11 @@ def create_af3_input_monomer(
 
     # Apply MSA mode
     if msa_mode == "none":
-        protein_entry["unpairedMsa"] = ""
+        protein_entry["unpairedMsaPath"] = ""
     elif msa_mode == "precomputed" and msa_file:
-        protein_entry["unpairedMsa"] = msa_file
+        protein_entry["unpairedMsaPath"] = msa_file
 
-    # If msa_mode == "search", don't add unpairedMsa field (AF3 default behavior)
+    # If msa_mode == "search", don't add unpairedMsaPath field (AF3 default behavior)
 
     return {
         "name": job_name,
@@ -126,7 +126,7 @@ def create_af3_input_binder(
         "sequence": binder_sequence,
     }
     if binder_msa_mode == "none":
-        binder_entry["unpairedMsa"] = ""
+        binder_entry["unpairedMsaPath"] = ""
 
     # Chain B: Given target (typically with pre-computed MSA)
     target_entry = {
@@ -134,9 +134,9 @@ def create_af3_input_binder(
         "sequence": target_sequence,
     }
     if target_msa_mode == "none":
-        target_entry["unpairedMsa"] = ""
+        target_entry["unpairedMsaPath"] = ""
     elif target_msa_mode == "precomputed" and target_msa_file:
-        target_entry["unpairedMsa"] = target_msa_file
+        target_entry["unpairedMsaPath"] = target_msa_file
 
     return {
         "name": job_name,
