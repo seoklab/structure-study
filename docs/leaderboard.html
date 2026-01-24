@@ -22,7 +22,7 @@
             border-bottom: 1px solid #0f3460;
         }
         .header-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -45,7 +45,7 @@
             text-decoration: underline;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
@@ -126,25 +126,51 @@
             color: #888;
             font-size: 0.9rem;
         }
+
+        /* Table styles */
+        .table-container {
+            overflow-x: auto;
+        }
         .ranking-table {
             width: 100%;
             border-collapse: collapse;
             background: #16213e;
             border-radius: 8px;
             overflow: hidden;
+            min-width: 800px;
         }
         .ranking-table th,
         .ranking-table td {
-            padding: 0.875rem 1rem;
+            padding: 0.75rem 0.6rem;
             text-align: left;
             border-bottom: 1px solid #0f3460;
+            white-space: nowrap;
         }
         .ranking-table th {
             background: #0f3460;
             color: #65cbf3;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+        .ranking-table th:hover {
+            background: #1a4a7a;
+        }
+        .ranking-table th.sortable::after {
+            content: ' \2195';
+            opacity: 0.5;
+            font-size: 0.7rem;
+        }
+        .ranking-table th.sort-asc::after {
+            content: ' \2191';
+            opacity: 1;
+        }
+        .ranking-table th.sort-desc::after {
+            content: ' \2193';
+            opacity: 1;
         }
         .ranking-table tr:last-child td {
             border-bottom: none;
@@ -161,22 +187,17 @@
         .rank-3 { color: #cd7f32; }
         .score-cell {
             font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         .score-cell.primary {
             color: #65cbf3;
             font-weight: 600;
         }
         .score-cell.secondary {
-            color: #888;
+            color: #aaa;
         }
-        .view-link {
-            color: #e94560;
-            text-decoration: none;
-            font-size: 0.85rem;
-        }
-        .view-link:hover {
-            text-decoration: underline;
+        .score-cell.highlight {
+            color: #2ecc71;
         }
         .participant-id {
             font-weight: 500;
@@ -187,10 +208,10 @@
             color: #888;
         }
         .metric-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #666;
             display: block;
-            margin-top: 0.2rem;
+            margin-top: 0.1rem;
         }
         .loading {
             text-align: center;
@@ -205,17 +226,20 @@
             border-radius: 8px;
         }
 
-        /* Overall rankings specific styles */
-        .overall-stats {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.85rem;
-            color: #888;
+        /* Section headers in table */
+        .section-header {
+            background: #0a1628 !important;
+            color: #888 !important;
+            font-size: 0.7rem !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: default !important;
         }
-        .overall-stats span {
-            background: #0f0f23;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+        .section-header:hover {
+            background: #0a1628 !important;
+        }
+        .section-header::after {
+            display: none !important;
         }
 
         /* Responsive */
@@ -229,11 +253,11 @@
                 text-align: center;
             }
             .ranking-table {
-                font-size: 0.85rem;
+                font-size: 0.8rem;
             }
             .ranking-table th,
             .ranking-table td {
-                padding: 0.5rem;
+                padding: 0.5rem 0.4rem;
             }
             .tabs {
                 justify-content: center;
@@ -247,7 +271,6 @@
             <h1>Protein Design Leaderboard</h1>
             <div class="header-links">
                 <a href="index.html">Submit Sequences</a>
-                <a href="viewer.html">Structure Viewer</a>
             </div>
         </div>
     </div>
@@ -274,6 +297,7 @@
         const LEADERBOARD_URL = './leaderboard_data.json';
 
         let leaderboardData = null;
+        let currentSorts = {}; // Track current sort state per table
 
         async function loadLeaderboard() {
             try {
@@ -312,7 +336,7 @@
                 tab.className = 'tab';
                 tab.dataset.tab = problemId;
 
-                const typeBadge = `<span class="problem-type-badge ${problem.type}">${problem.type}</span>`;
+                const typeBadge = `<span class="problem-type-badge ${problem.type}">${problem.type === 'monomer' ? 'Monomer' : 'Binder'}</span>`;
                 tab.innerHTML = problem.name.replace(/\s*\([^)]*\)/, '') + typeBadge;
 
                 tab.addEventListener('click', () => selectTab(problemId));
@@ -331,6 +355,9 @@
 
             // Add click handler for overall tab
             document.querySelector('.tab.overall').addEventListener('click', () => selectTab('overall'));
+
+            // Initialize sorting
+            initializeSorting();
         }
 
         function selectTab(tabId) {
@@ -360,71 +387,97 @@
 
             const isBinder = problem.type === 'binder';
 
-            let tableHeaders = `
-                <th>Rank</th>
-                <th>Participant</th>
-                <th>Primary Score</th>
-            `;
+            let tableHeaders, tableRows;
 
             if (isBinder) {
-                tableHeaders += `
-                    <th>ipTM</th>
-                    <th>Binder TM</th>
-                    <th>Binder RMSD</th>
-                    <th>Complex TM</th>
-                `;
-            } else {
-                tableHeaders += `
-                    <th>bb-lDDT</th>
-                    <th>TM-score</th>
-                    <th>RMSD</th>
-                `;
-            }
-
-            // tableHeaders += `<th>View</th>`;
-
-            const tableRows = rankings.map(entry => {
-                const rankClass = entry.rank <= 3 ? `rank-${entry.rank}` : '';
-
-                let secondaryScores = '';
-                if (isBinder) {
-                    secondaryScores = `
-                        <td class="score-cell secondary">${formatScore(entry.iptm)}</td>
-                        <td class="score-cell secondary">${formatScore(entry.binder_tm)}</td>
-                        <td class="score-cell secondary">${formatScore(entry.binder_rmsd)}</td>
-                        <td class="score-cell secondary">${formatScore(entry.complex_tm)}</td>
-                    `;
-                } else {
-                    secondaryScores = `
-                        <td class="score-cell secondary">${formatScore(entry.bb_lddt)}</td>
-                        <td class="score-cell secondary">${formatScore(entry.tm_score)}</td>
-                        <td class="score-cell secondary">${formatScore(entry.rmsd)}</td>
-                    `;
-                }
-
-                return `
+                tableHeaders = `
                     <tr>
-                        <td class="rank-cell ${rankClass}">#${entry.rank}</td>
-                        <td class="participant-id">${escapeHtml(entry.participant_id)}</td>
-                        <td class="score-cell primary">
-                            ${formatScore(entry.primary_score)}
-                            <span class="metric-label">${formatMetricName(entry.primary_metric)}</span>
-                        </td>
-                        ${secondaryScores}
-                        <!-- <td><a class="view-link" href="viewer.html?token=${entry.token}">View</a></td> -->
+                        <th class="sortable" data-key="rank" data-type="number">Rank</th>
+                        <th class="sortable" data-key="participant_id" data-type="string">Participant</th>
+                        <th colspan="3" class="section-header">Binder Only</th>
+                        <th colspan="3" class="section-header">Complex</th>
+                        <th colspan="3" class="section-header">AlphaFold3</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th class="sortable" data-key="binder_lddt" data-type="number">BB-lDDT</th>
+                        <th class="sortable" data-key="binder_rmsd" data-type="number" data-order="asc">RMSD</th>
+                        <th class="sortable" data-key="binder_tm" data-type="number">TM-score</th>
+                        <th class="sortable" data-key="interface_lddt" data-type="number">iLDDT</th>
+                        <th class="sortable" data-key="complex_tm" data-type="number">TM-score</th>
+                        <th class="sortable" data-key="complex_rmsd" data-type="number" data-order="asc">RMSD</th>
+                        <th class="sortable" data-key="iptm" data-type="number">ipTM</th>
+                        <th class="sortable" data-key="ptm" data-type="number">pTM</th>
+                        <th class="sortable" data-key="plddt" data-type="number">pLDDT</th>
                     </tr>
                 `;
-            }).join('');
+
+                tableRows = rankings.map(entry => {
+                    const rankClass = entry.rank <= 3 ? `rank-${entry.rank}` : '';
+                    return `
+                        <tr>
+                            <td class="rank-cell ${rankClass}">#${entry.rank}</td>
+                            <td class="participant-id">${escapeHtml(entry.participant_id)}</td>
+                            <td class="score-cell primary">${formatScore(entry.binder_lddt)}</td>
+                            <td class="score-cell secondary">${formatScore(entry.binder_rmsd)}</td>
+                            <td class="score-cell secondary">${formatScore(entry.binder_tm)}</td>
+                            <td class="score-cell ${entry.interface_lddt ? 'highlight' : 'secondary'}">${formatScore(entry.interface_lddt)}</td>
+                            <td class="score-cell secondary">${formatScore(entry.complex_tm)}</td>
+                            <td class="score-cell secondary">${formatScore(entry.complex_rmsd)}</td>
+                            <td class="score-cell highlight">${formatScore(entry.iptm)}</td>
+                            <td class="score-cell secondary">${formatScore(entry.ptm)}</td>
+                            <td class="score-cell secondary">${formatScore(entry.plddt)}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                // Monomer design
+                tableHeaders = `
+                    <tr>
+                        <th class="sortable" data-key="rank" data-type="number">Rank</th>
+                        <th class="sortable" data-key="participant_id" data-type="string">Participant</th>
+                        <th colspan="3" class="section-header">Structure Metrics</th>
+                        <th colspan="2" class="section-header">AlphaFold3</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th class="sortable" data-key="bb_lddt" data-type="number">BB-lDDT</th>
+                        <th class="sortable" data-key="rmsd" data-type="number" data-order="asc">RMSD</th>
+                        <th class="sortable" data-key="tm_score" data-type="number">TM-score</th>
+                        <th class="sortable" data-key="ptm" data-type="number">pTM</th>
+                        <th class="sortable" data-key="plddt" data-type="number">pLDDT</th>
+                    </tr>
+                `;
+
+                tableRows = rankings.map(entry => {
+                    const rankClass = entry.rank <= 3 ? `rank-${entry.rank}` : '';
+                    return `
+                        <tr>
+                            <td class="rank-cell ${rankClass}">#${entry.rank}</td>
+                            <td class="participant-id">${escapeHtml(entry.participant_id)}</td>
+                            <td class="score-cell primary">${formatScore(entry.bb_lddt)}</td>
+                            <td class="score-cell secondary">${formatScore(entry.rmsd)}</td>
+                            <td class="score-cell secondary">${formatScore(entry.tm_score)}</td>
+                            <td class="score-cell secondary">${formatScore(entry.ptm)}</td>
+                            <td class="score-cell secondary">${formatScore(entry.plddt)}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
 
             return `
                 <div class="panel-header">
                     <h2>${problem.name}</h2>
-                    <p>Primary metric: ${formatMetricName(problem.primary_metric)} | ${rankings.length} submissions</p>
+                    <p>${isBinder ? 'Binder Design' : 'Monomer Design'} | ${rankings.length} submissions | Click column headers to sort</p>
                 </div>
-                <table class="ranking-table">
-                    <thead><tr>${tableHeaders}</tr></thead>
-                    <tbody>${tableRows}</tbody>
-                </table>
+                <div class="table-container">
+                    <table class="ranking-table" data-table-id="${problemId}">
+                        <thead>${tableHeaders}</thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                </div>
             `;
         }
 
@@ -459,7 +512,6 @@
                         <td class="score-cell">${entry.problems_completed}/${problemCount}</td>
                         <td class="score-cell primary">${entry.avg_rank_points.toFixed(1)}</td>
                         <td class="score-cell secondary">${problemRanks || '-'}</td>
-                        <!-- <td><a class="view-link" href="viewer.html?token=${entry.token}">View</a></td> -->
                     </tr>
                 `;
             }).join('');
@@ -469,20 +521,102 @@
                     <h2>Overall Rankings</h2>
                     <p>Aggregate rankings based on average placement across all problems. Higher points = better average rank.</p>
                 </div>
-                <table class="ranking-table">
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Participant</th>
-                            <th>Problems</th>
-                            <th>Avg Points</th>
-                            <th>Per-Problem Ranks</th>
-                            <!-- <th>View</th> -->
-                        </tr>
-                    </thead>
-                    <tbody>${tableRows}</tbody>
-                </table>
+                <div class="table-container">
+                    <table class="ranking-table" data-table-id="overall">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-key="rank" data-type="number">Rank</th>
+                                <th class="sortable" data-key="participant_id" data-type="string">Participant</th>
+                                <th class="sortable" data-key="problems_completed" data-type="number">Problems</th>
+                                <th class="sortable" data-key="avg_rank_points" data-type="number">Avg Points</th>
+                                <th>Per-Problem Ranks</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                </div>
             `;
+        }
+
+        function initializeSorting() {
+            document.querySelectorAll('.ranking-table').forEach(table => {
+                const tableId = table.dataset.tableId;
+                currentSorts[tableId] = { key: 'rank', order: 'asc' };
+
+                table.querySelectorAll('th.sortable').forEach(th => {
+                    th.addEventListener('click', () => {
+                        const key = th.dataset.key;
+                        const type = th.dataset.type || 'number';
+                        const defaultOrder = th.dataset.order || 'desc';
+
+                        // Toggle sort order
+                        let order;
+                        if (currentSorts[tableId].key === key) {
+                            order = currentSorts[tableId].order === 'asc' ? 'desc' : 'asc';
+                        } else {
+                            order = defaultOrder;
+                        }
+
+                        currentSorts[tableId] = { key, order };
+                        sortTable(table, key, type, order);
+
+                        // Update header classes
+                        table.querySelectorAll('th.sortable').forEach(h => {
+                            h.classList.remove('sort-asc', 'sort-desc');
+                        });
+                        th.classList.add(order === 'asc' ? 'sort-asc' : 'sort-desc');
+                    });
+                });
+            });
+        }
+
+        function sortTable(table, key, type, order) {
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            rows.sort((a, b) => {
+                let aVal, bVal;
+
+                // Find cell index by key
+                const headers = table.querySelectorAll('th.sortable[data-key]');
+                let cellIndex = -1;
+                headers.forEach((h, i) => {
+                    if (h.dataset.key === key) {
+                        // Account for colspan in header rows
+                        cellIndex = Array.from(h.parentElement.children).indexOf(h);
+                    }
+                });
+
+                if (cellIndex === -1) return 0;
+
+                aVal = a.children[cellIndex]?.textContent.trim() || '';
+                bVal = b.children[cellIndex]?.textContent.trim() || '';
+
+                // Handle special values
+                if (aVal === '-' || aVal === '') aVal = type === 'number' ? -Infinity : '';
+                if (bVal === '-' || bVal === '') bVal = type === 'number' ? -Infinity : '';
+
+                // Remove # from rank
+                if (aVal.startsWith('#')) aVal = aVal.slice(1);
+                if (bVal.startsWith('#')) bVal = bVal.slice(1);
+
+                if (type === 'number') {
+                    aVal = parseFloat(aVal) || -Infinity;
+                    bVal = parseFloat(bVal) || -Infinity;
+                }
+
+                let result;
+                if (type === 'number') {
+                    result = aVal - bVal;
+                } else {
+                    result = aVal.localeCompare(bVal);
+                }
+
+                return order === 'asc' ? result : -result;
+            });
+
+            // Re-append sorted rows
+            rows.forEach(row => tbody.appendChild(row));
         }
 
         function formatScore(value) {
@@ -500,9 +634,11 @@
                 'tm_score': 'TM-score',
                 'ptm': 'pTM',
                 'iptm': 'ipTM',
+                'plddt': 'pLDDT',
                 'ranking_score': 'Ranking Score',
                 'dockq': 'DockQ',
                 'ilddt': 'iLDDT',
+                'interface_lddt': 'iLDDT',
                 'chain_pair_iptm': 'ipTM'
             };
             return names[metric] || metric || '-';

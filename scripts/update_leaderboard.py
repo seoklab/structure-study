@@ -311,6 +311,7 @@ def generate_leaderboard(
                 ranking_entry["iptm"] = af3.get("chain_pair_iptm", [[None]])[0][0] \
                     if af3.get("chain_pair_iptm") else None
                 ranking_entry["ptm"] = af3.get("ptm")
+                ranking_entry["plddt"] = af3.get("mean_plddt")
                 ranking_entry["ranking_score"] = af3.get("ranking_score")
                 # Complex metrics (USalign multimer mode)
                 ranking_entry["complex_tm"] = metrics.get("complex_tm_score") or metrics.get("tm_score")
@@ -326,10 +327,13 @@ def generate_leaderboard(
                 ranking_entry["interface_lddt"] = interface_m.get("interface_lddt")
                 ranking_entry["interface_contacts"] = interface_m.get("total_interface_contacts")
             else:
+                # Monomer metrics
                 ranking_entry["bb_lddt"] = metrics.get("bb_lddt")
                 ranking_entry["tm_score"] = metrics.get("tm_score")
                 ranking_entry["rmsd"] = metrics.get("rmsd")
+                # AF3 metrics
                 ranking_entry["ptm"] = af3.get("ptm")
+                ranking_entry["plddt"] = af3.get("mean_plddt")
                 ranking_entry["ranking_score"] = af3.get("ranking_score")
 
             rankings.append(ranking_entry)

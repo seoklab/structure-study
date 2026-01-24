@@ -748,8 +748,11 @@ def compute_interface_lddt(model_coords_a: np.ndarray, model_coords_b: np.ndarra
 
 def get_af3_metrics(result_dir: str, problem_id: str, participant_id: str) -> dict:
     """
-    Extract AF3 confidence metrics from summary_confidences.json.
+    Extract AF3 confidence metrics from summary_confidences.json and confidences.json.
     """
+    result = {}
+
+    # First try summary_confidences.json
     patterns = [
         f"{participant_id}_{problem_id}_summary_confidences.json",
         f"*_{problem_id}_summary_confidences.json",
@@ -761,17 +764,41 @@ def get_af3_metrics(result_dir: str, problem_id: str, participant_id: str) -> di
             try:
                 with open(f) as fp:
                     data = json.load(fp)
-                    return {
+                    result = {
                         "ptm": data.get("ptm"),
                         "iptm": data.get("iptm"),
                         "ranking_score": data.get("ranking_score"),
                         "chain_pair_iptm": data.get("chain_pair_iptm"),
                         "fraction_disordered": data.get("fraction_disordered")
                     }
+                    break
             except Exception:
                 continue
+        if result:
+            break
 
-    return {}
+    # Try to get mean pLDDT from full confidences.json
+    plddt_patterns = [
+        f"{participant_id}_{problem_id}_confidences.json",
+        f"*_{problem_id}_confidences.json",
+        f"*{problem_id}_confidences.json"
+    ]
+
+    for pattern in plddt_patterns:
+        for f in Path(result_dir).glob(pattern):
+            try:
+                with open(f) as fp:
+                    data = json.load(fp)
+                    atom_plddts = data.get("atom_plddts")
+                    if atom_plddts and len(atom_plddts) > 0:
+                        result["mean_plddt"] = round(sum(atom_plddts) / len(atom_plddts), 2)
+                    break
+            except Exception:
+                continue
+        if result.get("mean_plddt") is not None:
+            break
+
+    return result
 
 
 def main():

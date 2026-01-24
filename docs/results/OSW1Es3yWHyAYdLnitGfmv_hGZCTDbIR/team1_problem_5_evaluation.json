@@ -5,7 +5,7 @@
   "token": "OSW1Es3yWHyAYdLnitGfmv_hGZCTDbIR",
   "model_file": "team1_problem_5_model.cif",
   "reference_file": "binder_problem_9bk5.pdb",
-  "evaluated_at": "2026-01-24T14:44:12.530327Z",
+  "evaluated_at": "2026-01-24T14:51:47.438801Z",
   "metrics": {
     "tm_score": 0.2327,
     "tm_score_ref": null,
@@ -35,7 +35,8 @@
         0.69
       ]
     ],
-    "fraction_disordered": 0.15
+    "fraction_disordered": 0.15,
+    "mean_plddt": 81.17
   },
   "binder_metrics": {
     "binder_tm_score": 0.61409,

@@ -5,7 +5,7 @@
   "token": "OSW1Es3yWHyAYdLnitGfmv_hGZCTDbIR",
   "model_file": "team1_problem_2_model.cif",
   "reference_file": "4r80_bb.pdb",
-  "evaluated_at": "2026-01-24T14:44:00.826640Z",
+  "evaluated_at": "2026-01-24T14:51:46.922739Z",
   "metrics": {
     "tm_score": 0.83233,
     "tm_score_ref": null,
@@ -26,7 +26,8 @@
         0.76
       ]
     ],
-    "fraction_disordered": 0.18
+    "fraction_disordered": 0.18,
+    "mean_plddt": 85.19
   },
   "primary_score": 0.9216,
   "primary_metric": "bb_lddt"
