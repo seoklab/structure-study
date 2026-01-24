@@ -1,8 +1,8 @@
 {
-  "last_updated": "2026-01-24T14:25:56.035099Z",
+  "last_updated": "2026-01-24T14:44:22.913775Z",
   "problems": {
     "problem_1": {
-      "name": "Problem 1 (3V86)",
+      "name": "Problem 1",
       "type": "monomer",
       "primary_metric": "bb_lddt",
       "rankings": [
@@ -22,7 +22,7 @@
       ]
     },
     "problem_2": {
-      "name": "Problem 2 (4R80)",
+      "name": "Problem 2",
       "type": "monomer",
       "primary_metric": "bb_lddt",
       "rankings": [
@@ -31,9 +31,9 @@
           "participant_id": "team1",
           "token": "OSW1Es3yWHyAYdLnitGfmv_hGZCTDbIR",
           "submitted_at": "2026-01-24T09:29:50.584Z",
-          "primary_score": 0.5026,
+          "primary_score": 0.9216,
           "primary_metric": "bb_lddt",
-          "bb_lddt": 0.5026,
+          "bb_lddt": 0.9216,
           "tm_score": 0.83233,
           "rmsd": 1.41,
           "ptm": 0.76,
@@ -42,7 +42,7 @@
       ]
     },
     "problem_3": {
-      "name": "Problem 3 (1QYS)",
+      "name": "Problem 3",
       "type": "monomer",
       "primary_metric": "bb_lddt",
       "rankings": [
@@ -51,9 +51,9 @@
           "participant_id": "team1",
           "token": "OSW1Es3yWHyAYdLnitGfmv_hGZCTDbIR",
           "submitted_at": "2026-01-24T09:29:50.584Z",
-          "primary_score": 0.3894,
+          "primary_score": 0.9139,
           "primary_metric": "bb_lddt",
-          "bb_lddt": 0.3894,
+          "bb_lddt": 0.9139,
           "tm_score": 0.81585,
           "rmsd": 0.94,
           "ptm": 0.75,
@@ -62,7 +62,7 @@
       ]
     },
     "problem_4": {
-      "name": "Problem 4 (6WI5)",
+      "name": "Problem 4",
       "type": "monomer",
       "primary_metric": "bb_lddt",
       "rankings": [
@@ -82,7 +82,7 @@
       ]
     },
     "problem_5": {
-      "name": "Problem 5 - Binder Design (9BK5)",
+      "name": "Problem 5 - Binder Design",
       "type": "binder",
       "primary_metric": "iptm",
       "rankings": [
@@ -98,10 +98,10 @@
           "ranking_score": 0.85,
           "complex_tm": 0.58643,
           "complex_rmsd": 1.08,
-          "complex_lddt": 0.1475,
+          "complex_lddt": 0.5833,
           "binder_tm": 0.61409,
           "binder_rmsd": 1.11,
-          "binder_lddt": 0.2168,
+          "binder_lddt": 0.9062,
           "interface_lddt": null,
           "interface_contacts": null
         }
@@ -116,8 +116,8 @@
       "total_rank_points": 500,
       "problem_scores": {
         "problem_1": 0.9885,
-        "problem_2": 0.5026,
-        "problem_3": 0.3894,
+        "problem_2": 0.9216,
+        "problem_3": 0.9139,
         "problem_4": 0.5817,
         "problem_5": 0.72
       },

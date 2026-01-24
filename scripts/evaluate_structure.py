@@ -293,7 +293,67 @@ def maybe_keep_temp(temp_path: str, label: str) -> str:
     return temp_path
 
 
-def run_tmalign(model_path: str, reference_path: str, multimer: bool = False) -> dict:
+def parse_tmalign_alignment(output: str) -> list[tuple[int, int]]:
+    """
+    Parse TMalign/USalign output to extract aligned residue pairs.
+
+    Returns list of (model_idx, ref_idx) tuples for aligned residues.
+    Indices are 0-based.
+    """
+    lines = output.split("\n")
+    alignment_lines = []
+
+    # Find the alignment block (3 consecutive lines with sequence/alignment)
+    for i, line in enumerate(lines):
+        # Look for the alignment marker line (contains : and/or .)
+        if line and all(c in ' :.X-ACDEFGHIKLMNPQRSTVWY' for c in line):
+            # Check if this looks like an alignment block
+            if i > 0 and i < len(lines) - 1:
+                prev_line = lines[i - 1]
+                next_line = lines[i + 1]
+                # The alignment block has sequence chars and gaps
+                if (any(c in 'ACDEFGHIKLMNPQRSTVWYX' for c in prev_line) and
+                    any(c in 'ACDEFGHIKLMNPQRSTVWYX-' for c in next_line)):
+                    alignment_lines = [prev_line, line, next_line]
+                    break
+
+    if len(alignment_lines) != 3:
+        return []
+
+    seq1 = alignment_lines[0]  # Model sequence
+    seq2 = alignment_lines[2]  # Reference sequence
+
+    # Parse alignment to get corresponding residue indices
+    aligned_pairs = []
+    model_idx = 0
+    ref_idx = 0
+
+    # Align the sequences by position
+    max_len = max(len(seq1), len(seq2))
+    seq1 = seq1.ljust(max_len)
+    seq2 = seq2.ljust(max_len)
+
+    for i in range(max_len):
+        c1 = seq1[i] if i < len(seq1) else ' '
+        c2 = seq2[i] if i < len(seq2) else ' '
+
+        has_model = c1 not in ' -'
+        has_ref = c2 not in ' -'
+
+        if has_model and has_ref:
+            # Both have residues at this position - aligned pair
+            aligned_pairs.append((model_idx, ref_idx))
+
+        if has_model:
+            model_idx += 1
+        if has_ref:
+            ref_idx += 1
+
+    return aligned_pairs
+
+
+def run_tmalign(model_path: str, reference_path: str, multimer: bool = False,
+                return_alignment: bool = False) -> dict:
     """
     Run TMalign/USalign to compute TM-score and RMSD.
 
@@ -301,15 +361,17 @@ def run_tmalign(model_path: str, reference_path: str, multimer: bool = False) ->
         model_path: Path to model structure
         reference_path: Path to reference structure
         multimer: If True, use USalign with -mm 1 -ter 1 for multimer alignment
+        return_alignment: If True, also return aligned residue pairs
 
-    Returns dict with tm_score, rmsd, aligned_length, seq_identity
+    Returns dict with tm_score, rmsd, aligned_length, seq_identity, and optionally alignment
     """
     result = {
         "tm_score": None,
         "tm_score_ref": None,
         "rmsd": None,
         "aligned_length": None,
-        "seq_identity": None
+        "seq_identity": None,
+        "aligned_pairs": None
     }
 
     # Convert CIF to PDB if needed
@@ -400,6 +462,10 @@ def run_tmalign(model_path: str, reference_path: str, multimer: bool = False) ->
                     elif result["tm_score"] is None:
                         result["tm_score"] = tm
 
+        # Parse alignment if requested
+        if return_alignment:
+            result["aligned_pairs"] = parse_tmalign_alignment(proc.stdout)
+
         return result
 
     finally:
@@ -410,7 +476,8 @@ def run_tmalign(model_path: str, reference_path: str, multimer: bool = False) ->
 
 
 def compute_lddt(model_coords: np.ndarray, ref_coords: np.ndarray,
-                 cutoff: float = 15.0, thresholds: tuple = (0.5, 1.0, 2.0, 4.0)) -> float:
+                 cutoff: float = 15.0, thresholds: tuple = (0.5, 1.0, 2.0, 4.0),
+                 aligned_pairs: list[tuple[int, int]] = None) -> float:
     """
     Compute lDDT (Local Distance Difference Test) score.
 
@@ -418,19 +485,49 @@ def compute_lddt(model_coords: np.ndarray, ref_coords: np.ndarray,
 
     Args:
         model_coords: Nx3 array of model CA coordinates
-        ref_coords: Nx3 array of reference CA coordinates (must be same length)
+        ref_coords: Mx3 array of reference CA coordinates
         cutoff: Distance cutoff for considering residue pairs (default 15A)
         thresholds: Distance difference thresholds (default 0.5, 1, 2, 4 A)
+        aligned_pairs: List of (model_idx, ref_idx) tuples from TMalign alignment.
+                      If provided, uses these pairs for lDDT calculation.
+                      If None, falls back to simple index-based comparison.
 
     Returns:
         lDDT score between 0 and 1
     """
+    if aligned_pairs is not None and len(aligned_pairs) > 0:
+        # Use TMalign alignment for proper residue correspondence
+        n_aligned = len(aligned_pairs)
+        if n_aligned < 2:
+            return 0.0
+
+        # Extract aligned coordinates
+        model_indices = [p[0] for p in aligned_pairs]
+        ref_indices = [p[1] for p in aligned_pairs]
+
+        # Validate indices
+        if max(model_indices) >= len(model_coords) or max(ref_indices) >= len(ref_coords):
+            print(f"  Warning: Alignment indices out of bounds, falling back to simple comparison")
+            aligned_pairs = None
+        else:
+            aligned_model_coords = model_coords[model_indices]
+            aligned_ref_coords = ref_coords[ref_indices]
+
+            # Compute lDDT on aligned coordinates
+            return _compute_lddt_core(aligned_model_coords, aligned_ref_coords, cutoff, thresholds)
+
+    # Fallback: simple index-based comparison (truncate to min length)
     if len(model_coords) != len(ref_coords):
-        # Try to align by length - take minimum
         min_len = min(len(model_coords), len(ref_coords))
         model_coords = model_coords[:min_len]
         ref_coords = ref_coords[:min_len]
 
+    return _compute_lddt_core(model_coords, ref_coords, cutoff, thresholds)
+
+
+def _compute_lddt_core(model_coords: np.ndarray, ref_coords: np.ndarray,
+                       cutoff: float = 15.0, thresholds: tuple = (0.5, 1.0, 2.0, 4.0)) -> float:
+    """Core lDDT computation on aligned coordinates."""
     n_residues = len(ref_coords)
     if n_residues < 2:
         return 0.0
@@ -725,31 +822,37 @@ def main():
             args.result_dir, args.problem_id, args.participant_id
         )
 
-    # Run TMalign for TM-score and RMSD
+    # Run TMalign for TM-score, RMSD, and alignment
     print(f"Running TMalign on {args.model} vs {args.reference}...")
-    tm_result = run_tmalign(args.model, args.reference)
+    tm_result = run_tmalign(args.model, args.reference, return_alignment=True)
 
+    aligned_pairs = None
     if "error" not in tm_result:
         result["metrics"]["tm_score"] = tm_result.get("tm_score")
         result["metrics"]["tm_score_ref"] = tm_result.get("tm_score_ref")
         result["metrics"]["rmsd"] = tm_result.get("rmsd")
         result["metrics"]["aligned_length"] = tm_result.get("aligned_length")
         result["metrics"]["seq_identity"] = tm_result.get("seq_identity")
+        aligned_pairs = tm_result.get("aligned_pairs")
+        if aligned_pairs:
+            print(f"  Got {len(aligned_pairs)} aligned residue pairs from TMalign")
     else:
         print(f"TMalign error: {tm_result['error']}", file=sys.stderr)
         result["metrics"]["tm_error"] = tm_result["error"]
 
-    # Compute lDDT
+    # Compute lDDT using TMalign alignment
     print("Computing backbone lDDT...")
     try:
         model_coords, model_res = parse_structure_ca(args.model)
         ref_coords, ref_res = parse_structure_ca(args.reference)
 
         if len(model_coords) > 0 and len(ref_coords) > 0:
-            lddt_score = compute_lddt(model_coords, ref_coords)
+            lddt_score = compute_lddt(model_coords, ref_coords, aligned_pairs=aligned_pairs)
             result["metrics"]["bb_lddt"] = round(lddt_score, 4)
             result["metrics"]["model_ca_count"] = len(model_coords)
             result["metrics"]["ref_ca_count"] = len(ref_coords)
+            if aligned_pairs:
+                result["metrics"]["lddt_aligned_count"] = len(aligned_pairs)
             print(f"  bb-lDDT: {lddt_score:.4f} (model: {len(model_coords)} CA, ref: {len(ref_coords)} CA)")
         else:
             result["metrics"]["lddt_error"] = "Could not extract CA coordinates"
@@ -791,23 +894,27 @@ def main():
                 maybe_keep_temp(model_chain_a.name, "binder_model_chainA")
                 maybe_keep_temp(ref_chain_a.name, "binder_ref_chainA")
 
-                # TMalign on binder chain only (monomer mode)
-                binder_tm = run_tmalign(model_chain_a.name, ref_chain_a.name, multimer=False)
+                # TMalign on binder chain only (monomer mode) with alignment
+                binder_tm = run_tmalign(model_chain_a.name, ref_chain_a.name,
+                                        multimer=False, return_alignment=True)
+                binder_aligned_pairs = None
                 if "error" not in binder_tm:
                     result["binder_metrics"]["binder_tm_score"] = binder_tm.get("tm_score")
                     result["binder_metrics"]["binder_rmsd"] = binder_tm.get("rmsd")
                     result["binder_metrics"]["binder_aligned_length"] = binder_tm.get("aligned_length")
+                    binder_aligned_pairs = binder_tm.get("aligned_pairs")
                     print(f"  Binder TM-score: {binder_tm.get('tm_score')}")
                     print(f"  Binder RMSD: {binder_tm.get('rmsd')}")
                 else:
                     print(f"  Binder TMalign error: {binder_tm.get('error')}")
 
-                # lDDT on binder chain only
+                # lDDT on binder chain only using alignment
                 model_a_coords, _ = parse_structure_ca(args.model, chain="A")
                 ref_a_coords, _ = parse_structure_ca(args.reference, chain="A")
 
                 if len(model_a_coords) > 0 and len(ref_a_coords) > 0:
-                    binder_lddt = compute_lddt(model_a_coords, ref_a_coords)
+                    binder_lddt = compute_lddt(model_a_coords, ref_a_coords,
+                                               aligned_pairs=binder_aligned_pairs)
                     result["binder_metrics"]["binder_lddt"] = round(binder_lddt, 4)
                     result["binder_metrics"]["binder_model_ca"] = len(model_a_coords)
                     result["binder_metrics"]["binder_ref_ca"] = len(ref_a_coords)

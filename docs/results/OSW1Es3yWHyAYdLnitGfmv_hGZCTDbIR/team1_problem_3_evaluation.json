@@ -5,16 +5,17 @@
   "token": "OSW1Es3yWHyAYdLnitGfmv_hGZCTDbIR",
   "model_file": "team1_problem_3_model.cif",
   "reference_file": "1qys_bb.pdb",
-  "evaluated_at": "2026-01-24T13:59:56.451296Z",
+  "evaluated_at": "2026-01-24T14:44:00.994715Z",
   "metrics": {
     "tm_score": 0.81585,
     "tm_score_ref": null,
     "rmsd": 0.94,
     "aligned_length": 91,
     "seq_identity": 1.0,
-    "bb_lddt": 0.3894,
+    "bb_lddt": 0.9139,
     "model_ca_count": 106,
-    "ref_ca_count": 91
+    "ref_ca_count": 91,
+    "lddt_aligned_count": 91
   },
   "af3_metrics": {
     "ptm": 0.75,
@@ -27,6 +28,6 @@
     ],
     "fraction_disordered": 0.12
   },
-  "primary_score": 0.3894,
+  "primary_score": 0.9139,
   "primary_metric": "bb_lddt"
 }

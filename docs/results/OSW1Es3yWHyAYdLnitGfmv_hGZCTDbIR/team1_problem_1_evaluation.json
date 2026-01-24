@@ -5,7 +5,7 @@
   "token": "OSW1Es3yWHyAYdLnitGfmv_hGZCTDbIR",
   "model_file": "team1_problem_1_model.cif",
   "reference_file": "3v86_bb.pdb",
-  "evaluated_at": "2026-01-24T13:59:39.610487Z",
+  "evaluated_at": "2026-01-24T14:44:00.667049Z",
   "metrics": {
     "tm_score": 0.77177,
     "tm_score_ref": null,
@@ -14,7 +14,8 @@
     "seq_identity": 1.0,
     "bb_lddt": 0.9885,
     "model_ca_count": 27,
-    "ref_ca_count": 27
+    "ref_ca_count": 27,
+    "lddt_aligned_count": 27
   },
   "af3_metrics": {
     "ptm": 0.48,
