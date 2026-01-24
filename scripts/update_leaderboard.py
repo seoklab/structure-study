@@ -312,15 +312,19 @@ def generate_leaderboard(
                     if af3.get("chain_pair_iptm") else None
                 ranking_entry["ptm"] = af3.get("ptm")
                 ranking_entry["ranking_score"] = af3.get("ranking_score")
-                # Full complex metrics
-                ranking_entry["complex_tm"] = metrics.get("tm_score")
-                ranking_entry["complex_rmsd"] = metrics.get("rmsd")
+                # Complex metrics (USalign multimer mode)
+                ranking_entry["complex_tm"] = metrics.get("complex_tm_score") or metrics.get("tm_score")
+                ranking_entry["complex_rmsd"] = metrics.get("complex_rmsd") or metrics.get("rmsd")
                 ranking_entry["complex_lddt"] = metrics.get("bb_lddt")
-                # Binder-only metrics (chain A vs chain A)
+                # Binder-only metrics (chain A vs chain A, TMalign)
                 binder_m = entry.get("binder_metrics", {})
                 ranking_entry["binder_tm"] = binder_m.get("binder_tm_score")
                 ranking_entry["binder_rmsd"] = binder_m.get("binder_rmsd")
                 ranking_entry["binder_lddt"] = binder_m.get("binder_lddt")
+                # Interface metrics
+                interface_m = entry.get("interface_metrics", {})
+                ranking_entry["interface_lddt"] = interface_m.get("interface_lddt")
+                ranking_entry["interface_contacts"] = interface_m.get("total_interface_contacts")
             else:
                 ranking_entry["bb_lddt"] = metrics.get("bb_lddt")
                 ranking_entry["tm_score"] = metrics.get("tm_score")

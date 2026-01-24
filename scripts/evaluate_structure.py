@@ -4,16 +4,23 @@ Evaluate predicted protein structures against reference structures.
 
 Uses:
 - TMalign/USalign for TM-score and RMSD (standalone binaries)
-- Pure Python implementation for lDDT (backbone)
+- USalign with -mm 1 for multimer complex alignment
+- Pure Python implementation for lDDT (backbone) and interface lDDT
 
 Usage:
     python evaluate_structure.py --model path/to/model.cif --reference path/to/reference.pdb \
         --problem-id problem_1 --problem-type monomer --output evaluation.json
+
+For binder problems:
+    - Complex TM-score: USalign -mm 1 -ter 1 (multimer alignment)
+    - Binder-only TM-score: TMalign on extracted chain A
+    - Interface lDDT: lDDT computed only for interface residues (within 8A of other chain)
 """
 
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -22,6 +29,10 @@ from pathlib import Path
 from typing import Optional
 
 import numpy as np
+
+# Global flag for keeping temp files
+KEEP_TEMP_FILES = False
+TEMP_OUTPUT_DIR = None
 
 
 def parse_pdb_ca_coords(pdb_path: str) -> tuple[np.ndarray, list[str]]:
@@ -271,9 +282,25 @@ def cif_to_pdb(cif_path: str, pdb_path: str) -> bool:
         return False
 
 
-def run_tmalign(model_path: str, reference_path: str) -> dict:
+def maybe_keep_temp(temp_path: str, label: str) -> str:
+    """Optionally preserve temp file for inspection."""
+    global KEEP_TEMP_FILES, TEMP_OUTPUT_DIR
+    if KEEP_TEMP_FILES and TEMP_OUTPUT_DIR and os.path.exists(temp_path):
+        dest = os.path.join(TEMP_OUTPUT_DIR, f"{label}_{os.path.basename(temp_path)}")
+        shutil.copy2(temp_path, dest)
+        print(f"  Saved temp file: {dest}")
+        return dest
+    return temp_path
+
+
+def run_tmalign(model_path: str, reference_path: str, multimer: bool = False) -> dict:
     """
-    Run TMalign to compute TM-score and RMSD.
+    Run TMalign/USalign to compute TM-score and RMSD.
+
+    Args:
+        model_path: Path to model structure
+        reference_path: Path to reference structure
+        multimer: If True, use USalign with -mm 1 -ter 1 for multimer alignment
 
     Returns dict with tm_score, rmsd, aligned_length, seq_identity
     """
@@ -295,6 +322,7 @@ def run_tmalign(model_path: str, reference_path: str) -> dict:
             model_pdb.close()
             if not cif_to_pdb(model_path, model_pdb.name):
                 return {"error": "Failed to convert model CIF to PDB"}
+            maybe_keep_temp(model_pdb.name, "model_converted")
             model_path = model_pdb.name
 
         if reference_path.endswith(".cif"):
@@ -303,22 +331,40 @@ def run_tmalign(model_path: str, reference_path: str) -> dict:
             ref_pdb.close()
             if not cif_to_pdb(reference_path, ref_pdb.name):
                 return {"error": "Failed to convert reference CIF to PDB"}
+            maybe_keep_temp(ref_pdb.name, "reference_converted")
             reference_path = ref_pdb.name
 
-        # Try USalign first (newer), fall back to TMalign
-        for cmd in ["/applic/bin/USalign", "/applic/bin/TMalign", "USalign", "TMalign"]:
+        # Build command based on mode
+        if multimer:
+            # Use USalign with multimer mode for complex alignment
+            cmd_options = [
+                (["/applic/bin/USalign", model_path, reference_path, "-mm", "1", "-ter", "1"], "USalign multimer"),
+                (["USalign", model_path, reference_path, "-mm", "1", "-ter", "1"], "USalign multimer (PATH)"),
+            ]
+        else:
+            # Standard monomer alignment
+            cmd_options = [
+                (["/applic/bin/USalign", model_path, reference_path], "USalign"),
+                (["/applic/bin/TMalign", model_path, reference_path], "TMalign"),
+                (["USalign", model_path, reference_path], "USalign (PATH)"),
+                (["TMalign", model_path, reference_path], "TMalign (PATH)"),
+            ]
+
+        proc = None
+        for cmd, desc in cmd_options:
             try:
                 proc = subprocess.run(
-                    [cmd, model_path, reference_path],
+                    cmd,
                     capture_output=True,
                     text=True,
-                    timeout=60
+                    timeout=120
                 )
                 if proc.returncode == 0:
                     break
             except (FileNotFoundError, subprocess.TimeoutExpired):
                 continue
-        else:
+
+        if proc is None or proc.returncode != 0:
             return {"error": "TMalign/USalign not found or failed"}
 
         # Parse output
@@ -357,9 +403,10 @@ def run_tmalign(model_path: str, reference_path: str) -> dict:
         return result
 
     finally:
-        for f in temp_files:
-            if os.path.exists(f):
-                os.unlink(f)
+        if not KEEP_TEMP_FILES:
+            for f in temp_files:
+                if os.path.exists(f):
+                    os.unlink(f)
 
 
 def compute_lddt(model_coords: np.ndarray, ref_coords: np.ndarray,
@@ -466,6 +513,142 @@ def compute_lddt_per_residue(model_coords: np.ndarray, ref_coords: np.ndarray,
     return per_residue_lddt
 
 
+def identify_interface_residues(coords_a: np.ndarray, coords_b: np.ndarray,
+                                 interface_cutoff: float = 8.0) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Identify interface residues between two chains.
+
+    Args:
+        coords_a: Nx3 array of chain A CA coordinates
+        coords_b: Mx3 array of chain B CA coordinates
+        interface_cutoff: Distance cutoff to define interface (default 8A)
+
+    Returns:
+        mask_a: Boolean array indicating interface residues in chain A
+        mask_b: Boolean array indicating interface residues in chain B
+    """
+    if len(coords_a) == 0 or len(coords_b) == 0:
+        return np.array([], dtype=bool), np.array([], dtype=bool)
+
+    # Compute cross-chain distances
+    diff = coords_a[:, np.newaxis, :] - coords_b[np.newaxis, :, :]
+    distances = np.sqrt(np.sum(diff ** 2, axis=-1))  # Shape: (N, M)
+
+    # Interface residues are those within cutoff of any residue in other chain
+    mask_a = np.any(distances < interface_cutoff, axis=1)
+    mask_b = np.any(distances < interface_cutoff, axis=0)
+
+    return mask_a, mask_b
+
+
+def compute_interface_lddt(model_coords_a: np.ndarray, model_coords_b: np.ndarray,
+                           ref_coords_a: np.ndarray, ref_coords_b: np.ndarray,
+                           interface_cutoff: float = 8.0,
+                           lddt_cutoff: float = 15.0,
+                           thresholds: tuple = (0.5, 1.0, 2.0, 4.0)) -> dict:
+    """
+    Compute interface lDDT (iLDDT) between two chains.
+
+    Interface residues are identified based on the reference structure.
+    lDDT is computed for interface residues considering cross-chain contacts.
+
+    Args:
+        model_coords_a: Model chain A CA coordinates
+        model_coords_b: Model chain B CA coordinates
+        ref_coords_a: Reference chain A CA coordinates
+        ref_coords_b: Reference chain B CA coordinates
+        interface_cutoff: Distance cutoff to define interface residues (default 8A)
+        lddt_cutoff: Distance cutoff for lDDT calculation (default 15A)
+        thresholds: Distance difference thresholds for lDDT
+
+    Returns:
+        dict with interface_lddt, interface_residue_counts, etc.
+    """
+    result = {
+        "interface_lddt": None,
+        "interface_lddt_a": None,
+        "interface_lddt_b": None,
+        "interface_count_a": 0,
+        "interface_count_b": 0,
+        "total_interface_contacts": 0
+    }
+
+    # Check if lengths match (they should for proper comparison)
+    if len(model_coords_a) != len(ref_coords_a) or len(model_coords_b) != len(ref_coords_b):
+        result["error"] = "Chain length mismatch between model and reference"
+        return result
+
+    if len(ref_coords_a) == 0 or len(ref_coords_b) == 0:
+        result["error"] = "Empty chain coordinates"
+        return result
+
+    # Identify interface residues in reference
+    interface_a, interface_b = identify_interface_residues(ref_coords_a, ref_coords_b, interface_cutoff)
+
+    result["interface_count_a"] = int(np.sum(interface_a))
+    result["interface_count_b"] = int(np.sum(interface_b))
+
+    if result["interface_count_a"] == 0 and result["interface_count_b"] == 0:
+        result["error"] = "No interface residues found"
+        return result
+
+    # Combine all coordinates for distance calculations
+    n_a, n_b = len(ref_coords_a), len(ref_coords_b)
+    ref_all = np.vstack([ref_coords_a, ref_coords_b])
+    model_all = np.vstack([model_coords_a, model_coords_b])
+
+    # Compute full distance matrices
+    def pairwise_distances(coords):
+        diff = coords[:, np.newaxis, :] - coords[np.newaxis, :, :]
+        return np.sqrt(np.sum(diff ** 2, axis=-1))
+
+    ref_dists = pairwise_distances(ref_all)
+    model_dists = pairwise_distances(model_all)
+
+    # Compute interface lDDT: for interface residues, count preserved cross-chain contacts
+    total_preserved = 0
+    total_contacts = 0
+
+    # For chain A interface residues
+    for i in np.where(interface_a)[0]:
+        # Find cross-chain contacts in reference (residues in chain B within lddt_cutoff)
+        for j in range(n_a, n_a + n_b):
+            if ref_dists[i, j] < lddt_cutoff:
+                ref_dist = ref_dists[i, j]
+                model_dist = model_dists[i, j]
+                diff = abs(model_dist - ref_dist)
+
+                # Count preserved at each threshold
+                preserved = sum(1 for t in thresholds if diff < t) / len(thresholds)
+                total_preserved += preserved
+                total_contacts += 1
+
+    # For chain B interface residues
+    for j in np.where(interface_b)[0]:
+        j_idx = n_a + j
+        # Find cross-chain contacts in reference (residues in chain A within lddt_cutoff)
+        for i in range(n_a):
+            # Avoid double counting - only count if this pair wasn't counted above
+            if not interface_a[i]:  # Only count if i is not an interface residue
+                if ref_dists[i, j_idx] < lddt_cutoff:
+                    ref_dist = ref_dists[i, j_idx]
+                    model_dist = model_dists[i, j_idx]
+                    diff = abs(model_dist - ref_dist)
+
+                    preserved = sum(1 for t in thresholds if diff < t) / len(thresholds)
+                    total_preserved += preserved
+                    total_contacts += 1
+
+    result["total_interface_contacts"] = total_contacts
+
+    if total_contacts > 0:
+        result["interface_lddt"] = round(total_preserved / total_contacts, 4)
+    else:
+        result["interface_lddt"] = 0.0
+
+    return result
+
+
 def get_af3_metrics(result_dir: str, problem_id: str, participant_id: str) -> dict:
     """
     Extract AF3 confidence metrics from summary_confidences.json.
@@ -495,6 +678,8 @@ def get_af3_metrics(result_dir: str, problem_id: str, participant_id: str) -> di
 
 
 def main():
+    global KEEP_TEMP_FILES, TEMP_OUTPUT_DIR
+
     parser = argparse.ArgumentParser(description="Evaluate protein structure predictions")
     parser.add_argument("--model", required=True, help="Path to predicted model (CIF/PDB)")
     parser.add_argument("--reference", required=True, help="Path to reference structure (PDB)")
@@ -505,8 +690,21 @@ def main():
     parser.add_argument("--token", required=True, help="Result token")
     parser.add_argument("--result-dir", help="Directory containing AF3 result files")
     parser.add_argument("--output", required=True, help="Output JSON path")
+    parser.add_argument("--keep-temp", action="store_true",
+                        help="Keep temporary PDB files for manual inspection")
+    parser.add_argument("--temp-dir", help="Directory to save temp files (requires --keep-temp)")
 
     args = parser.parse_args()
+
+    # Set up temp file handling
+    if args.keep_temp:
+        KEEP_TEMP_FILES = True
+        if args.temp_dir:
+            TEMP_OUTPUT_DIR = args.temp_dir
+        else:
+            TEMP_OUTPUT_DIR = os.path.dirname(args.output) or "."
+        os.makedirs(TEMP_OUTPUT_DIR, exist_ok=True)
+        print(f"Temp files will be saved to: {TEMP_OUTPUT_DIR}")
 
     # Initialize result
     result = {
@@ -559,11 +757,26 @@ def main():
         print(f"lDDT error: {e}", file=sys.stderr)
         result["metrics"]["lddt_error"] = str(e)
 
-    # For binder problems, also compute binder-only metrics (chain A vs chain A)
+    # For binder problems, compute additional metrics
     if args.problem_type == "binder":
-        print("\nComputing binder-only metrics (chain A vs chain A)...")
         result["binder_metrics"] = {}
+        result["interface_metrics"] = {}
 
+        # 1. Complex TM-score using USalign multimer mode
+        print("\nComputing complex TM-score (USalign multimer mode)...")
+        complex_tm = run_tmalign(args.model, args.reference, multimer=True)
+        if "error" not in complex_tm:
+            result["metrics"]["complex_tm_score"] = complex_tm.get("tm_score")
+            result["metrics"]["complex_tm_score_ref"] = complex_tm.get("tm_score_ref")
+            result["metrics"]["complex_rmsd"] = complex_tm.get("rmsd")
+            result["metrics"]["complex_aligned_length"] = complex_tm.get("aligned_length")
+            print(f"  Complex TM-score: {complex_tm.get('tm_score')}")
+            print(f"  Complex RMSD: {complex_tm.get('rmsd')}")
+        else:
+            print(f"  Complex TM-score error: {complex_tm.get('error')}")
+
+        # 2. Binder-only metrics (chain A vs chain A) using TMalign
+        print("\nComputing binder-only metrics (chain A vs chain A, TMalign)...")
         try:
             # Extract chain A from model and reference
             model_chain_a = tempfile.NamedTemporaryFile(suffix=".pdb", delete=False)
@@ -575,14 +788,19 @@ def main():
             ref_extracted = extract_chain_to_pdb(args.reference, ref_chain_a.name, "A")
 
             if model_extracted and ref_extracted:
-                # TMalign on binder chain only
-                binder_tm = run_tmalign(model_chain_a.name, ref_chain_a.name)
+                maybe_keep_temp(model_chain_a.name, "binder_model_chainA")
+                maybe_keep_temp(ref_chain_a.name, "binder_ref_chainA")
+
+                # TMalign on binder chain only (monomer mode)
+                binder_tm = run_tmalign(model_chain_a.name, ref_chain_a.name, multimer=False)
                 if "error" not in binder_tm:
                     result["binder_metrics"]["binder_tm_score"] = binder_tm.get("tm_score")
                     result["binder_metrics"]["binder_rmsd"] = binder_tm.get("rmsd")
                     result["binder_metrics"]["binder_aligned_length"] = binder_tm.get("aligned_length")
                     print(f"  Binder TM-score: {binder_tm.get('tm_score')}")
                     print(f"  Binder RMSD: {binder_tm.get('rmsd')}")
+                else:
+                    print(f"  Binder TMalign error: {binder_tm.get('error')}")
 
                 # lDDT on binder chain only
                 model_a_coords, _ = parse_structure_ca(args.model, chain="A")
@@ -599,13 +817,48 @@ def main():
                 print("  Warning: Could not extract chain A for binder-only evaluation")
 
             # Cleanup temp files
-            for f in [model_chain_a.name, ref_chain_a.name]:
-                if os.path.exists(f):
-                    os.unlink(f)
+            if not KEEP_TEMP_FILES:
+                for f in [model_chain_a.name, ref_chain_a.name]:
+                    if os.path.exists(f):
+                        os.unlink(f)
 
         except Exception as e:
             print(f"Binder-only evaluation error: {e}", file=sys.stderr)
             result["binder_metrics"]["error"] = str(e)
+
+        # 3. Interface LDDT calculation
+        print("\nComputing interface lDDT...")
+        try:
+            model_a_coords, _ = parse_structure_ca(args.model, chain="A")
+            model_b_coords, _ = parse_structure_ca(args.model, chain="B")
+            ref_a_coords, _ = parse_structure_ca(args.reference, chain="A")
+            ref_b_coords, _ = parse_structure_ca(args.reference, chain="B")
+
+            print(f"  Model: chain A={len(model_a_coords)} CA, chain B={len(model_b_coords)} CA")
+            print(f"  Reference: chain A={len(ref_a_coords)} CA, chain B={len(ref_b_coords)} CA")
+
+            if (len(model_a_coords) == len(ref_a_coords) and
+                len(model_b_coords) == len(ref_b_coords)):
+                ilddt_result = compute_interface_lddt(
+                    model_a_coords, model_b_coords,
+                    ref_a_coords, ref_b_coords,
+                    interface_cutoff=8.0
+                )
+                result["interface_metrics"] = ilddt_result
+                if ilddt_result.get("interface_lddt") is not None:
+                    print(f"  Interface lDDT: {ilddt_result['interface_lddt']}")
+                    print(f"  Interface residues: A={ilddt_result['interface_count_a']}, B={ilddt_result['interface_count_b']}")
+                    print(f"  Total interface contacts: {ilddt_result['total_interface_contacts']}")
+                else:
+                    print(f"  Interface lDDT error: {ilddt_result.get('error', 'Unknown')}")
+            else:
+                result["interface_metrics"]["error"] = "Chain length mismatch - cannot compute interface lDDT"
+                print("  Warning: Chain lengths differ between model and reference")
+                print("  (Interface lDDT requires matching chain lengths)")
+
+        except Exception as e:
+            print(f"Interface lDDT error: {e}", file=sys.stderr)
+            result["interface_metrics"]["error"] = str(e)
 
     # Determine primary score based on problem type
     metrics = result.get("metrics", {})

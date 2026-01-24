@@ -1,0 +1,52 @@
+{
+  "problem_id": "problem_5",
+  "problem_type": "binder",
+  "participant_id": "team1",
+  "token": "OSW1Es3yWHyAYdLnitGfmv_hGZCTDbIR",
+  "model_file": "team1_problem_5_model.cif",
+  "reference_file": "binder_problem_9bk5.pdb",
+  "evaluated_at": "2026-01-24T14:21:16.580241Z",
+  "metrics": {
+    "tm_score": 0.2327,
+    "tm_score_ref": null,
+    "rmsd": 3.45,
+    "aligned_length": 43,
+    "seq_identity": 0.0,
+    "bb_lddt": 0.1475,
+    "model_ca_count": 192,
+    "ref_ca_count": 146,
+    "complex_tm_score": 0.58643,
+    "complex_tm_score_ref": null,
+    "complex_rmsd": 1.08,
+    "complex_aligned_length": 78
+  },
+  "af3_metrics": {
+    "ptm": 0.76,
+    "iptm": 0.78,
+    "ranking_score": 0.85,
+    "chain_pair_iptm": [
+      [
+        0.72,
+        0.78
+      ],
+      [
+        0.78,
+        0.69
+      ]
+    ],
+    "fraction_disordered": 0.15
+  },
+  "binder_metrics": {
+    "binder_tm_score": 0.61409,
+    "binder_rmsd": 1.11,
+    "binder_aligned_length": 78,
+    "binder_lddt": 0.2168,
+    "binder_model_ca": 121,
+    "binder_ref_ca": 78
+  },
+  "interface_metrics": {
+    "error": "Chain length mismatch - cannot compute interface lDDT"
+  },
+  "primary_score": 0.72,
+  "primary_metric": "iptm"
+}
