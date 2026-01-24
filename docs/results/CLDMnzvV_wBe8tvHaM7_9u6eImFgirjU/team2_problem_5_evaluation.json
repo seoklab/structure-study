@@ -1,0 +1,54 @@
+{
+  "problem_id": "problem_5",
+  "problem_type": "binder",
+  "participant_id": "team2",
+  "token": "CLDMnzvV_wBe8tvHaM7_9u6eImFgirjU",
+  "model_file": "team2_problem_5_model.cif",
+  "reference_file": "binder_problem_9bk5.pdb",
+  "evaluated_at": "2026-01-24T14:59:37.674644Z",
+  "metrics": {
+    "tm_score": 0.34389,
+    "tm_score_ref": null,
+    "rmsd": 2.38,
+    "aligned_length": 40,
+    "seq_identity": 0.0,
+    "bb_lddt": 0.6642,
+    "model_ca_count": 149,
+    "ref_ca_count": 146,
+    "lddt_aligned_count": 40,
+    "complex_tm_score": 0.8471,
+    "complex_tm_score_ref": null,
+    "complex_rmsd": 0.96,
+    "complex_aligned_length": 78
+  },
+  "af3_metrics": {
+    "ptm": 0.75,
+    "iptm": 0.71,
+    "ranking_score": 0.75,
+    "chain_pair_iptm": [
+      [
+        0.72,
+        0.71
+      ],
+      [
+        0.71,
+        0.71
+      ]
+    ],
+    "fraction_disordered": 0.07,
+    "mean_plddt": 83.38
+  },
+  "binder_metrics": {
+    "binder_tm_score": 0.93878,
+    "binder_rmsd": 0.96,
+    "binder_aligned_length": 78,
+    "binder_lddt": 0.9186,
+    "binder_model_ca": 78,
+    "binder_ref_ca": 78
+  },
+  "interface_metrics": {
+    "error": "Chain length mismatch - cannot compute interface lDDT"
+  },
+  "primary_score": 0.72,
+  "primary_metric": "iptm"
+}

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-01-24T14:54:19.505712Z",
+  "last_updated": "2026-01-24T14:59:37.824182Z",
   "problems": {
     "problem_1": {
       "name": "Problem 1",
@@ -19,6 +19,20 @@
           "ptm": 0.48,
           "plddt": 93.67,
           "ranking_score": 0.98
+        },
+        {
+          "rank": 1,
+          "participant_id": "team2",
+          "token": "CLDMnzvV_wBe8tvHaM7_9u6eImFgirjU",
+          "submitted_at": "2026-01-24T14:32:43.442Z",
+          "primary_score": 0.9885,
+          "primary_metric": "bb_lddt",
+          "bb_lddt": 0.9885,
+          "tm_score": 0.77176,
+          "rmsd": 0.64,
+          "ptm": 0.48,
+          "plddt": null,
+          "ranking_score": 0.98
         }
       ]
     },
@@ -29,6 +43,20 @@
       "rankings": [
         {
           "rank": 1,
+          "participant_id": "team2",
+          "token": "CLDMnzvV_wBe8tvHaM7_9u6eImFgirjU",
+          "submitted_at": "2026-01-24T14:32:43.442Z",
+          "primary_score": 0.9345,
+          "primary_metric": "bb_lddt",
+          "bb_lddt": 0.9345,
+          "tm_score": 0.93217,
+          "rmsd": 1.09,
+          "ptm": 0.81,
+          "plddt": null,
+          "ranking_score": 0.81
+        },
+        {
+          "rank": 2,
           "participant_id": "team1",
           "token": "OSW1Es3yWHyAYdLnitGfmv_hGZCTDbIR",
           "submitted_at": "2026-01-24T09:29:50.584Z",
@@ -50,6 +78,20 @@
       "rankings": [
         {
           "rank": 1,
+          "participant_id": "team2",
+          "token": "CLDMnzvV_wBe8tvHaM7_9u6eImFgirjU",
+          "submitted_at": "2026-01-24T14:32:43.442Z",
+          "primary_score": 0.9245,
+          "primary_metric": "bb_lddt",
+          "bb_lddt": 0.9245,
+          "tm_score": 0.93434,
+          "rmsd": 0.93,
+          "ptm": 0.79,
+          "plddt": null,
+          "ranking_score": 0.79
+        },
+        {
+          "rank": 2,
           "participant_id": "team1",
           "token": "OSW1Es3yWHyAYdLnitGfmv_hGZCTDbIR",
           "submitted_at": "2026-01-24T09:29:50.584Z",
@@ -74,6 +116,20 @@
           "participant_id": "team1",
           "token": "OSW1Es3yWHyAYdLnitGfmv_hGZCTDbIR",
           "submitted_at": "2026-01-24T09:29:50.584Z",
+          "primary_score": 0.5817,
+          "primary_metric": "bb_lddt",
+          "bb_lddt": 0.5817,
+          "tm_score": 0.96615,
+          "rmsd": 0.82,
+          "ptm": 0.77,
+          "plddt": null,
+          "ranking_score": 0.77
+        },
+        {
+          "rank": 1,
+          "participant_id": "team2",
+          "token": "CLDMnzvV_wBe8tvHaM7_9u6eImFgirjU",
+          "submitted_at": "2026-01-24T14:32:43.442Z",
           "primary_score": 0.5817,
           "primary_metric": "bb_lddt",
           "bb_lddt": 0.5817,
@@ -109,20 +165,40 @@
           "binder_lddt": 0.9062,
           "interface_lddt": null,
           "interface_contacts": null
+        },
+        {
+          "rank": 1,
+          "participant_id": "team2",
+          "token": "CLDMnzvV_wBe8tvHaM7_9u6eImFgirjU",
+          "submitted_at": "2026-01-24T14:32:43.442Z",
+          "primary_score": 0.72,
+          "primary_metric": "iptm",
+          "iptm": 0.72,
+          "ptm": 0.75,
+          "plddt": 83.38,
+          "ranking_score": 0.75,
+          "complex_tm": 0.8471,
+          "complex_rmsd": 0.96,
+          "complex_lddt": 0.6642,
+          "binder_tm": 0.93878,
+          "binder_rmsd": 0.96,
+          "binder_lddt": 0.9186,
+          "interface_lddt": null,
+          "interface_contacts": null
         }
       ]
     }
   },
   "overall_rankings": [
     {
-      "participant_id": "team1",
-      "token": "OSW1Es3yWHyAYdLnitGfmv_hGZCTDbIR",
+      "participant_id": "team2",
+      "token": "CLDMnzvV_wBe8tvHaM7_9u6eImFgirjU",
       "problems_completed": 5,
-      "total_rank_points": 500,
+      "total_rank_points": 500.0,
       "problem_scores": {
         "problem_1": 0.9885,
-        "problem_2": 0.9216,
-        "problem_3": 0.9139,
+        "problem_2": 0.9345,
+        "problem_3": 0.9245,
         "problem_4": 0.5817,
         "problem_5": 0.72
       },
@@ -135,6 +211,28 @@
       },
       "rank": 1,
       "avg_rank_points": 100.0
+    },
+    {
+      "participant_id": "team1",
+      "token": "OSW1Es3yWHyAYdLnitGfmv_hGZCTDbIR",
+      "problems_completed": 5,
+      "total_rank_points": 300.0,
+      "problem_scores": {
+        "problem_1": 0.9885,
+        "problem_2": 0.9216,
+        "problem_3": 0.9139,
+        "problem_4": 0.5817,
+        "problem_5": 0.72
+      },
+      "problem_ranks": {
+        "problem_1": 1,
+        "problem_2": 2,
+        "problem_3": 2,
+        "problem_4": 1,
+        "problem_5": 1
+      },
+      "rank": 2,
+      "avg_rank_points": 60.0
     }
   ]
 }
