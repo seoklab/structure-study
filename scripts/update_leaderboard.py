@@ -44,10 +44,14 @@ def scan_results(results_dir: str, problem_info: dict) -> dict:
     """
     Scan results directories for evaluation data.
 
-    Returns dict mapping problem_id -> list of participant entries
+    Supports multi-sequence submissions - finds all sequence evaluations
+    and keeps only the BEST per participant per problem.
+
+    Returns dict mapping problem_id -> list of participant entries (best per participant)
     """
     results_path = Path(results_dir)
-    problem_results = {pid: [] for pid in problem_info}
+    # Collect all entries first, then deduplicate
+    all_entries: dict[str, list] = {pid: [] for pid in problem_info}
 
     for token_dir in results_path.iterdir():
         if not token_dir.is_dir() or token_dir.name == ".gitkeep":
@@ -82,84 +86,167 @@ def scan_results(results_dir: str, problem_info: dict) -> dict:
                 continue
 
             ptype = problem_info[problem_id]["type"]
-            entry = {
-                "participant_id": participant_id,
-                "token": token,
-                "submitted_at": submitted_at,
-                "problem_type": ptype
-            }
+            problem_data = problems[problem_id]
 
-            # Look for evaluation file first
-            eval_file = token_dir / f"{participant_id}_{problem_id}_evaluation.json"
-            if not eval_file.exists():
-                eval_file = token_dir / f"evaluation_{problem_id}.json"
+            # Check if this problem has multiple sequences
+            sequences = problem_data.get("sequences", {})
+            if sequences:
+                # Multi-sequence: process each sequence
+                for seq_num in sequences:
+                    entry = process_sequence_entry(
+                        token_dir, token, participant_id, submitted_at,
+                        problem_id, ptype, seq_num
+                    )
+                    if entry and entry.get("primary_score") is not None:
+                        all_entries[problem_id].append(entry)
+            else:
+                # Single sequence (legacy format)
+                entry = process_sequence_entry(
+                    token_dir, token, participant_id, submitted_at,
+                    problem_id, ptype, None
+                )
+                if entry and entry.get("primary_score") is not None:
+                    all_entries[problem_id].append(entry)
 
-            if eval_file.exists():
-                try:
-                    with open(eval_file) as f:
-                        eval_data = json.load(f)
-                    entry["metrics"] = eval_data.get("metrics", {})
-                    entry["af3_metrics"] = eval_data.get("af3_metrics", {})
-                    entry["binder_metrics"] = eval_data.get("binder_metrics", {})
-                    entry["primary_score"] = eval_data.get("primary_score")
-                    entry["primary_metric"] = eval_data.get("primary_metric")
-                except Exception as e:
-                    print(f"Warning: Could not read evaluation for {token}/{problem_id}: {e}",
-                          file=sys.stderr)
-
-            # Also try to load AF3 confidences directly if no evaluation file
-            if "af3_metrics" not in entry or not entry["af3_metrics"]:
-                # Look for summary_confidences.json
-                for conf_file in token_dir.glob(f"*{problem_id}_summary_confidences.json"):
-                    try:
-                        with open(conf_file) as f:
-                            conf_data = json.load(f)
-                        entry["af3_metrics"] = {
-                            "ptm": conf_data.get("ptm"),
-                            "iptm": conf_data.get("iptm"),
-                            "ranking_score": conf_data.get("ranking_score"),
-                            "chain_pair_iptm": conf_data.get("chain_pair_iptm"),
-                            "fraction_disordered": conf_data.get("fraction_disordered")
-                        }
-                        break
-                    except Exception:
-                        continue
-
-            # Determine primary score if not set
-            if entry.get("primary_score") is None:
-                af3 = entry.get("af3_metrics", {})
-
-                if ptype == "binder":
-                    # For binders, use chain_pair_iptm or ranking_score
-                    chain_iptm = af3.get("chain_pair_iptm")
-                    if chain_iptm and isinstance(chain_iptm, list) and len(chain_iptm) > 0:
-                        if isinstance(chain_iptm[0], list) and len(chain_iptm[0]) > 0:
-                            entry["primary_score"] = chain_iptm[0][0]
-                            entry["primary_metric"] = "iptm"
-                    if entry.get("primary_score") is None:
-                        entry["primary_score"] = af3.get("ranking_score")
-                        entry["primary_metric"] = "ranking_score"
-                else:
-                    # For monomers, use ptm or ranking_score
-                    metrics = entry.get("metrics", {})
-                    if metrics.get("bb_lddt"):
-                        entry["primary_score"] = metrics["bb_lddt"]
-                        entry["primary_metric"] = "bb_lddt"
-                    elif metrics.get("tm_score"):
-                        entry["primary_score"] = metrics["tm_score"]
-                        entry["primary_metric"] = "tm_score"
-                    elif af3.get("ptm"):
-                        entry["primary_score"] = af3["ptm"]
-                        entry["primary_metric"] = "ptm"
-                    else:
-                        entry["primary_score"] = af3.get("ranking_score")
-                        entry["primary_metric"] = "ranking_score"
-
-            # Only add if we have a score
-            if entry.get("primary_score") is not None:
-                problem_results[problem_id].append(entry)
+    # Deduplicate: keep only best entry per participant per problem
+    problem_results = {pid: [] for pid in problem_info}
+    for problem_id, entries in all_entries.items():
+        best_by_participant: dict[str, dict] = {}
+        for entry in entries:
+            pid = entry["participant_id"]
+            score = entry.get("primary_score") or 0
+            if pid not in best_by_participant or score > (best_by_participant[pid].get("primary_score") or 0):
+                best_by_participant[pid] = entry
+        problem_results[problem_id] = list(best_by_participant.values())
 
     return problem_results
+
+
+def process_sequence_entry(
+    token_dir: Path,
+    token: str,
+    participant_id: str,
+    submitted_at: str,
+    problem_id: str,
+    ptype: str,
+    seq_num: str | None
+) -> dict | None:
+    """
+    Process a single sequence entry and extract metrics.
+
+    Args:
+        token_dir: Directory containing result files
+        token: Result token
+        participant_id: Participant identifier
+        submitted_at: Submission timestamp
+        problem_id: Problem identifier
+        ptype: Problem type (monomer/binder)
+        seq_num: Sequence number (None for legacy single-sequence format)
+
+    Returns:
+        Entry dict with metrics, or None if no data found
+    """
+    entry = {
+        "participant_id": participant_id,
+        "token": token,
+        "submitted_at": submitted_at,
+        "problem_type": ptype,
+        "seq_num": seq_num
+    }
+
+    # Build file pattern based on whether this is multi-sequence
+    if seq_num:
+        seq_suffix = f"_seq{seq_num}"
+        file_patterns = [
+            f"{participant_id}_{problem_id}{seq_suffix}_evaluation.json",
+            f"{participant_id}_{problem_id}_seq{seq_num}_evaluation.json",
+            f"evaluation_{problem_id}_seq{seq_num}.json",
+        ]
+        conf_patterns = [
+            f"*{problem_id}{seq_suffix}_summary_confidences.json",
+            f"*{problem_id}_seq{seq_num}_summary_confidences.json",
+        ]
+    else:
+        file_patterns = [
+            f"{participant_id}_{problem_id}_evaluation.json",
+            f"evaluation_{problem_id}.json",
+        ]
+        conf_patterns = [
+            f"*{problem_id}_summary_confidences.json",
+        ]
+
+    # Look for evaluation file
+    eval_file = None
+    for pattern in file_patterns:
+        candidate = token_dir / pattern
+        if candidate.exists():
+            eval_file = candidate
+            break
+
+    if eval_file:
+        try:
+            with open(eval_file) as f:
+                eval_data = json.load(f)
+            entry["metrics"] = eval_data.get("metrics", {})
+            entry["af3_metrics"] = eval_data.get("af3_metrics", {})
+            entry["binder_metrics"] = eval_data.get("binder_metrics", {})
+            entry["primary_score"] = eval_data.get("primary_score")
+            entry["primary_metric"] = eval_data.get("primary_metric")
+        except Exception as e:
+            print(f"Warning: Could not read evaluation for {token}/{problem_id}: {e}",
+                  file=sys.stderr)
+
+    # Also try to load AF3 confidences directly if no evaluation file
+    if "af3_metrics" not in entry or not entry["af3_metrics"]:
+        for pattern in conf_patterns:
+            for conf_file in token_dir.glob(pattern):
+                try:
+                    with open(conf_file) as f:
+                        conf_data = json.load(f)
+                    entry["af3_metrics"] = {
+                        "ptm": conf_data.get("ptm"),
+                        "iptm": conf_data.get("iptm"),
+                        "ranking_score": conf_data.get("ranking_score"),
+                        "chain_pair_iptm": conf_data.get("chain_pair_iptm"),
+                        "fraction_disordered": conf_data.get("fraction_disordered")
+                    }
+                    break
+                except Exception:
+                    continue
+            if entry.get("af3_metrics"):
+                break
+
+    # Determine primary score if not set
+    if entry.get("primary_score") is None:
+        af3 = entry.get("af3_metrics", {})
+
+        if ptype == "binder":
+            # For binders, use chain_pair_iptm or ranking_score
+            chain_iptm = af3.get("chain_pair_iptm")
+            if chain_iptm and isinstance(chain_iptm, list) and len(chain_iptm) > 0:
+                if isinstance(chain_iptm[0], list) and len(chain_iptm[0]) > 0:
+                    entry["primary_score"] = chain_iptm[0][0]
+                    entry["primary_metric"] = "iptm"
+            if entry.get("primary_score") is None:
+                entry["primary_score"] = af3.get("ranking_score")
+                entry["primary_metric"] = "ranking_score"
+        else:
+            # For monomers, use ptm or ranking_score
+            metrics = entry.get("metrics", {})
+            if metrics.get("bb_lddt"):
+                entry["primary_score"] = metrics["bb_lddt"]
+                entry["primary_metric"] = "bb_lddt"
+            elif metrics.get("tm_score"):
+                entry["primary_score"] = metrics["tm_score"]
+                entry["primary_metric"] = "tm_score"
+            elif af3.get("ptm"):
+                entry["primary_score"] = af3["ptm"]
+                entry["primary_metric"] = "ptm"
+            else:
+                entry["primary_score"] = af3.get("ranking_score")
+                entry["primary_metric"] = "ranking_score"
+
+    return entry
 
 
 def rank_entries(entries: list[dict], descending: bool = True) -> list[dict]:

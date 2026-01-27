@@ -71,25 +71,69 @@ jobs:
                 [ ! -d "$problem_dir" ] && continue
                 PROBLEM_ID=$(basename "$problem_dir")
 
-                # Check for model.cif (success)
-                if find "$problem_dir" -maxdepth 2 -name "*_model.cif" -type f 2>/dev/null | head -1 | grep -q .; then
-                  COMPLETED_COUNT=$((COMPLETED_COUNT + 1))
-                  COMPLETED_LIST="${COMPLETED_LIST}${PROBLEM_ID}, "
-                  # Check if this is newly completed (not yet notified)
-                  if ! echo ",$NOTIFIED_PROBLEMS," | grep -q ",${PROBLEM_ID},"; then
-                    NEW_COMPLETED_LIST="${NEW_COMPLETED_LIST}${PROBLEM_ID}, "
+                # Check for seq_* subdirectories (multi-sequence format)
+                SEQ_DIRS=$(find "$problem_dir" -maxdepth 1 -type d -name "seq_*" 2>/dev/null | sort)
+                SEQ_COUNT=$(echo "$SEQ_DIRS" | grep -c "seq_" 2>/dev/null || echo "0")
+
+                if [ "$SEQ_COUNT" -gt 0 ]; then
+                  # Multi-sequence: check each seq directory
+                  PROBLEM_COMPLETED=0
+                  PROBLEM_FAILED=0
+                  PROBLEM_PENDING=0
+
+                  for seq_dir in $SEQ_DIRS; do
+                    [ ! -d "$seq_dir" ] && continue
+                    SEQ_NUM=$(basename "$seq_dir" | sed 's/seq_//')
+
+                    # Check for model.cif in seq directory
+                    if find "$seq_dir" -maxdepth 2 -name "*_model.cif" -type f 2>/dev/null | head -1 | grep -q .; then
+                      PROBLEM_COMPLETED=$((PROBLEM_COMPLETED + 1))
+                    else
+                      # Check SLURM job status
+                      JOB_NAME="${SUBMISSION_ID}_${PROBLEM_ID}_seq${SEQ_NUM}"
+                      JOB_STATUS=$(sacct --name="$JOB_NAME" --format=State --noheader 2>/dev/null | head -1 | tr -d ' ')
+
+                      if [ "$JOB_STATUS" = "FAILED" ] || [ "$JOB_STATUS" = "CANCELLED" ] || [ "$JOB_STATUS" = "TIMEOUT" ]; then
+                        PROBLEM_FAILED=$((PROBLEM_FAILED + 1))
+                      else
+                        PROBLEM_PENDING=$((PROBLEM_PENDING + 1))
+                      fi
+                    fi
+                  done
+
+                  # Problem is complete if at least one sequence completed
+                  if [ "$PROBLEM_COMPLETED" -gt 0 ]; then
+                    COMPLETED_COUNT=$((COMPLETED_COUNT + 1))
+                    COMPLETED_LIST="${COMPLETED_LIST}${PROBLEM_ID}(${PROBLEM_COMPLETED}/${SEQ_COUNT}), "
+                    if ! echo ",$NOTIFIED_PROBLEMS," | grep -q ",${PROBLEM_ID},"; then
+                      NEW_COMPLETED_LIST="${NEW_COMPLETED_LIST}${PROBLEM_ID}, "
+                    fi
+                  fi
+                  if [ "$PROBLEM_FAILED" -gt 0 ] && [ "$PROBLEM_PENDING" -eq 0 ] && [ "$PROBLEM_COMPLETED" -eq 0 ]; then
+                    FAILED_COUNT=$((FAILED_COUNT + 1))
+                    FAILED_LIST="${FAILED_LIST}${PROBLEM_ID}(${PROBLEM_FAILED}/${SEQ_COUNT} failed), "
+                  fi
+                  if [ "$PROBLEM_PENDING" -gt 0 ]; then
+                    PENDING_LIST="${PENDING_LIST}${PROBLEM_ID}(${PROBLEM_PENDING} pending), "
                   fi
                 else
-                  # Check SLURM job status for this problem
-                  JOB_NAME="${SUBMISSION_ID}_${PROBLEM_ID}"
-                  # Check if job failed (look for FAILED status in sacct)
-                  JOB_STATUS=$(sacct --name="$JOB_NAME" --format=State --noheader 2>/dev/null | head -1 | tr -d ' ')
-
-                  if [ "$JOB_STATUS" = "FAILED" ] || [ "$JOB_STATUS" = "CANCELLED" ] || [ "$JOB_STATUS" = "TIMEOUT" ]; then
-                    FAILED_COUNT=$((FAILED_COUNT + 1))
-                    FAILED_LIST="${FAILED_LIST}${PROBLEM_ID} (${JOB_STATUS}), "
+                  # Legacy: check problem_dir directly
+                  if find "$problem_dir" -maxdepth 2 -name "*_model.cif" -type f 2>/dev/null | head -1 | grep -q .; then
+                    COMPLETED_COUNT=$((COMPLETED_COUNT + 1))
+                    COMPLETED_LIST="${COMPLETED_LIST}${PROBLEM_ID}, "
+                    if ! echo ",$NOTIFIED_PROBLEMS," | grep -q ",${PROBLEM_ID},"; then
+                      NEW_COMPLETED_LIST="${NEW_COMPLETED_LIST}${PROBLEM_ID}, "
+                    fi
                   else
-                    PENDING_LIST="${PENDING_LIST}${PROBLEM_ID}, "
+                    JOB_NAME="${SUBMISSION_ID}_${PROBLEM_ID}"
+                    JOB_STATUS=$(sacct --name="$JOB_NAME" --format=State --noheader 2>/dev/null | head -1 | tr -d ' ')
+
+                    if [ "$JOB_STATUS" = "FAILED" ] || [ "$JOB_STATUS" = "CANCELLED" ] || [ "$JOB_STATUS" = "TIMEOUT" ]; then
+                      FAILED_COUNT=$((FAILED_COUNT + 1))
+                      FAILED_LIST="${FAILED_LIST}${PROBLEM_ID} (${JOB_STATUS}), "
+                    else
+                      PENDING_LIST="${PENDING_LIST}${PROBLEM_ID}, "
+                    fi
                   fi
                 fi
               done
@@ -217,16 +261,16 @@ jobs:
         run: |
           echo "Updating leaderboard data..."
 
-          # Define reference files for each problem
+          # Define reference files for each problem (updated for new problems)
           TARGETS_DIR="${GITHUB_WORKSPACE}/docs/targets"
           RESULTS_DIR="${GITHUB_WORKSPACE}/docs/results"
 
           declare -A PROBLEM_REFS=(
-            ["problem_1"]="3v86_bb.pdb:monomer"
-            ["problem_2"]="4r80_bb.pdb:monomer"
-            ["problem_3"]="1qys_bb.pdb:monomer"
-            ["problem_4"]="6wi5_bb.pdb:monomer"
-            ["problem_5"]="binder_problem_9bk5.pdb:binder"
+            ["problem_1"]="3H-scaffold.pdb:monomer"
+            ["problem_2"]="4B1H-scaffold.pdb:monomer"
+            ["problem_3"]="Top7-scaffold.pdb:monomer"
+            ["problem_4"]="PepBinder1-scaffold.pdb:binder"
+            ["problem_5"]="PepBinder2-scaffold.pdb:binder"
           )
 
           # Run evaluation for each result directory
@@ -247,26 +291,37 @@ jobs:
               REF_FILE="${REF_INFO%:*}"
               PROBLEM_TYPE="${REF_INFO#*:}"
 
-              # Find model file
-              MODEL_FILE=$(find "$token_dir" -name "*${problem_id}_model.cif" 2>/dev/null | head -1)
-              [ -z "$MODEL_FILE" ] && continue
+              # Find all model files for this problem (supports multi-sequence: _seq1, _seq2, etc.)
+              MODEL_FILES=$(find "$token_dir" -name "*${problem_id}*_model.cif" 2>/dev/null | sort)
+              [ -z "$MODEL_FILES" ] && continue
 
-              # Check if already evaluated
-              EVAL_FILE="${token_dir}/${PARTICIPANT_ID}_${problem_id}_evaluation.json"
-              [ -f "$EVAL_FILE" ] && continue
+              for MODEL_FILE in $MODEL_FILES; do
+                # Extract sequence number if present (e.g., problem_1_seq2_model.cif -> seq2)
+                MODEL_NAME=$(basename "$MODEL_FILE")
+                SEQ_SUFFIX=""
+                if echo "$MODEL_NAME" | grep -q "_seq[0-9]"; then
+                  SEQ_SUFFIX=$(echo "$MODEL_NAME" | grep -oP '_seq\d+' | head -1)
+                fi
 
-              echo "Evaluating $TOKEN / $problem_id..."
+                # Build evaluation file name
+                EVAL_FILE="${token_dir}/${PARTICIPANT_ID}_${problem_id}${SEQ_SUFFIX}_evaluation.json"
 
-              # Run evaluation using TMalign + Python lDDT
-              python3 scripts/evaluate_structure.py \
-                --model "$MODEL_FILE" \
-                --reference "${TARGETS_DIR}/${REF_FILE}" \
-                --problem-id "$problem_id" \
-                --problem-type "$PROBLEM_TYPE" \
-                --participant-id "$PARTICIPANT_ID" \
-                --token "$TOKEN" \
-                --result-dir "$token_dir" \
-                --output "$EVAL_FILE" || echo "Warning: Evaluation failed for $TOKEN/$problem_id"
+                # Check if already evaluated
+                [ -f "$EVAL_FILE" ] && continue
+
+                echo "Evaluating $TOKEN / $problem_id$SEQ_SUFFIX..."
+
+                # Run evaluation using TMalign + Python lDDT
+                python3 scripts/evaluate_structure.py \
+                  --model "$MODEL_FILE" \
+                  --reference "${TARGETS_DIR}/${REF_FILE}" \
+                  --problem-id "$problem_id" \
+                  --problem-type "$PROBLEM_TYPE" \
+                  --participant-id "$PARTICIPANT_ID" \
+                  --token "$TOKEN" \
+                  --result-dir "$token_dir" \
+                  --output "$EVAL_FILE" || echo "Warning: Evaluation failed for $TOKEN/$problem_id$SEQ_SUFFIX"
+              done
             done
           done
 
