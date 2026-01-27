@@ -58,26 +58,41 @@ jobs:
           QUEUE_DIR="/data/galaxy4/user/j2ho/job_queue"
 
           # Find all problem directories and queue their jobs
+          # New structure: problem_N/seq_M/ contains af3_input.json
           QUEUED_COUNT=0
           for problem_dir in "$SUBMISSION_DIR"/problem_*; do
             [ ! -d "$problem_dir" ] && continue
             PROBLEM_ID=$(basename "$problem_dir")
 
-            # Generate the SLURM script (singleton groups by participant for fair scheduling)
-            python3 scripts/run_af3.py \
-              --submission-dir "$problem_dir" \
-              --submission-id "${SUBMISSION_ID}_${PROBLEM_ID}" \
-              --participant-id "$PARTICIPANT_ID" \
-              --mode full
+            # Iterate through sequence subdirectories
+            for seq_dir in "$problem_dir"/seq_*; do
+              [ ! -d "$seq_dir" ] && continue
+              SEQ_NUM=$(basename "$seq_dir" | sed 's/seq_//')
 
-            # Copy to queue directory
-            SCRIPT_FILE="$problem_dir/scripts/run_${SUBMISSION_ID}_${PROBLEM_ID}_full.sh"
-            if [ -f "$SCRIPT_FILE" ]; then
-              cp "$SCRIPT_FILE" "$QUEUE_DIR/${SUBMISSION_ID}_${PROBLEM_ID}.sh"
-              chmod 755 "$QUEUE_DIR/${SUBMISSION_ID}_${PROBLEM_ID}.sh"
-              QUEUED_COUNT=$((QUEUED_COUNT + 1))
-              echo "Queued job for $PROBLEM_ID"
-            fi
+              # Check if af3_input.json exists in this seq directory
+              if [ ! -f "$seq_dir/af3_input.json" ]; then
+                echo "Skipping $seq_dir - no af3_input.json found"
+                continue
+              fi
+
+              JOB_ID="${SUBMISSION_ID}_${PROBLEM_ID}_seq${SEQ_NUM}"
+
+              # Generate the SLURM script (singleton groups by participant for fair scheduling)
+              python3 scripts/run_af3.py \
+                --submission-dir "$seq_dir" \
+                --submission-id "$JOB_ID" \
+                --participant-id "$PARTICIPANT_ID" \
+                --mode full
+
+              # Copy to queue directory
+              SCRIPT_FILE="$seq_dir/scripts/run_${JOB_ID}_full.sh"
+              if [ -f "$SCRIPT_FILE" ]; then
+                cp "$SCRIPT_FILE" "$QUEUE_DIR/${JOB_ID}.sh"
+                chmod 755 "$QUEUE_DIR/${JOB_ID}.sh"
+                QUEUED_COUNT=$((QUEUED_COUNT + 1))
+                echo "Queued job for $PROBLEM_ID seq $SEQ_NUM"
+              fi
+            done
           done
 
           echo "Queued $QUEUED_COUNT jobs for submission $SUBMISSION_ID"
@@ -90,7 +105,7 @@ jobs:
             "participant_id": "$PARTICIPANT_ID",
             "submitted_at": "${{ github.event.client_payload.submitted_at }}",
             "queued_at": "$(date -Iseconds)",
-            "problem_count": $QUEUED_COUNT
+            "job_count": $QUEUED_COUNT
           }
           EOF
 

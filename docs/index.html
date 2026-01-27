@@ -296,6 +296,71 @@
             word-break: break-all;
         }
 
+        /* Multi-sequence support */
+        .sequences-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .sequence-entry {
+            background: #0a0a1a;
+            border: 1px solid #2a3f5f;
+            border-radius: 8px;
+            padding: 1rem;
+            position: relative;
+        }
+        .sequence-entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .sequence-entry-header label {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        .remove-sequence-btn {
+            background: transparent;
+            border: 1px solid #e94560;
+            color: #e94560;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .remove-sequence-btn:hover {
+            background: #e94560;
+            color: white;
+        }
+        .add-sequence-btn {
+            background: transparent;
+            border: 2px dashed #2a3f5f;
+            color: #65cbf3;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .add-sequence-btn:hover {
+            border-color: #65cbf3;
+            background: rgba(101, 203, 243, 0.1);
+        }
+        .add-sequence-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sequence-count-badge {
+            display: inline-block;
+            background: #2a3f5f;
+            color: #65cbf3;
+            padding: 0.15rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
         /* Modal for structure viewer */
         .modal-overlay {
             display: none;
@@ -448,7 +513,7 @@
 
                 <h3 style="color: #65cbf3; margin-bottom: 1rem;">Target Structures</h3>
                 <p class="hint" style="margin-bottom: 1.5rem;">
-                    Design a sequence for each target backbone structure below. View or download each structure to understand the fold.
+                    Design sequences for the target backbone structures below. You can submit sequences for any subset of problems.
                     <br>Valid amino acids: <span class="valid-chars" style="display: inline; padding: 0.2rem 0.5rem;">A C D E F G H I K L M N P Q R S T V W Y</span>
                 </p>
 
@@ -458,7 +523,7 @@
 
                 <div class="actions">
                     <button type="submit" class="btn btn-primary" id="submit-btn">
-                        <span id="btn-text">Submit All Sequences</span>
+                        <span id="btn-text">Submit Sequences</span>
                         <span id="btn-spinner" class="spinner" style="display: none;"></span>
                     </button>
                     <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear All</button>
@@ -534,11 +599,23 @@
             }
         }
 
+        const MAX_SEQUENCES_PER_PROBLEM = 5;
+
+        // Track sequence counts per problem
+        const problemSequenceCounts = {};
+
         function renderProblems() {
             if (!problemsConfig || !problemsConfig.problems) return;
 
             // Filter out example problems (those starting with _)
             const problems = problemsConfig.problems.filter(p => !p.id.startsWith('_'));
+
+            // Initialize sequence counts
+            problems.forEach(p => {
+                if (!problemSequenceCounts[p.id]) {
+                    problemSequenceCounts[p.id] = 1;
+                }
+            });
 
             const html = problems.map((problem, index) => {
                 const residueInfo = problem.residue_count
@@ -554,7 +631,7 @@
                 let binderLengthHint = '';
                 if (isBinder && problem.expected_binder_length) {
                     const [minLen, maxLen] = problem.expected_binder_length;
-                    binderLengthHint = `<p class="hint" style="margin-top: 0.5rem;">Suggested binder length: ${minLen}-${maxLen} residues</p>`;
+                    binderLengthHint = `Suggested binder length: ${minLen}-${maxLen} residues`;
                 }
 
                 // For binder problems, show the given target sequence (read-only)
@@ -574,20 +651,25 @@
                 }
 
                 const sequenceLabel = isBinder
-                    ? 'Your Binder Sequence (Chain A)'
-                    : 'Your Sequence';
+                    ? 'Binder Sequence'
+                    : 'Sequence';
 
                 const sequencePlaceholder = isBinder
                     ? 'Enter your designed binder sequence...'
                     : 'Enter your designed amino acid sequence...';
 
+                // Show day badge
+                const dayBadge = problem.day
+                    ? `<span class="problem-type" style="background: #1a4a3a; color: #4ade80; margin-left: 0.5rem;">Day ${problem.day}</span>`
+                    : '';
+
                 return `
-                    <div class="problem-card" data-problem-id="${problem.id}" data-problem-type="${problem.type || 'monomer'}">
+                    <div class="problem-card" data-problem-id="${problem.id}" data-problem-type="${problem.type || 'monomer'}" data-day="${problem.day || 1}">
                         <div class="problem-header">
                             <div class="problem-title">
                                 <h3>${problem.name}${residueInfo}</h3>
                                 <p>${problem.description}</p>
-                                ${problemType}
+                                ${problemType}${dayBadge}
                             </div>
                             <div class="problem-actions">
                                 <button type="button" class="btn btn-secondary btn-small" onclick="openViewerModal('${problem.id}', '${problem.name}', '${problem.target_file}')">
@@ -600,18 +682,31 @@
                         </div>
                         ${targetSequenceSection}
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label for="sequence_${problem.id}">${sequenceLabel} <span class="required">*</span></label>
-                            <div class="sequence-input-wrapper">
-                                <textarea
-                                    id="sequence_${problem.id}"
-                                    name="sequence_${problem.id}"
-                                    placeholder="${sequencePlaceholder}"
-                                    required
-                                    oninput="updateCharCount('${problem.id}')"
-                                ></textarea>
+                            <label>
+                                Your ${sequenceLabel}(s)
+                                <span style="color: #888; font-weight: normal;">(optional, max ${MAX_SEQUENCES_PER_PROBLEM})</span>
+                                <span class="sequence-count-badge" id="seq-count-${problem.id}">1/${MAX_SEQUENCES_PER_PROBLEM}</span>
+                            </label>
+                            ${binderLengthHint ? `<p class="hint" style="margin-bottom: 0.5rem;">${binderLengthHint}</p>` : ''}
+                            <div class="sequences-container" id="sequences-container-${problem.id}">
+                                <div class="sequence-entry" data-seq-num="1">
+                                    <div class="sequence-entry-header">
+                                        <label for="sequence_${problem.id}_1">${sequenceLabel} #1</label>
+                                    </div>
+                                    <textarea
+                                        id="sequence_${problem.id}_1"
+                                        name="sequence_${problem.id}_1"
+                                        placeholder="${sequencePlaceholder}"
+                                        oninput="updateCharCountMulti('${problem.id}', 1)"
+                                    ></textarea>
+                                    <div class="char-count" id="char-count-${problem.id}-1">0 residues</div>
+                                    <p class="error-msg" id="error-${problem.id}-1"></p>
+                                </div>
                             </div>
-                            <div class="char-count" id="char-count-${problem.id}">0 residues</div>
-                            ${binderLengthHint}
+                            <button type="button" class="add-sequence-btn" id="add-seq-btn-${problem.id}"
+                                onclick="addSequenceInput('${problem.id}', '${sequenceLabel}', '${sequencePlaceholder}')">
+                                + Add another sequence
+                            </button>
                             <p class="error-msg" id="error-${problem.id}"></p>
                         </div>
                     </div>
@@ -619,6 +714,138 @@
             }).join('');
 
             problemsContainer.innerHTML = html;
+        }
+
+        function addSequenceInput(problemId, sequenceLabel, placeholder) {
+            const container = document.getElementById(`sequences-container-${problemId}`);
+            const currentCount = problemSequenceCounts[problemId] || 1;
+
+            if (currentCount >= MAX_SEQUENCES_PER_PROBLEM) {
+                return;
+            }
+
+            const newSeqNum = currentCount + 1;
+            problemSequenceCounts[problemId] = newSeqNum;
+
+            const entryHtml = `
+                <div class="sequence-entry" data-seq-num="${newSeqNum}">
+                    <div class="sequence-entry-header">
+                        <label for="sequence_${problemId}_${newSeqNum}">${sequenceLabel} #${newSeqNum}</label>
+                        <button type="button" class="remove-sequence-btn" onclick="removeSequenceInput('${problemId}', ${newSeqNum})">
+                            Remove
+                        </button>
+                    </div>
+                    <textarea
+                        id="sequence_${problemId}_${newSeqNum}"
+                        name="sequence_${problemId}_${newSeqNum}"
+                        placeholder="${placeholder}"
+                        oninput="updateCharCountMulti('${problemId}', ${newSeqNum})"
+                    ></textarea>
+                    <div class="char-count" id="char-count-${problemId}-${newSeqNum}">0 residues</div>
+                    <p class="error-msg" id="error-${problemId}-${newSeqNum}"></p>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', entryHtml);
+            updateSequenceCountBadge(problemId);
+
+            // Disable add button if at max
+            if (newSeqNum >= MAX_SEQUENCES_PER_PROBLEM) {
+                document.getElementById(`add-seq-btn-${problemId}`).disabled = true;
+            }
+        }
+
+        function removeSequenceInput(problemId, seqNum) {
+            const container = document.getElementById(`sequences-container-${problemId}`);
+            const entries = container.querySelectorAll('.sequence-entry');
+
+            // Don't remove if only one entry
+            if (entries.length <= 1) {
+                return;
+            }
+
+            // Find and remove the entry
+            const entry = container.querySelector(`.sequence-entry[data-seq-num="${seqNum}"]`);
+            if (entry) {
+                entry.remove();
+            }
+
+            // Renumber remaining entries
+            const remainingEntries = container.querySelectorAll('.sequence-entry');
+            remainingEntries.forEach((entry, idx) => {
+                const newNum = idx + 1;
+                entry.dataset.seqNum = newNum;
+
+                // Update label
+                const label = entry.querySelector('label');
+                const oldLabel = label.getAttribute('for');
+                const baseProblem = oldLabel.replace(/_\d+$/, '');
+                label.setAttribute('for', `${baseProblem}_${newNum}`);
+                label.textContent = `${label.textContent.replace(/#\d+/, `#${newNum}`)}`;
+
+                // Update textarea
+                const textarea = entry.querySelector('textarea');
+                textarea.id = `sequence_${problemId}_${newNum}`;
+                textarea.name = `sequence_${problemId}_${newNum}`;
+                textarea.setAttribute('oninput', `updateCharCountMulti('${problemId}', ${newNum})`);
+
+                // Update char count
+                const charCount = entry.querySelector('.char-count');
+                charCount.id = `char-count-${problemId}-${newNum}`;
+
+                // Update error
+                const error = entry.querySelector('.error-msg');
+                error.id = `error-${problemId}-${newNum}`;
+
+                // Update remove button
+                const removeBtn = entry.querySelector('.remove-sequence-btn');
+                if (removeBtn) {
+                    removeBtn.setAttribute('onclick', `removeSequenceInput('${problemId}', ${newNum})`);
+                }
+            });
+
+            problemSequenceCounts[problemId] = remainingEntries.length;
+            updateSequenceCountBadge(problemId);
+
+            // Re-enable add button
+            document.getElementById(`add-seq-btn-${problemId}`).disabled = false;
+        }
+
+        function updateSequenceCountBadge(problemId) {
+            const badge = document.getElementById(`seq-count-${problemId}`);
+            const count = problemSequenceCounts[problemId] || 1;
+            badge.textContent = `${count}/${MAX_SEQUENCES_PER_PROBLEM}`;
+        }
+
+        function updateCharCountMulti(problemId, seqNum) {
+            const textarea = document.getElementById(`sequence_${problemId}_${seqNum}`);
+            const charCountEl = document.getElementById(`char-count-${problemId}-${seqNum}`);
+            const errorEl = document.getElementById(`error-${problemId}-${seqNum}`);
+
+            if (!textarea || !charCountEl) return;
+
+            const result = validateSequence(textarea.value, problemId);
+            charCountEl.textContent = `${result.length} residues`;
+            charCountEl.className = 'char-count';
+
+            if (result.tooLong) {
+                charCountEl.classList.add('error');
+                charCountEl.textContent += ` (max ${result.maxLen})`;
+            } else if (result.length > result.maxLen * 0.9) {
+                charCountEl.classList.add('warning');
+            }
+
+            if (errorEl) {
+                if (result.invalidChars.length > 0) {
+                    errorEl.textContent = `Invalid characters: ${result.invalidChars.join(', ')}`;
+                    errorEl.style.display = 'block';
+                } else if (result.tooShort) {
+                    errorEl.textContent = `Sequence too short (minimum ${result.minLen} residues)`;
+                    errorEl.style.display = 'block';
+                } else {
+                    errorEl.style.display = 'none';
+                }
+            }
         }
 
         function cleanSequence(seq) {
@@ -648,36 +875,14 @@
             return /^[A-Za-z0-9_-]+$/.test(id) && id.length > 0;
         }
 
+        // Legacy function for backward compatibility
         function updateCharCount(problemId) {
-            const textarea = document.getElementById(`sequence_${problemId}`);
-            const charCountEl = document.getElementById(`char-count-${problemId}`);
-            const errorEl = document.getElementById(`error-${problemId}`);
-
-            const result = validateSequence(textarea.value, problemId);
-            charCountEl.textContent = `${result.length} residues`;
-            charCountEl.className = 'char-count';
-
-            if (result.tooLong) {
-                charCountEl.classList.add('error');
-                charCountEl.textContent += ` (max ${result.maxLen})`;
-            } else if (result.length > result.maxLen * 0.9) {
-                charCountEl.classList.add('warning');
-            }
-
-            if (result.invalidChars.length > 0) {
-                errorEl.textContent = `Invalid characters: ${result.invalidChars.join(', ')}`;
-                errorEl.style.display = 'block';
-            } else if (result.tooShort) {
-                errorEl.textContent = `Sequence too short (minimum ${result.minLen} residues)`;
-                errorEl.style.display = 'block';
-            } else {
-                errorEl.style.display = 'none';
-            }
+            updateCharCountMulti(problemId, 1);
         }
 
         function setLoading(loading) {
             submitBtn.disabled = loading;
-            btnText.textContent = loading ? 'Submitting...' : 'Submit All Sequences';
+            btnText.textContent = loading ? 'Submitting...' : 'Submit Sequences';
             btnSpinner.style.display = loading ? 'block' : 'none';
         }
 
@@ -785,27 +990,48 @@
                 document.getElementById('email_error').style.display = 'none';
             }
 
-            // Collect and validate all sequences (skip example problems)
+            // Collect and validate provided sequences (skip example problems, allow partial submission)
+            // Now supports multiple sequences per problem
             const sequences = {};
             const activeProblems = problemsConfig.problems.filter(p => !p.id.startsWith('_'));
+
             for (const problem of activeProblems) {
-                const textarea = document.getElementById(`sequence_${problem.id}`);
-                const errorEl = document.getElementById(`error-${problem.id}`);
+                const problemId = problem.id;
+                const seqCount = problemSequenceCounts[problemId] || 1;
+                const problemSeqs = [];
 
-                if (!textarea.value.trim()) {
-                    errorEl.textContent = 'Sequence is required';
-                    errorEl.style.display = 'block';
-                    valid = false;
-                    continue;
+                for (let seqNum = 1; seqNum <= seqCount; seqNum++) {
+                    const textarea = document.getElementById(`sequence_${problemId}_${seqNum}`);
+                    const errorEl = document.getElementById(`error-${problemId}-${seqNum}`);
+
+                    if (!textarea) continue;
+
+                    // Skip empty sequences
+                    if (!textarea.value.trim()) {
+                        if (errorEl) errorEl.style.display = 'none';
+                        continue;
+                    }
+
+                    const result = validateSequence(textarea.value, problemId);
+                    if (!result.valid) {
+                        valid = false;
+                        // Error already shown by updateCharCountMulti
+                    } else {
+                        problemSeqs.push(result.cleaned);
+                    }
                 }
 
-                const result = validateSequence(textarea.value, problem.id);
-                if (!result.valid) {
-                    valid = false;
-                    // Error already shown by validateSequence
-                } else {
-                    sequences[problem.id] = result.cleaned;
+                // Add to sequences if we have any valid ones
+                if (problemSeqs.length > 0) {
+                    sequences[problemId] = problemSeqs;
                 }
+            }
+
+            // Require at least one sequence total
+            const totalSeqs = Object.values(sequences).flat().length;
+            if (totalSeqs === 0) {
+                showError('Please provide at least one sequence.');
+                return;
             }
 
             if (!valid) return;
@@ -829,17 +1055,10 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    showSuccess(`Your sequences have been submitted successfully!<br><strong>Submission ID:</strong> ${data.submission_id}<br><strong>Check your email for results!</strong>`);
-                    form.reset();
-                    // Reset all char counts
-                    const activeProblems = problemsConfig.problems.filter(p => !p.id.startsWith('_'));
-                    for (const problem of activeProblems) {
-                        const charCountEl = document.getElementById(`char-count-${problem.id}`);
-                        if (charCountEl) {
-                            charCountEl.textContent = '0 residues';
-                            charCountEl.className = 'char-count';
-                        }
-                    }
+                    const seqCount = Object.values(sequences).flat().length;
+                    const problemCount = Object.keys(sequences).length;
+                    showSuccess(`Your sequences have been submitted successfully!<br><strong>Submission ID:</strong> ${data.submission_id}<br><strong>Problems:</strong> ${problemCount}, <strong>Sequences:</strong> ${seqCount}<br><strong>Check your email for results!</strong>`);
+                    clearForm();
                 } else {
                     showError(data.error || 'Submission failed. Please try again.');
                 }
@@ -857,15 +1076,41 @@
             if (problemsConfig) {
                 const activeProblems = problemsConfig.problems.filter(p => !p.id.startsWith('_'));
                 for (const problem of activeProblems) {
-                    const charCountEl = document.getElementById(`char-count-${problem.id}`);
+                    // Reset to single sequence per problem
+                    problemSequenceCounts[problem.id] = 1;
+
+                    // Re-render sequences container to single entry
+                    const container = document.getElementById(`sequences-container-${problem.id}`);
+                    if (container) {
+                        // Keep only first entry, remove extras
+                        const entries = container.querySelectorAll('.sequence-entry');
+                        entries.forEach((entry, idx) => {
+                            if (idx > 0) entry.remove();
+                        });
+
+                        // Reset first entry
+                        const firstEntry = container.querySelector('.sequence-entry');
+                        if (firstEntry) {
+                            const textarea = firstEntry.querySelector('textarea');
+                            if (textarea) textarea.value = '';
+                            const charCount = firstEntry.querySelector('.char-count');
+                            if (charCount) {
+                                charCount.textContent = '0 residues';
+                                charCount.className = 'char-count';
+                            }
+                        }
+                    }
+
+                    // Update badge
+                    updateSequenceCountBadge(problem.id);
+
+                    // Re-enable add button
+                    const addBtn = document.getElementById(`add-seq-btn-${problem.id}`);
+                    if (addBtn) addBtn.disabled = false;
+
+                    // Clear general error
                     const errorEl = document.getElementById(`error-${problem.id}`);
-                    if (charCountEl) {
-                        charCountEl.textContent = '0 residues';
-                        charCountEl.className = 'char-count';
-                    }
-                    if (errorEl) {
-                        errorEl.style.display = 'none';
-                    }
+                    if (errorEl) errorEl.style.display = 'none';
                 }
             }
             document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');

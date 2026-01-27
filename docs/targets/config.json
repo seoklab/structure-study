@@ -2,82 +2,92 @@
   "problems": [
     {
       "id": "problem_1",
-      "name": "Problem 1",
-      "description": "Small beta-barrel structure - 27 residues",
-      "target_file": "3v86_bb.pdb",
-      "residue_count": 27,
+      "name": "Problem 1 - 3-Helix Bundle",
+      "description": "Design a sequence for a 3-helix bundle scaffold (73 residues)",
+      "target_file": "3H-scaffold.pdb",
+      "residue_count": 73,
       "type": "monomer",
-      "msa_mode": "none"
+      "msa_mode": "none",
+      "day": 1
     },
     {
       "id": "problem_2",
-      "name": "Problem 2",
-      "description": "Alpha-helical bundle - 76 residues",
-      "target_file": "4r80_bb.pdb",
+      "name": "Problem 2 - 4-Helix Bundle",
+      "description": "Design a sequence for a 4-helix bundle scaffold (76 residues)",
+      "target_file": "4B1H-scaffold.pdb",
       "residue_count": 76,
       "type": "monomer",
-      "msa_mode": "none"
+      "msa_mode": "none",
+      "day": 1
     },
     {
       "id": "problem_3",
-      "name": "Problem 3",
-      "description": "Mixed alpha/beta fold - 91 residues",
-      "target_file": "1qys_bb.pdb",
-      "residue_count": 91,
+      "name": "Problem 3 - Top7 Fold",
+      "description": "Design a sequence for a mixed alpha/beta fold (90 residues)",
+      "target_file": "Top7-scaffold.pdb",
+      "residue_count": 90,
       "type": "monomer",
-      "msa_mode": "none"
+      "msa_mode": "none",
+      "day": 1
     },
     {
       "id": "problem_4",
-      "name": "Problem 4",
-      "description": "Compact globular domain - 92 residues",
-      "target_file": "6wi5_bb.pdb",
-      "residue_count": 92,
-      "type": "monomer",
-      "msa_mode": "none"
+      "name": "Problem 4 - Peptide Binder 1",
+      "description": "Design a peptide binder (30 residues) for GLP-1 receptor",
+      "target_file": "PepBinder1-scaffold.pdb",
+      "residue_count": 30,
+      "type": "binder",
+      "target_sequence": "MKTIIALSYIFCLVFADYKDDDDLEVLFQGPARPQGATVSLWETVQKWREYRRQCQRSLTEDPPPATDLFCNRTFDEYACWPDGEPGSFVNVSCPWYLPWASSVPQGHVYRFCTAEGLWLQKDNSSLPWRDLSECEESKRGERSSPEEQLLFLYIIYTVGYALSFSALVIASAILLGFRHLHCTRNYIHLNLFASFILRALSVFIKDAALKWMYSTAAQQHQWDGLLSYQDSLSCRLVFLLMQYCVAANYYWLLVEGVYLYTLLAFSVFSEQWIFRLYVSIGWGVPLLFVVPWGIVKYLYEDEGCWTRNSNMNYWLIIRLPILFAIGVNFLIFVRVICIVVSKLKANLMCKTDIKCRLAKSTLTLIPLLGTHEVIFAFVMDEHARGTLRFIKLFTELSFTSFQGLMVAILYCFVNNEVQLEFRKSWERWRLEHLHIQRDSSMKPLKCPTSSLSSGATAGSSMYTATCQASCSPAGLEVLFQGPHHHHHHHH",
+      "target_msa_file": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/docs/targets/PepBinder1_msa.json",
+      "participant_msa_mode": "none",
+      "expected_binder_length": [20, 50],
+      "day": 2
     },
     {
       "id": "problem_5",
-      "name": "Problem 5 - Binder Design",
-      "description": "Design a binder (78 residues) for the given target protein",
+      "name": "Problem 5 - Peptide Binder 2",
+      "description": "Design a peptide binder (12 residues) for a GPCR target",
+      "target_file": "PepBinder2-scaffold.pdb",
+      "residue_count": 12,
       "type": "binder",
-      "target_file": "binder_problem_9bk5.pdb",
-      "residue_count": 78,
-      "target_sequence": "IRCFITPDITSKDCPNGHVCYTKTWCDAFCSIRGKRVDLGCAATCPTVKTGVDIQCCSTDNCNPFPTRKRP",
-      "target_msa_file": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/docs/targets/target_9bk5.a3m",
+      "target_sequence": "MVAIQCIYALVCLVGLVGNALVIFVILRYAKMKTATNIYLLNLAVADELFMLSVPFVASSAALRHWPFGSVLCRAVLSVDGLNMFTSVFCLTVLSVDRYVAVVHPLRAATYRRPSVAKLINLGVWLASLLVTLPIAIFADTRPARGGQAVACNLQWPHPAWSAVFVVYTFLLGFLLPVLAIGLCYLLIVGKMRAVALRAGWQQRRRSEKKITRLVLMFVVVFVLCWMPFYVVQLLNLFVTSLDATVNHVSLILSYANSCANPILYGFLSDNFRRFF",
+      "target_msa_file": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/docs/targets/PepBinder2_msa.json",
       "participant_msa_mode": "none",
-      "expected_binder_length": [50, 100]
+      "expected_binder_length": [10, 30],
+      "day": 2
     }
   ],
+  "competition": {
+    "day1": {
+      "problems": ["problem_1", "problem_2", "problem_3"],
+      "submissions": 2,
+      "description": "Scaffold design - initial submission, see results, final submission"
+    },
+    "day2": {
+      "problems": ["problem_4", "problem_5"],
+      "submissions": 1,
+      "description": "Binder design - single submission"
+    }
+  },
   "problem_types": {
     "monomer": {
-      "description": "Monomer design",
+      "description": "Monomer design - design a sequence for the given backbone",
       "chains": ["participant"]
     },
     "binder": {
-      "description": "Binder design - participant provides binder sequence for a given target",
+      "description": "Binder design - design a peptide that binds to the given target",
       "chains": ["participant_binder", "given_target"]
     }
   },
   "msa_modes": {
-    "none": "No MSA - empty string, skips MSA search",
+    "none": "No MSA - single sequence, skips MSA search",
     "search": "Run MSA search (default AF3 behavior)",
     "precomputed": "Use pre-calculated MSA file (specify msa_file in problem config)"
   },
   "validation": {
     "min_length": 10,
     "max_length": 5000,
-    "valid_amino_acids": "ACDEFGHIKLMNPQRSTVWY"
-  },
-  "_example_binder_problem": {
-    "id": "problem_binder_example",
-    "name": "Binder Design Example",
-    "description": "Design a binder for target protein X",
-    "type": "binder",
-    "target_file": "target_x.pdb",
-    "target_sequence": "MKTAYIAKQRQISFVKSHFSRQ...",
-    "target_msa_file": "target_x.a3m",
-    "participant_msa_mode": "none",
-    "expected_binder_length": [50, 150]
+    "valid_amino_acids": "ACDEFGHIKLMNPQRSTVWY",
+    "max_sequences_per_problem": 5
   }
 }

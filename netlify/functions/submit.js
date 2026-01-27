@@ -13,6 +13,7 @@
 const VALID_AMINO_ACIDS = new Set('ACDEFGHIKLMNPQRSTVWY');
 const MIN_LENGTH = 10;
 const MAX_LENGTH = 5000;
+const MAX_SEQUENCES_PER_PROBLEM = 5;
 
 function validateSequence(seq) {
   const cleaned = seq.toUpperCase().replace(/[^A-Z]/g, '');
@@ -138,9 +139,9 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Validate each sequence
+    // Validate each problem's sequences (supports array of sequences per problem)
     const validatedSequences = {};
-    for (const [problemId, sequence] of Object.entries(sequences)) {
+    for (const [problemId, seqData] of Object.entries(sequences)) {
       // Validate problem ID format
       if (!validateId(problemId)) {
         return {
@@ -153,25 +154,56 @@ exports.handler = async (event, context) => {
         };
       }
 
-      // Validate sequence
-      const seqResult = validateSequence(sequence || '');
-      if (!seqResult.valid) {
-        let errorMsg = `Invalid sequence for ${problemId}.`;
-        if (seqResult.invalidChars.length > 0) {
-          errorMsg = `${problemId}: Invalid amino acids: ${seqResult.invalidChars.join(', ')}`;
-        } else if (seqResult.tooShort) {
-          errorMsg = `${problemId}: Sequence too short. Minimum ${MIN_LENGTH} residues required.`;
-        } else if (seqResult.tooLong) {
-          errorMsg = `${problemId}: Sequence too long. Maximum ${MAX_LENGTH} residues allowed.`;
-        }
+      // Normalize to array (support both single string and array format)
+      const seqArray = Array.isArray(seqData) ? seqData : [seqData];
+
+      // Validate sequence count
+      if (seqArray.length === 0) {
         return {
           statusCode: 400,
           headers,
-          body: JSON.stringify({ success: false, error: errorMsg })
+          body: JSON.stringify({
+            success: false,
+            error: `${problemId}: At least one sequence is required.`
+          })
+        };
+      }
+      if (seqArray.length > MAX_SEQUENCES_PER_PROBLEM) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            error: `${problemId}: Maximum ${MAX_SEQUENCES_PER_PROBLEM} sequences allowed per problem.`
+          })
         };
       }
 
-      validatedSequences[problemId] = seqResult.cleaned;
+      // Validate each sequence in the array
+      const validatedSeqArray = [];
+      for (let i = 0; i < seqArray.length; i++) {
+        const sequence = seqArray[i];
+        const seqResult = validateSequence(sequence || '');
+        if (!seqResult.valid) {
+          const seqNum = seqArray.length > 1 ? ` (sequence ${i + 1})` : '';
+          let errorMsg = `Invalid sequence for ${problemId}${seqNum}.`;
+          if (seqResult.invalidChars.length > 0) {
+            errorMsg = `${problemId}${seqNum}: Invalid amino acids: ${seqResult.invalidChars.join(', ')}`;
+          } else if (seqResult.tooShort) {
+            errorMsg = `${problemId}${seqNum}: Sequence too short. Minimum ${MIN_LENGTH} residues required.`;
+          } else if (seqResult.tooLong) {
+            errorMsg = `${problemId}${seqNum}: Sequence too long. Maximum ${MAX_LENGTH} residues allowed.`;
+          }
+          return {
+            statusCode: 400,
+            headers,
+            body: JSON.stringify({ success: false, error: errorMsg })
+          };
+        }
+        validatedSeqArray.push(seqResult.cleaned);
+      }
+
+      validatedSequences[problemId] = validatedSeqArray;
     }
 
     // Generate unique submission ID with participant name

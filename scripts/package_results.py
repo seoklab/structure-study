@@ -23,30 +23,30 @@ def generate_token() -> str:
     return secrets.token_urlsafe(24)
 
 
-def find_af3_outputs(problem_dir: Path) -> dict:
-    """Find AF3 output files in a problem directory."""
+def find_af3_outputs(seq_dir: Path) -> dict:
+    """Find AF3 output files in a sequence directory."""
     outputs = {}
 
     # Look for main output files
-    for f in problem_dir.glob("*_model.cif"):
+    for f in seq_dir.glob("*_model.cif"):
         outputs["model_cif"] = f
         break
 
-    for f in problem_dir.glob("*_confidences.json"):
+    for f in seq_dir.glob("*_confidences.json"):
         outputs["confidences"] = f
         break
 
-    for f in problem_dir.glob("*_summary_confidences.json"):
+    for f in seq_dir.glob("*_summary_confidences.json"):
         outputs["summary"] = f
         break
 
-    for f in problem_dir.glob("*_ranking_scores.csv"):
+    for f in seq_dir.glob("*_ranking_scores.csv"):
         outputs["ranking"] = f
         break
 
     # Also check one level deeper (AF3 sometimes nests outputs)
     if "model_cif" not in outputs:
-        for f in problem_dir.glob("*/*_model.cif"):
+        for f in seq_dir.glob("*/*_model.cif"):
             outputs["model_cif"] = f
             # Also get other files from same dir
             parent = f.parent
@@ -64,9 +64,38 @@ def find_af3_outputs(problem_dir: Path) -> dict:
     return outputs
 
 
+def find_all_sequence_outputs(problem_dir: Path) -> dict:
+    """
+    Find AF3 output files for all sequences in a problem directory.
+
+    Returns dict: {seq_num: {file_type: path}}
+    """
+    all_outputs = {}
+
+    # Check for seq_N subdirectories (multi-sequence format)
+    seq_dirs = sorted(problem_dir.glob("seq_*"))
+    if seq_dirs:
+        for seq_dir in seq_dirs:
+            if not seq_dir.is_dir():
+                continue
+            seq_num = seq_dir.name.replace("seq_", "")
+            outputs = find_af3_outputs(seq_dir)
+            if outputs:
+                all_outputs[seq_num] = outputs
+    else:
+        # Backward compatibility: check problem_dir directly
+        outputs = find_af3_outputs(problem_dir)
+        if outputs:
+            all_outputs["1"] = outputs
+
+    return all_outputs
+
+
 def package_multi_results(submission_dir: Path, output_dir: Path, status_file: Path, incremental: bool = True):
     """
     Package results from multi-problem submission.
+
+    Supports multiple sequences per problem (seq_1, seq_2, etc.)
 
     Args:
         submission_dir: Directory containing problem subdirectories
@@ -74,7 +103,7 @@ def package_multi_results(submission_dir: Path, output_dir: Path, status_file: P
         status_file: Path to status.json
         incremental: If True, reuse existing token and add new results
 
-    Returns the token and list of newly packaged problems if successful, (None, []) otherwise.
+    Returns the token and list of newly packaged items if successful, (None, []) otherwise.
     """
     # Check if this is a multi-problem submission
     problem_dirs = sorted(submission_dir.glob("problem_*"))
@@ -84,18 +113,34 @@ def package_multi_results(submission_dir: Path, output_dir: Path, status_file: P
         token = package_single_result(submission_dir, output_dir, status_file)
         return token, ["single"] if token else []
 
-    # Check which problems are complete
-    completed_problems = {}
+    # Check which problems/sequences are complete
+    # Structure: {problem_id: {seq_num: outputs}}
+    completed_sequences = {}
+    total_expected_sequences = 0
+
     for problem_dir in problem_dirs:
         if not problem_dir.is_dir():
             continue
-        outputs = find_af3_outputs(problem_dir)
-        if "model_cif" in outputs:
-            completed_problems[problem_dir.name] = outputs
+        problem_id = problem_dir.name
+        seq_outputs = find_all_sequence_outputs(problem_dir)
+        if seq_outputs:
+            completed_sequences[problem_id] = seq_outputs
 
-    if not completed_problems:
-        print(f"No completed problems found in {submission_dir}", file=sys.stderr)
+        # Count expected sequences from problem_meta.json if available
+        meta_file = problem_dir / "problem_meta.json"
+        if meta_file.exists():
+            with open(meta_file) as f:
+                meta = json.load(f)
+            total_expected_sequences += meta.get("num_sequences", 1)
+        else:
+            total_expected_sequences += 1
+
+    if not completed_sequences:
+        print(f"No completed sequences found in {submission_dir}", file=sys.stderr)
         return None, []
+
+    # Count total completed sequences
+    total_completed_sequences = sum(len(seqs) for seqs in completed_sequences.values())
 
     # Read main submission.json
     main_submission = submission_dir / "submission.json"
@@ -108,8 +153,8 @@ def package_multi_results(submission_dir: Path, output_dir: Path, status_file: P
     participant_id = submission_data.get("participant_id", "unknown")
     total_problems = len(submission_data.get("sequences", {}))
 
-    # Check if all problems are complete
-    all_complete = len(completed_problems) >= total_problems
+    # Check if all sequences are complete
+    all_complete = total_completed_sequences >= total_expected_sequences
 
     # Check for existing token (incremental mode)
     existing_token = None
@@ -118,13 +163,20 @@ def package_multi_results(submission_dir: Path, output_dir: Path, status_file: P
         with open(status_file) as f:
             existing_status = json.load(f)
         existing_token = existing_status.get("result_token")
-        already_packaged = set(existing_status.get("packaged_problems", []))
+        already_packaged = set(existing_status.get("packaged_items", existing_status.get("packaged_problems", [])))
 
-    # Determine which problems are newly completed
-    newly_completed = {k: v for k, v in completed_problems.items() if k not in already_packaged}
+    # Determine which items are newly completed (problem_id_seq_num format)
+    newly_completed = {}
+    for problem_id, seq_outputs in completed_sequences.items():
+        for seq_num, outputs in seq_outputs.items():
+            item_key = f"{problem_id}_seq{seq_num}"
+            if item_key not in already_packaged:
+                if problem_id not in newly_completed:
+                    newly_completed[problem_id] = {}
+                newly_completed[problem_id][seq_num] = outputs
 
     if not newly_completed and existing_token:
-        print(f"No new problems to package (already packaged: {already_packaged})")
+        print(f"No new sequences to package (already packaged: {already_packaged})")
         return existing_token, []
 
     # Use existing token or generate new one
@@ -134,7 +186,7 @@ def package_multi_results(submission_dir: Path, output_dir: Path, status_file: P
     else:
         token = generate_token()
         token_dir = output_dir / token
-        newly_completed = completed_problems  # Package all if not incremental
+        newly_completed = completed_sequences  # Package all if not incremental
 
     token_dir.mkdir(parents=True, exist_ok=True)
 
@@ -142,35 +194,47 @@ def package_multi_results(submission_dir: Path, output_dir: Path, status_file: P
     problem_results = {}
     newly_packaged = []
 
-    # Copy files from newly completed problems only
-    for problem_id, outputs in newly_completed.items():
-        problem_results[problem_id] = {"files": []}
-        newly_packaged.append(problem_id)
+    # Copy files from newly completed sequences
+    for problem_id, seq_outputs in newly_completed.items():
+        if problem_id not in problem_results:
+            problem_results[problem_id] = {"files": [], "sequences": {}}
 
-        for file_type, filepath in outputs.items():
-            if filepath and filepath.exists():
-                # Rename file to include participant and problem ID
-                # e.g., team_alpha_problem_1_model.cif
-                suffix = filepath.suffix
-                stem = filepath.stem
+        for seq_num, outputs in seq_outputs.items():
+            item_key = f"{problem_id}_seq{seq_num}"
+            newly_packaged.append(item_key)
 
-                # Extract the file type (model, confidences, etc.)
-                if "_model" in stem:
-                    new_name = f"{participant_id}_{problem_id}_model{suffix}"
-                elif "_summary_confidences" in stem:
-                    new_name = f"{participant_id}_{problem_id}_summary_confidences{suffix}"
-                elif "_confidences" in stem:
-                    new_name = f"{participant_id}_{problem_id}_confidences{suffix}"
-                elif "_ranking_scores" in stem:
-                    new_name = f"{participant_id}_{problem_id}_ranking_scores{suffix}"
-                else:
-                    new_name = f"{participant_id}_{problem_id}_{filepath.name}"
+            seq_files = []
+            for file_type, filepath in outputs.items():
+                if filepath and filepath.exists():
+                    # Rename file to include participant, problem ID, and sequence number
+                    # e.g., team_alpha_problem_1_seq1_model.cif
+                    suffix = filepath.suffix
+                    stem = filepath.stem
 
-                dest = token_dir / new_name
-                shutil.copy2(filepath, dest)
-                copied_files.append(new_name)
-                problem_results[problem_id]["files"].append(new_name)
-                print(f"Copied {filepath.name} -> {new_name}")
+                    # Determine sequence suffix (only add if multiple sequences)
+                    num_seqs = len(seq_outputs)
+                    seq_suffix = f"_seq{seq_num}" if num_seqs > 1 or int(seq_num) > 1 else ""
+
+                    # Extract the file type (model, confidences, etc.)
+                    if "_model" in stem:
+                        new_name = f"{participant_id}_{problem_id}{seq_suffix}_model{suffix}"
+                    elif "_summary_confidences" in stem:
+                        new_name = f"{participant_id}_{problem_id}{seq_suffix}_summary_confidences{suffix}"
+                    elif "_confidences" in stem:
+                        new_name = f"{participant_id}_{problem_id}{seq_suffix}_confidences{suffix}"
+                    elif "_ranking_scores" in stem:
+                        new_name = f"{participant_id}_{problem_id}{seq_suffix}_ranking_scores{suffix}"
+                    else:
+                        new_name = f"{participant_id}_{problem_id}{seq_suffix}_{filepath.name}"
+
+                    dest = token_dir / new_name
+                    shutil.copy2(filepath, dest)
+                    copied_files.append(new_name)
+                    seq_files.append(new_name)
+                    print(f"Copied {filepath.name} -> {new_name}")
+
+            problem_results[problem_id]["sequences"][seq_num] = {"files": seq_files}
+            problem_results[problem_id]["files"].extend(seq_files)
 
     # Copy main submission.json
     if main_submission.exists():
@@ -187,14 +251,25 @@ def package_multi_results(submission_dir: Path, output_dir: Path, status_file: P
     # Merge with existing files and problems
     all_files = list(set(existing_metadata.get("files", []) + copied_files))
     all_problem_results = existing_metadata.get("problems", {})
-    all_problem_results.update(problem_results)
+    for problem_id, results in problem_results.items():
+        if problem_id in all_problem_results:
+            # Merge sequences
+            existing_seqs = all_problem_results[problem_id].get("sequences", {})
+            existing_seqs.update(results.get("sequences", {}))
+            all_problem_results[problem_id]["sequences"] = existing_seqs
+            all_problem_results[problem_id]["files"] = list(set(
+                all_problem_results[problem_id].get("files", []) + results.get("files", [])
+            ))
+        else:
+            all_problem_results[problem_id] = results
 
     # Create/update metadata file
     metadata = {
         "token": token,
         "participant_id": participant_id,
         "total_problems": total_problems,
-        "completed_problems": len(completed_problems),
+        "completed_problems": len(completed_sequences),
+        "total_sequences": total_completed_sequences,
         "all_complete": all_complete,
         "files": all_files,
         "problems": all_problem_results,
@@ -212,15 +287,16 @@ def package_multi_results(submission_dir: Path, output_dir: Path, status_file: P
 
     status["status"] = "completed" if all_complete else "partial"
     status["result_token"] = token
-    status["completed_problems"] = len(completed_problems)
+    status["completed_problems"] = len(completed_sequences)
+    status["completed_sequences"] = total_completed_sequences
     status["total_problems"] = total_problems
-    status["packaged_problems"] = list(already_packaged | set(newly_packaged))
+    status["packaged_items"] = list(already_packaged | set(newly_packaged))
 
     with open(status_file, "w") as f:
         json.dump(status, f, indent=2)
 
     print(f"Results packaged to {token_dir}")
-    print(f"Completed: {len(completed_problems)}/{total_problems} problems")
+    print(f"Completed: {len(completed_sequences)}/{total_problems} problems, {total_completed_sequences} sequences")
     print(f"Newly packaged: {newly_packaged}")
     return token, newly_packaged
 

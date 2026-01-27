@@ -320,6 +320,8 @@
             }
         }
 
+        let currentSequence = null;
+
         function setupMultiProblemView() {
             const problems = Object.keys(metadata.problems).sort();
 
@@ -331,8 +333,11 @@
 
             // Create tabs for each problem
             tabsDiv.innerHTML = problems.map(problemId => {
+                const problemData = metadata.problems[problemId];
+                const seqCount = problemData.sequences ? Object.keys(problemData.sequences).length : 1;
                 const displayName = problemId.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
-                return `<button class="problem-tab" data-problem="${problemId}">${displayName}</button>`;
+                const seqBadge = seqCount > 1 ? ` <span style="font-size: 0.7rem; opacity: 0.7;">(${seqCount})</span>` : '';
+                return `<button class="problem-tab" data-problem="${problemId}">${displayName}${seqBadge}</button>`;
             }).join('');
 
             // Add click handlers
@@ -364,6 +369,7 @@
 
         function selectProblem(problemId) {
             currentProblem = problemId;
+            currentSequence = null;
 
             // Update tab states
             document.querySelectorAll('.problem-tab').forEach(tab => {
@@ -374,17 +380,93 @@
             const displayName = problemId.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
             document.getElementById('current-problem').textContent = displayName;
 
-            // Find the model file for this problem
-            const problemFiles = metadata.problems[problemId]?.files || [];
-            const cifFile = problemFiles.find(f => f.endsWith('_model.cif')) ||
-                           metadata.files.find(f => f.includes(problemId) && f.endsWith('.cif'));
+            // Check if this problem has multiple sequences
+            const problemData = metadata.problems[problemId];
+            const sequences = problemData?.sequences || {};
+            const seqNums = Object.keys(sequences).sort((a, b) => parseInt(a) - parseInt(b));
+
+            // Show/hide sequence selector
+            let seqSelectorHtml = '';
+            if (seqNums.length > 1) {
+                seqSelectorHtml = `
+                    <div style="margin-top: 0.5rem;">
+                        <span style="color: #888; font-size: 0.85rem;">Sequences: </span>
+                        ${seqNums.map(seqNum =>
+                            `<button class="problem-tab seq-tab" data-seq="${seqNum}" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Seq ${seqNum}</button>`
+                        ).join(' ')}
+                    </div>
+                `;
+            }
+
+            // Add sequence selector to current-problem card
+            const problemInfoCard = document.getElementById('problem-info-card');
+            let seqContainer = problemInfoCard.querySelector('.seq-selector');
+            if (!seqContainer) {
+                seqContainer = document.createElement('div');
+                seqContainer.className = 'seq-selector';
+                problemInfoCard.appendChild(seqContainer);
+            }
+            seqContainer.innerHTML = seqSelectorHtml;
+
+            // Add click handlers for sequence tabs
+            seqContainer.querySelectorAll('.seq-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const seqNum = tab.dataset.seq;
+                    selectSequence(problemId, seqNum);
+                });
+            });
+
+            // Select first sequence by default
+            if (seqNums.length > 0) {
+                selectSequence(problemId, seqNums[0]);
+            } else {
+                // Fall back to finding file directly (legacy format)
+                const problemFiles = problemData?.files || [];
+                const cifFile = problemFiles.find(f => f.endsWith('_model.cif')) ||
+                               metadata.files.find(f => f.includes(problemId) && f.endsWith('.cif'));
+
+                if (cifFile) {
+                    loadStructure(cifFile);
+                    document.getElementById('download-current').href = `${RESULTS_BASE_URL}${token}/${cifFile}`;
+                } else {
+                    document.getElementById('molstar-viewer').innerHTML =
+                        `<div class="error">No structure file found for ${displayName}.</div>`;
+                }
+            }
+        }
+
+        function selectSequence(problemId, seqNum) {
+            currentSequence = seqNum;
+
+            // Update sequence tab states
+            document.querySelectorAll('.seq-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.seq === seqNum);
+            });
+
+            // Find the model file for this sequence
+            const problemData = metadata.problems[problemId];
+            const seqData = problemData?.sequences?.[seqNum];
+            const seqFiles = seqData?.files || [];
+
+            // Look for model file
+            let cifFile = seqFiles.find(f => f.endsWith('_model.cif'));
+
+            // If not found in sequence data, try problem files with seq suffix
+            if (!cifFile) {
+                cifFile = problemData?.files?.find(f => f.includes(`_seq${seqNum}_`) && f.endsWith('_model.cif'));
+            }
+
+            // Fall back to any model file for this problem
+            if (!cifFile) {
+                cifFile = metadata.files.find(f => f.includes(problemId) && f.includes(`seq${seqNum}`) && f.endsWith('.cif'));
+            }
 
             if (cifFile) {
                 loadStructure(cifFile);
                 document.getElementById('download-current').href = `${RESULTS_BASE_URL}${token}/${cifFile}`;
             } else {
                 document.getElementById('molstar-viewer').innerHTML =
-                    `<div class="error">No structure file found for ${displayName}.</div>`;
+                    `<div class="error">No structure file found for sequence ${seqNum}.</div>`;
             }
         }
 

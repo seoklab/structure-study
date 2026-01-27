@@ -26,7 +26,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Default model seeds for reproducibility
-DEFAULT_MODEL_SEEDS = [1, 2, 3, 4, 5]
+DEFAULT_MODEL_SEEDS = [1]
 
 # Path to problem config
 CONFIG_PATH = Path(__file__).parent.parent / "docs" / "targets" / "config.json"
@@ -239,9 +239,15 @@ def main():
     logger.info(f"Participant: {participant_id}")
     logger.info(f"Number of problems: {len(sequences)}")
 
+    total_jobs = 0
+
     # Process each problem
-    for problem_id, sequence in sequences.items():
-        logger.info(f"Processing {problem_id}: {len(sequence)} residues")
+    for problem_id, seq_data in sequences.items():
+        # Normalize to list (support both single string and array format)
+        seq_list = seq_data if isinstance(seq_data, list) else [seq_data]
+        num_sequences = len(seq_list)
+
+        logger.info(f"Processing {problem_id}: {num_sequences} sequence(s)")
 
         # Get problem-specific settings from config
         problem_settings = get_problem_settings(config, problem_id)
@@ -255,93 +261,148 @@ def main():
         problem_dir = args.submission_dir / problem_id
         problem_dir.mkdir(parents=True, exist_ok=True)
         problem_dir.chmod(0o775)
-        (problem_dir / "scripts").mkdir(exist_ok=True)
-        (problem_dir / "scripts").chmod(0o775)
-        (problem_dir / "logs").mkdir(exist_ok=True)
-        (problem_dir / "logs").chmod(0o775)
 
-        # Create job name: participant_problem
-        job_name = f"{participant_id}_{problem_id}"
-
-        # Create AF3 input JSON based on problem type
-        if problem_type == "binder":
-            # Binder design: participant sequence + given target
-            target_sequence = problem_settings.get("target_sequence", "")
-            target_msa_file = problem_settings.get("target_msa_file")
-            participant_msa_mode = problem_settings.get("participant_msa_mode", "none")
-
-            if not target_sequence:
-                logger.error(f"  Binder problem {problem_id} missing target_sequence in config!")
-                continue
-
-            af3_input = create_af3_input_binder(
-                job_name=job_name,
-                binder_sequence=sequence,
-                target_sequence=target_sequence,
-                binder_msa_mode=participant_msa_mode,
-                target_msa_mode="precomputed" if target_msa_file else "none",
-                target_msa_file=target_msa_file,
-                output_dir=problem_dir,
-            )
-            logger.info(f"  Created binder input: {len(sequence)} (binder) + {len(target_sequence)} (target) residues")
-        else:
-            # Monomer prediction
-            af3_input = create_af3_input_monomer(
-                job_name=job_name,
-                sequence=sequence,
-                msa_mode=msa_mode,
-                msa_file=msa_file,
-                output_dir=problem_dir,
-            )
-
-        af3_input_file = problem_dir / "af3_input.json"
-        with open(af3_input_file, "w") as f:
-            json.dump(af3_input, f, indent=2)
-        logger.info(f"  Created: {af3_input_file}")
-
-        # Create problem-specific submission info
-        problem_submission = {
+        # Store metadata about all sequences for this problem
+        problem_meta = {
             "submission_id": args.submission_id,
             "participant_id": participant_id,
             "email": email,
             "problem_id": problem_id,
-            "sequence": sequence,
-            "sequence_length": len(sequence),
             "problem_type": problem_type,
             "msa_mode": msa_mode,
+            "num_sequences": num_sequences,
+            "sequences": [],
         }
 
-        # Add binder-specific info
-        if problem_type == "binder":
-            problem_submission["target_sequence"] = problem_settings.get("target_sequence", "")
-            problem_submission["target_length"] = len(problem_settings.get("target_sequence", ""))
+        # Process each sequence for this problem
+        for seq_idx, sequence in enumerate(seq_list):
+            seq_num = seq_idx + 1  # 1-indexed for display
+            seq_suffix = f"_seq{seq_num}" if num_sequences > 1 else ""
 
-        problem_submission_file = problem_dir / "submission.json"
-        with open(problem_submission_file, "w") as f:
-            json.dump(problem_submission, f, indent=2)
+            logger.info(f"  Sequence {seq_num}/{num_sequences}: {len(sequence)} residues")
 
-        # Create FASTA file
-        fasta_file = problem_dir / "sequence.fasta"
-        with open(fasta_file, "w") as f:
-            f.write(f">{job_name}\n")
-            for i in range(0, len(sequence), 80):
-                f.write(sequence[i : i + 80] + "\n")
+            # Create sequence-specific subdirectory
+            seq_dir = problem_dir / f"seq_{seq_num}"
+            seq_dir.mkdir(parents=True, exist_ok=True)
+            seq_dir.chmod(0o775)
+            (seq_dir / "scripts").mkdir(exist_ok=True)
+            (seq_dir / "scripts").chmod(0o775)
+            (seq_dir / "logs").mkdir(exist_ok=True)
+            (seq_dir / "logs").chmod(0o775)
 
-            # Add target sequence for binder problems
+            # Create job name: participant_problem_seq#
+            job_name = f"{participant_id}_{problem_id}{seq_suffix}"
+
+            # Create AF3 input JSON based on problem type
             if problem_type == "binder":
-                target_seq = problem_settings.get("target_sequence", "")
-                f.write(f">{job_name}_target\n")
-                for i in range(0, len(target_seq), 80):
-                    f.write(target_seq[i : i + 80] + "\n")
+                # Binder design: participant sequence + given target
+                target_sequence = problem_settings.get("target_sequence", "")
+                target_msa_file = problem_settings.get("target_msa_file")
+                participant_msa_mode = problem_settings.get("participant_msa_mode", "none")
 
-        logger.info(f"  Created: {fasta_file}")
+                if not target_sequence:
+                    logger.error(f"    Binder problem {problem_id} missing target_sequence in config!")
+                    continue
+
+                af3_input = create_af3_input_binder(
+                    job_name=job_name,
+                    binder_sequence=sequence,
+                    target_sequence=target_sequence,
+                    binder_msa_mode=participant_msa_mode,
+                    target_msa_mode="precomputed" if target_msa_file else "none",
+                    target_msa_file=target_msa_file,
+                    output_dir=seq_dir,
+                )
+                logger.info(f"    Created binder input: {len(sequence)} (binder) + {len(target_sequence)} (target) residues")
+            else:
+                # Monomer prediction
+                af3_input = create_af3_input_monomer(
+                    job_name=job_name,
+                    sequence=sequence,
+                    msa_mode=msa_mode,
+                    msa_file=msa_file,
+                    output_dir=seq_dir,
+                )
+
+            af3_input_file = seq_dir / "af3_input.json"
+            with open(af3_input_file, "w") as f:
+                json.dump(af3_input, f, indent=2)
+            logger.info(f"    Created: {af3_input_file}")
+
+            # Create sequence-specific submission info
+            seq_submission = {
+                "submission_id": args.submission_id,
+                "participant_id": participant_id,
+                "email": email,
+                "problem_id": problem_id,
+                "seq_num": seq_num,
+                "sequence": sequence,
+                "sequence_length": len(sequence),
+                "problem_type": problem_type,
+                "msa_mode": msa_mode,
+            }
+
+            # Add binder-specific info
+            if problem_type == "binder":
+                seq_submission["target_sequence"] = problem_settings.get("target_sequence", "")
+                seq_submission["target_length"] = len(problem_settings.get("target_sequence", ""))
+
+            seq_submission_file = seq_dir / "submission.json"
+            with open(seq_submission_file, "w") as f:
+                json.dump(seq_submission, f, indent=2)
+
+            # Create FASTA file
+            fasta_file = seq_dir / "sequence.fasta"
+            with open(fasta_file, "w") as f:
+                f.write(f">{job_name}\n")
+                for i in range(0, len(sequence), 80):
+                    f.write(sequence[i : i + 80] + "\n")
+
+                # Add target sequence for binder problems
+                if problem_type == "binder":
+                    target_seq = problem_settings.get("target_sequence", "")
+                    f.write(f">{job_name}_target\n")
+                    for i in range(0, len(target_seq), 80):
+                        f.write(target_seq[i : i + 80] + "\n")
+
+            logger.info(f"    Created: {fasta_file}")
+
+            # Create sequence status file
+            status_file = seq_dir / "status.json"
+            with open(status_file, "w") as f:
+                json.dump({
+                    "status": "pending",
+                    "problem_id": problem_id,
+                    "seq_num": seq_num,
+                    "type": problem_type
+                }, f, indent=2)
+
+            # Add to problem metadata
+            problem_meta["sequences"].append({
+                "seq_num": seq_num,
+                "sequence": sequence,
+                "sequence_length": len(sequence),
+                "seq_dir": f"seq_{seq_num}",
+            })
+
+            total_jobs += 1
+
+        # Save problem-level metadata
+        problem_meta_file = problem_dir / "problem_meta.json"
+        with open(problem_meta_file, "w") as f:
+            json.dump(problem_meta, f, indent=2)
 
         # Create problem status file
-        status_file = problem_dir / "status.json"
-        with open(status_file, "w") as f:
-            json.dump({"status": "pending", "problem_id": problem_id, "type": problem_type}, f, indent=2)
+        problem_status_file = problem_dir / "status.json"
+        with open(problem_status_file, "w") as f:
+            json.dump({
+                "status": "pending",
+                "problem_id": problem_id,
+                "type": problem_type,
+                "num_sequences": num_sequences
+            }, f, indent=2)
 
-    logger.info(f"Successfully processed {len(sequences)} problems")
+    logger.info(f"Successfully processed {len(sequences)} problems with {total_jobs} total jobs")
 
 
 if __name__ == "__main__":
