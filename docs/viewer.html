@@ -181,6 +181,72 @@
             text-decoration: underline;
         }
 
+        /* Metrics display */
+        .metrics-card {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .metrics-card h3 {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 0.75rem;
+        }
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid #2a3f5f;
+            font-size: 0.9rem;
+        }
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+        .metric-name {
+            color: #aaa;
+        }
+        .metric-value {
+            font-weight: 600;
+            color: #65cbf3;
+        }
+        .metric-value.primary {
+            color: #e94560;
+            font-size: 1.1rem;
+        }
+        .metrics-comparison {
+            margin-top: 1rem;
+        }
+        .metrics-comparison table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .metrics-comparison th, .metrics-comparison td {
+            padding: 0.4rem;
+            text-align: center;
+            border-bottom: 1px solid #2a3f5f;
+        }
+        .metrics-comparison th {
+            color: #aaa;
+            font-weight: normal;
+        }
+        .metrics-comparison tr.best-seq {
+            background: rgba(233, 69, 96, 0.15);
+        }
+        .metrics-comparison tr.best-seq td {
+            color: #e94560;
+            font-weight: 600;
+        }
+        .best-badge {
+            background: #e94560;
+            color: white;
+            font-size: 0.65rem;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            margin-left: 0.3rem;
+        }
+
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -229,6 +295,12 @@
                 <p id="current-problem">-</p>
             </div>
 
+            <div class="metrics-card" id="metrics-card" style="display: none;">
+                <h3>Evaluation Metrics</h3>
+                <div id="metrics-display"></div>
+                <div id="metrics-comparison" class="metrics-comparison"></div>
+            </div>
+
             <div class="info-card">
                 <h3>pLDDT Color Scale</h3>
                 <div class="plddt-legend">
@@ -273,6 +345,7 @@
         let submission = null;
         let viewerInstance = null;
         let currentProblem = null;
+        let evaluationCache = {};  // Cache for evaluation data
 
         async function loadResults() {
             if (!token) {
@@ -435,7 +508,7 @@
             }
         }
 
-        function selectSequence(problemId, seqNum) {
+        async function selectSequence(problemId, seqNum) {
             currentSequence = seqNum;
 
             // Update sequence tab states
@@ -468,6 +541,13 @@
                 document.getElementById('molstar-viewer').innerHTML =
                     `<div class="error">No structure file found for sequence ${seqNum}.</div>`;
             }
+
+            // Load and display evaluation metrics
+            const evaluations = await loadAllEvaluations(problemId);
+            const bestSeq = findBestSequence(evaluations);
+            const currentEval = evaluations[seqNum];
+            displayMetrics(currentEval, seqNum === bestSeq);
+            displayMetricsComparison(evaluations, seqNum);
         }
 
         function loadStructure(cifFile) {
@@ -492,6 +572,165 @@
             };
 
             viewerInstance.render(viewerContainer, options);
+        }
+
+        async function loadEvaluation(problemId, seqNum) {
+            const cacheKey = `${problemId}_seq${seqNum}`;
+            if (evaluationCache[cacheKey]) {
+                return evaluationCache[cacheKey];
+            }
+
+            // Try to find evaluation file
+            const participantId = submission.participant_id || 'unknown';
+            const patterns = [
+                `${participantId}_${problemId}_seq${seqNum}_evaluation.json`,
+                `${participantId}_${problemId}seq${seqNum}_evaluation.json`,
+                `evaluation_${problemId}_seq${seqNum}.json`,
+            ];
+
+            for (const pattern of patterns) {
+                try {
+                    const url = `${RESULTS_BASE_URL}${token}/${pattern}`;
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const data = await response.json();
+                        evaluationCache[cacheKey] = data;
+                        return data;
+                    }
+                } catch (e) {
+                    // Continue to next pattern
+                }
+            }
+            return null;
+        }
+
+        async function loadAllEvaluations(problemId) {
+            const problemData = metadata.problems[problemId];
+            const sequences = problemData?.sequences || {};
+            const seqNums = Object.keys(sequences).sort((a, b) => parseInt(a) - parseInt(b));
+
+            const evaluations = {};
+            for (const seqNum of seqNums) {
+                const evalData = await loadEvaluation(problemId, seqNum);
+                if (evalData) {
+                    evaluations[seqNum] = evalData;
+                }
+            }
+            return evaluations;
+        }
+
+        function findBestSequence(evaluations, primaryMetric = 'bb_lddt') {
+            let bestSeq = null;
+            let bestScore = -Infinity;
+
+            for (const [seqNum, evalData] of Object.entries(evaluations)) {
+                const score = evalData.primary_score || evalData.metrics?.[primaryMetric] || 0;
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestSeq = seqNum;
+                }
+            }
+            return bestSeq;
+        }
+
+        function displayMetrics(evalData, isBest = false) {
+            const metricsCard = document.getElementById('metrics-card');
+            const metricsDisplay = document.getElementById('metrics-display');
+
+            if (!evalData) {
+                metricsCard.style.display = 'none';
+                return;
+            }
+
+            metricsCard.style.display = 'block';
+            const metrics = evalData.metrics || {};
+            const af3Metrics = evalData.af3_metrics || {};
+            const primaryMetric = evalData.primary_metric || 'bb_lddt';
+            const primaryScore = evalData.primary_score;
+
+            let html = '';
+
+            // Primary metric first
+            if (primaryScore !== null && primaryScore !== undefined) {
+                const bestLabel = isBest ? '<span class="best-badge">BEST</span>' : '';
+                html += `<div class="metric-row">
+                    <span class="metric-name">${primaryMetric}${bestLabel}</span>
+                    <span class="metric-value primary">${primaryScore.toFixed(4)}</span>
+                </div>`;
+            }
+
+            // Other structural metrics
+            if (metrics.tm_score) {
+                html += `<div class="metric-row">
+                    <span class="metric-name">TM-score</span>
+                    <span class="metric-value">${metrics.tm_score.toFixed(4)}</span>
+                </div>`;
+            }
+            if (metrics.rmsd) {
+                html += `<div class="metric-row">
+                    <span class="metric-name">RMSD (Å)</span>
+                    <span class="metric-value">${metrics.rmsd.toFixed(2)}</span>
+                </div>`;
+            }
+            if (metrics.aligned_length) {
+                html += `<div class="metric-row">
+                    <span class="metric-name">Aligned Length</span>
+                    <span class="metric-value">${metrics.aligned_length}</span>
+                </div>`;
+            }
+
+            // AF3 metrics
+            if (af3Metrics.ptm) {
+                html += `<div class="metric-row">
+                    <span class="metric-name">pTM</span>
+                    <span class="metric-value">${af3Metrics.ptm.toFixed(2)}</span>
+                </div>`;
+            }
+            if (af3Metrics.ranking_score) {
+                html += `<div class="metric-row">
+                    <span class="metric-name">Ranking Score</span>
+                    <span class="metric-value">${af3Metrics.ranking_score.toFixed(2)}</span>
+                </div>`;
+            }
+
+            metricsDisplay.innerHTML = html;
+        }
+
+        function displayMetricsComparison(evaluations, currentSeqNum) {
+            const compDiv = document.getElementById('metrics-comparison');
+            const seqNums = Object.keys(evaluations).sort((a, b) => parseInt(a) - parseInt(b));
+
+            if (seqNums.length <= 1) {
+                compDiv.innerHTML = '';
+                return;
+            }
+
+            const bestSeq = findBestSequence(evaluations);
+
+            let html = '<h4 style="color: #aaa; font-size: 0.85rem; margin-bottom: 0.5rem;">All Sequences</h4>';
+            html += '<table><thead><tr><th>Seq</th><th>bb_lddt</th><th>TM</th><th>RMSD</th></tr></thead><tbody>';
+
+            for (const seqNum of seqNums) {
+                const evalData = evaluations[seqNum];
+                const metrics = evalData?.metrics || {};
+                const isBest = seqNum === bestSeq;
+                const isCurrent = seqNum === currentSeqNum;
+                const rowClass = isBest ? 'best-seq' : '';
+                const currentMark = isCurrent ? ' ◀' : '';
+                const bestMark = isBest ? ' ★' : '';
+
+                html += `<tr class="${rowClass}">
+                    <td>${seqNum}${bestMark}${currentMark}</td>
+                    <td>${metrics.bb_lddt?.toFixed(4) || '-'}</td>
+                    <td>${metrics.tm_score?.toFixed(3) || '-'}</td>
+                    <td>${metrics.rmsd?.toFixed(2) || '-'}</td>
+                </tr>`;
+            }
+
+            html += '</tbody></table>';
+            html += '<p style="font-size: 0.7rem; color: #666; margin-top: 0.5rem;">★ = best, ◀ = current</p>';
+
+            compDiv.innerHTML = html;
         }
 
         function displayFileList() {

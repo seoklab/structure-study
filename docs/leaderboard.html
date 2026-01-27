@@ -336,7 +336,7 @@
                 tab.className = 'tab';
                 tab.dataset.tab = problemId;
 
-                const typeBadge = `<span class="problem-type-badge ${problem.type}">${problem.type === 'monomer' ? 'Monomer' : 'Binder'}</span>`;
+                const typeBadge = `<span class="problem-type-badge ${problem.type}">${problem.type === 'monomer' ? 'Scaffold' : 'Binder'}</span>`;
                 tab.innerHTML = problem.name.replace(/\s*\([^)]*\)/, '') + typeBadge;
 
                 tab.addEventListener('click', () => selectTab(problemId));
@@ -470,7 +470,7 @@
             return `
                 <div class="panel-header">
                     <h2>${problem.name}</h2>
-                    <p>${isBinder ? 'Binder Design' : 'Monomer Design'} | ${rankings.length} submissions | Click column headers to sort</p>
+                    <p>${isBinder ? 'Binder Design' : 'Scaffold Design'} | ${rankings.length} submissions | Click column headers to sort</p>
                 </div>
                 <div class="table-container">
                     <table class="ranking-table" data-table-id="${problemId}">

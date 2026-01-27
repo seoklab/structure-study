@@ -71,7 +71,7 @@
   },
   "problem_types": {
     "monomer": {
-      "description": "Monomer design - design a sequence for the given backbone",
+      "description": "Scaffold design - design a sequence for the given backbone",
       "chains": ["participant"]
     },
     "binder": {

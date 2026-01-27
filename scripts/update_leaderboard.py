@@ -386,7 +386,8 @@ def generate_leaderboard(
                 "token": entry["token"],
                 "submitted_at": entry.get("submitted_at"),
                 "primary_score": entry.get("primary_score"),
-                "primary_metric": entry.get("primary_metric")
+                "primary_metric": entry.get("primary_metric"),
+                "best_seq": entry.get("seq_num")  # Which sequence was chosen as best
             }
 
             # Add relevant metrics based on problem type
