@@ -1,5 +1,100 @@
 {
-  "last_updated": "2026-01-27T10:00:00Z",
-  "problems": {},
-  "overall_rankings": []
+  "last_updated": "2026-01-27T10:06:51.101741Z",
+  "problems": {
+    "problem_1": {
+      "name": "Problem 1 - 3-Helix Bundle",
+      "type": "monomer",
+      "primary_metric": "bb_lddt",
+      "rankings": [
+        {
+          "rank": 1,
+          "participant_id": "admin1_day1_round1",
+          "token": "h90hcZUHJvDfazVueNlD9J9kHSBKZPH3",
+          "submitted_at": "2026-01-27T09:50:23.362Z",
+          "primary_score": 0.6656,
+          "primary_metric": "bb_lddt",
+          "bb_lddt": 0.6656,
+          "tm_score": 0.66988,
+          "rmsd": 2.51,
+          "ptm": 0.66,
+          "plddt": null,
+          "ranking_score": 0.66
+        }
+      ]
+    },
+    "problem_2": {
+      "name": "Problem 2 - 4-Helix Bundle",
+      "type": "monomer",
+      "primary_metric": "bb_lddt",
+      "rankings": [
+        {
+          "rank": 1,
+          "participant_id": "admin1_day1_round1",
+          "token": "h90hcZUHJvDfazVueNlD9J9kHSBKZPH3",
+          "submitted_at": "2026-01-27T09:50:23.362Z",
+          "primary_score": 0.9405,
+          "primary_metric": "bb_lddt",
+          "bb_lddt": 0.9405,
+          "tm_score": 0.93593,
+          "rmsd": 1.14,
+          "ptm": 0.81,
+          "plddt": null,
+          "ranking_score": 0.81
+        }
+      ]
+    },
+    "problem_3": {
+      "name": "Problem 3 - Top7 Fold",
+      "type": "monomer",
+      "primary_metric": "bb_lddt",
+      "rankings": [
+        {
+          "rank": 1,
+          "participant_id": "admin1_day1_round1",
+          "token": "h90hcZUHJvDfazVueNlD9J9kHSBKZPH3",
+          "submitted_at": "2026-01-27T09:50:23.362Z",
+          "primary_score": 0.5831,
+          "primary_metric": "bb_lddt",
+          "bb_lddt": 0.5831,
+          "tm_score": 0.4456,
+          "rmsd": 2.47,
+          "ptm": 0.5,
+          "plddt": null,
+          "ranking_score": 0.5
+        }
+      ]
+    },
+    "problem_4": {
+      "name": "Problem 4 - Peptide Binder 1",
+      "type": "binder",
+      "primary_metric": "iptm",
+      "rankings": []
+    },
+    "problem_5": {
+      "name": "Problem 5 - Peptide Binder 2",
+      "type": "binder",
+      "primary_metric": "iptm",
+      "rankings": []
+    }
+  },
+  "overall_rankings": [
+    {
+      "participant_id": "admin1_day1_round1",
+      "token": "h90hcZUHJvDfazVueNlD9J9kHSBKZPH3",
+      "problems_completed": 3,
+      "total_rank_points": 300,
+      "problem_scores": {
+        "problem_1": 0.6656,
+        "problem_2": 0.9405,
+        "problem_3": 0.5831
+      },
+      "problem_ranks": {
+        "problem_1": 1,
+        "problem_2": 1,
+        "problem_3": 1
+      },
+      "rank": 1,
+      "avg_rank_points": 100.0
+    }
+  ]
 }
