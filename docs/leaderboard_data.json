@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-01-28T02:52:04.895140Z",
+  "last_updated": "2026-01-28T06:47:46.899559Z",
   "problems": {
     "problem_1": {
       "name": "Problem 1 - 3-Helix Bundle",
@@ -87,9 +87,9 @@
           "complex_tm": 0.75449,
           "complex_rmsd": 1.58,
           "complex_lddt": 0.9575,
-          "binder_tm": null,
-          "binder_rmsd": null,
-          "binder_lddt": null,
+          "binder_tm": 0.9085,
+          "binder_rmsd": 0.54,
+          "binder_lddt": 0.9575,
           "interface_lddt": null,
           "interface_contacts": null
         }
@@ -110,16 +110,16 @@
           "best_seq": "1",
           "iptm": 0.01,
           "ptm": 0.87,
-          "plddt": null,
+          "plddt": 87.59,
           "ranking_score": 0.81,
           "complex_tm": 0.84501,
           "complex_rmsd": 2.55,
           "complex_lddt": 0.8929,
-          "binder_tm": null,
-          "binder_rmsd": null,
-          "binder_lddt": null,
-          "interface_lddt": null,
-          "interface_contacts": null
+          "binder_tm": 0.29289,
+          "binder_rmsd": 0.9,
+          "binder_lddt": 0.8929,
+          "interface_lddt": 0.514,
+          "interface_contacts": 571
         }
       ]
     }

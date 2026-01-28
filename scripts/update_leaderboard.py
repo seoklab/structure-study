@@ -190,6 +190,7 @@ def process_sequence_entry(
             entry["metrics"] = eval_data.get("metrics", {})
             entry["af3_metrics"] = eval_data.get("af3_metrics", {})
             entry["binder_metrics"] = eval_data.get("binder_metrics", {})
+            entry["interface_metrics"] = eval_data.get("interface_metrics", {})
             entry["primary_score"] = eval_data.get("primary_score")
             entry["primary_metric"] = eval_data.get("primary_metric")
         except Exception as e:
