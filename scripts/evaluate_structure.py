@@ -642,7 +642,9 @@ def compute_interface_lddt(model_coords_a: np.ndarray, model_coords_b: np.ndarra
                            ref_coords_a: np.ndarray, ref_coords_b: np.ndarray,
                            interface_cutoff: float = 8.0,
                            lddt_cutoff: float = 15.0,
-                           thresholds: tuple = (0.5, 1.0, 2.0, 4.0)) -> dict:
+                           thresholds: tuple = (0.5, 1.0, 2.0, 4.0),
+                           aligned_pairs_a: list[tuple[int, int]] | None = None,
+                           aligned_pairs_b: list[tuple[int, int]] | None = None) -> dict:
     """
     Compute interface lDDT (iLDDT) between two chains.
 
@@ -657,6 +659,8 @@ def compute_interface_lddt(model_coords_a: np.ndarray, model_coords_b: np.ndarra
         interface_cutoff: Distance cutoff to define interface residues (default 8A)
         lddt_cutoff: Distance cutoff for lDDT calculation (default 15A)
         thresholds: Distance difference thresholds for lDDT
+        aligned_pairs_a: List of (model_idx, ref_idx) for chain A alignment (for length mismatch)
+        aligned_pairs_b: List of (model_idx, ref_idx) for chain B alignment (for length mismatch)
 
     Returns:
         dict with interface_lddt, interface_residue_counts, etc.
@@ -670,15 +674,93 @@ def compute_interface_lddt(model_coords_a: np.ndarray, model_coords_b: np.ndarra
         "total_interface_contacts": 0
     }
 
-    # Check if lengths match (they should for proper comparison)
-    if len(model_coords_a) != len(ref_coords_a) or len(model_coords_b) != len(ref_coords_b):
-        result["error"] = "Chain length mismatch between model and reference"
-        return result
-
     if len(ref_coords_a) == 0 or len(ref_coords_b) == 0:
         result["error"] = "Empty chain coordinates"
         return result
 
+    # Handle length mismatch using alignments
+    length_mismatch = (len(model_coords_a) != len(ref_coords_a) or
+                       len(model_coords_b) != len(ref_coords_b))
+
+    if length_mismatch:
+        if aligned_pairs_a is None or aligned_pairs_b is None:
+            result["error"] = "Chain length mismatch and no alignment provided"
+            return result
+
+        # Build index mappings from alignment
+        # model_to_ref_a[model_idx] = ref_idx (or -1 if not aligned)
+        model_to_ref_a = {m: r for m, r in aligned_pairs_a}
+        model_to_ref_b = {m: r for m, r in aligned_pairs_b}
+        ref_to_model_a = {r: m for m, r in aligned_pairs_a}
+        ref_to_model_b = {r: m for m, r in aligned_pairs_b}
+
+        # Identify interface residues in reference
+        interface_a, interface_b = identify_interface_residues(ref_coords_a, ref_coords_b, interface_cutoff)
+
+        result["interface_count_a"] = int(np.sum(interface_a))
+        result["interface_count_b"] = int(np.sum(interface_b))
+
+        if result["interface_count_a"] == 0 and result["interface_count_b"] == 0:
+            result["error"] = "No interface residues found"
+            return result
+
+        # Compute interface lDDT using aligned residues only
+        total_preserved = 0
+        total_contacts = 0
+
+        # For chain A interface residues (in reference)
+        for ref_i in np.where(interface_a)[0]:
+            if ref_i not in ref_to_model_a:
+                continue  # This reference residue has no aligned model residue
+            model_i = ref_to_model_a[ref_i]
+
+            # Find cross-chain contacts in reference
+            for ref_j in range(len(ref_coords_b)):
+                if ref_j not in ref_to_model_b:
+                    continue  # This reference residue has no aligned model residue
+                model_j = ref_to_model_b[ref_j]
+
+                ref_dist = np.linalg.norm(ref_coords_a[ref_i] - ref_coords_b[ref_j])
+                if ref_dist < lddt_cutoff:
+                    model_dist = np.linalg.norm(model_coords_a[model_i] - model_coords_b[model_j])
+                    diff = abs(model_dist - ref_dist)
+
+                    preserved = sum(1 for t in thresholds if diff < t) / len(thresholds)
+                    total_preserved += preserved
+                    total_contacts += 1
+
+        # For chain B interface residues (avoid double counting)
+        for ref_j in np.where(interface_b)[0]:
+            if ref_j not in ref_to_model_b:
+                continue
+            model_j = ref_to_model_b[ref_j]
+
+            for ref_i in range(len(ref_coords_a)):
+                if interface_a[ref_i]:
+                    continue  # Already counted above
+                if ref_i not in ref_to_model_a:
+                    continue
+                model_i = ref_to_model_a[ref_i]
+
+                ref_dist = np.linalg.norm(ref_coords_a[ref_i] - ref_coords_b[ref_j])
+                if ref_dist < lddt_cutoff:
+                    model_dist = np.linalg.norm(model_coords_a[model_i] - model_coords_b[model_j])
+                    diff = abs(model_dist - ref_dist)
+
+                    preserved = sum(1 for t in thresholds if diff < t) / len(thresholds)
+                    total_preserved += preserved
+                    total_contacts += 1
+
+        result["total_interface_contacts"] = total_contacts
+
+        if total_contacts > 0:
+            result["interface_lddt"] = round(total_preserved / total_contacts, 4)
+        else:
+            result["interface_lddt"] = 0.0
+
+        return result
+
+    # Original logic for matching lengths
     # Identify interface residues in reference
     interface_a, interface_b = identify_interface_residues(ref_coords_a, ref_coords_b, interface_cutoff)
 
@@ -921,6 +1003,7 @@ def main():
 
         # 2. Binder-only metrics (chain A vs chain A) using TMalign
         print("\nComputing binder-only metrics (chain A vs chain A, TMalign)...")
+        binder_aligned_pairs = None  # Initialize for use in interface lDDT
         try:
             # Extract chain A from model and reference
             model_chain_a = tempfile.NamedTemporaryFile(suffix=".pdb", delete=False)
@@ -985,24 +1068,56 @@ def main():
             print(f"  Model: chain A={len(model_a_coords)} CA, chain B={len(model_b_coords)} CA")
             print(f"  Reference: chain A={len(ref_a_coords)} CA, chain B={len(ref_b_coords)} CA")
 
-            if (len(model_a_coords) == len(ref_a_coords) and
-                len(model_b_coords) == len(ref_b_coords)):
-                ilddt_result = compute_interface_lddt(
-                    model_a_coords, model_b_coords,
-                    ref_a_coords, ref_b_coords,
-                    interface_cutoff=8.0
-                )
-                result["interface_metrics"] = ilddt_result
-                if ilddt_result.get("interface_lddt") is not None:
-                    print(f"  Interface lDDT: {ilddt_result['interface_lddt']}")
-                    print(f"  Interface residues: A={ilddt_result['interface_count_a']}, B={ilddt_result['interface_count_b']}")
-                    print(f"  Total interface contacts: {ilddt_result['total_interface_contacts']}")
-                else:
-                    print(f"  Interface lDDT error: {ilddt_result.get('error', 'Unknown')}")
+            # Check for length mismatch
+            length_mismatch = (len(model_a_coords) != len(ref_a_coords) or
+                               len(model_b_coords) != len(ref_b_coords))
+
+            aligned_pairs_a = binder_aligned_pairs  # From binder TMalign above
+            aligned_pairs_b = None
+
+            if length_mismatch:
+                print("  Length mismatch detected - using TMalign alignment for chain B...")
+                # Get alignment for chain B
+                model_chain_b = tempfile.NamedTemporaryFile(suffix=".pdb", delete=False)
+                ref_chain_b = tempfile.NamedTemporaryFile(suffix=".pdb", delete=False)
+                model_chain_b.close()
+                ref_chain_b.close()
+
+                model_b_extracted = extract_chain_to_pdb(args.model, model_chain_b.name, "B")
+                ref_b_extracted = extract_chain_to_pdb(args.reference, ref_chain_b.name, "B")
+
+                if model_b_extracted and ref_b_extracted:
+                    maybe_keep_temp(model_chain_b.name, "interface_model_chainB")
+                    maybe_keep_temp(ref_chain_b.name, "interface_ref_chainB")
+
+                    chain_b_tm = run_tmalign(model_chain_b.name, ref_chain_b.name,
+                                             multimer=False, return_alignment=True)
+                    if "error" not in chain_b_tm:
+                        aligned_pairs_b = chain_b_tm.get("aligned_pairs")
+                        print(f"  Chain B alignment: {len(aligned_pairs_b) if aligned_pairs_b else 0} pairs")
+                    else:
+                        print(f"  Chain B TMalign error: {chain_b_tm.get('error')}")
+
+                # Cleanup temp files
+                if not KEEP_TEMP_FILES:
+                    for f in [model_chain_b.name, ref_chain_b.name]:
+                        if os.path.exists(f):
+                            os.unlink(f)
+
+            ilddt_result = compute_interface_lddt(
+                model_a_coords, model_b_coords,
+                ref_a_coords, ref_b_coords,
+                interface_cutoff=8.0,
+                aligned_pairs_a=aligned_pairs_a,
+                aligned_pairs_b=aligned_pairs_b
+            )
+            result["interface_metrics"] = ilddt_result
+            if ilddt_result.get("interface_lddt") is not None:
+                print(f"  Interface lDDT: {ilddt_result['interface_lddt']}")
+                print(f"  Interface residues: A={ilddt_result['interface_count_a']}, B={ilddt_result['interface_count_b']}")
+                print(f"  Total interface contacts: {ilddt_result['total_interface_contacts']}")
             else:
-                result["interface_metrics"]["error"] = "Chain length mismatch - cannot compute interface lDDT"
-                print("  Warning: Chain lengths differ between model and reference")
-                print("  (Interface lDDT requires matching chain lengths)")
+                print(f"  Interface lDDT error: {ilddt_result.get('error', 'Unknown')}")
 
         except Exception as e:
             print(f"Interface lDDT error: {e}", file=sys.stderr)
