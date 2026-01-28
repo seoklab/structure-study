@@ -659,34 +659,79 @@
                 </div>`;
             }
 
-            // Other structural metrics
-            if (metrics.tm_score) {
-                html += `<div class="metric-row">
-                    <span class="metric-name">TM-score</span>
-                    <span class="metric-value">${metrics.tm_score.toFixed(4)}</span>
-                </div>`;
-            }
-            if (metrics.rmsd) {
-                html += `<div class="metric-row">
-                    <span class="metric-name">RMSD (Å)</span>
-                    <span class="metric-value">${metrics.rmsd.toFixed(2)}</span>
-                </div>`;
-            }
-            if (metrics.aligned_length) {
-                html += `<div class="metric-row">
-                    <span class="metric-name">Aligned Length</span>
-                    <span class="metric-value">${metrics.aligned_length}</span>
-                </div>`;
+            // Check if this is a binder problem (has binder_metrics)
+            const binderMetrics = evalData.binder_metrics || {};
+            const isBinder = Object.keys(binderMetrics).length > 0 || evalData.problem_type === 'binder';
+
+            if (isBinder) {
+                // Binder-specific metrics
+                if (binderMetrics.binder_tm_score != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">Binder TM-score</span>
+                        <span class="metric-value">${binderMetrics.binder_tm_score.toFixed(4)}</span>
+                    </div>`;
+                }
+                if (binderMetrics.binder_rmsd != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">Binder RMSD (Å)</span>
+                        <span class="metric-value">${binderMetrics.binder_rmsd.toFixed(2)}</span>
+                    </div>`;
+                }
+                if (binderMetrics.binder_lddt != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">Binder lDDT</span>
+                        <span class="metric-value">${binderMetrics.binder_lddt.toFixed(4)}</span>
+                    </div>`;
+                }
+                // Complex metrics
+                if (metrics.complex_tm_score != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">Complex TM-score</span>
+                        <span class="metric-value">${metrics.complex_tm_score.toFixed(4)}</span>
+                    </div>`;
+                }
+                if (metrics.complex_rmsd != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">Complex RMSD (Å)</span>
+                        <span class="metric-value">${metrics.complex_rmsd.toFixed(2)}</span>
+                    </div>`;
+                }
+            } else {
+                // Monomer metrics
+                if (metrics.tm_score != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">TM-score</span>
+                        <span class="metric-value">${metrics.tm_score.toFixed(4)}</span>
+                    </div>`;
+                }
+                if (metrics.rmsd != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">RMSD (Å)</span>
+                        <span class="metric-value">${metrics.rmsd.toFixed(2)}</span>
+                    </div>`;
+                }
+                if (metrics.aligned_length) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">Aligned Length</span>
+                        <span class="metric-value">${metrics.aligned_length}</span>
+                    </div>`;
+                }
             }
 
             // AF3 metrics
-            if (af3Metrics.ptm) {
+            if (af3Metrics.ptm != null) {
                 html += `<div class="metric-row">
                     <span class="metric-name">pTM</span>
                     <span class="metric-value">${af3Metrics.ptm.toFixed(2)}</span>
                 </div>`;
             }
-            if (af3Metrics.ranking_score) {
+            if (af3Metrics.iptm != null) {
+                html += `<div class="metric-row">
+                    <span class="metric-name">ipTM</span>
+                    <span class="metric-value">${af3Metrics.iptm.toFixed(2)}</span>
+                </div>`;
+            }
+            if (af3Metrics.ranking_score != null) {
                 html += `<div class="metric-row">
                     <span class="metric-name">Ranking Score</span>
                     <span class="metric-value">${af3Metrics.ranking_score.toFixed(2)}</span>
@@ -707,24 +752,44 @@
 
             const bestSeq = findBestSequence(evaluations);
 
+            // Check if this is a binder problem
+            const firstEval = evaluations[seqNums[0]];
+            const isBinder = firstEval?.binder_metrics && Object.keys(firstEval.binder_metrics).length > 0;
+
             let html = '<h4 style="color: #aaa; font-size: 0.85rem; margin-bottom: 0.5rem;">All Sequences</h4>';
-            html += '<table><thead><tr><th>Seq</th><th>bb_lddt</th><th>TM</th><th>RMSD</th></tr></thead><tbody>';
+
+            if (isBinder) {
+                html += '<table><thead><tr><th>Seq</th><th>ipTM</th><th>Binder TM</th><th>Binder RMSD</th></tr></thead><tbody>';
+            } else {
+                html += '<table><thead><tr><th>Seq</th><th>bb_lddt</th><th>TM</th><th>RMSD</th></tr></thead><tbody>';
+            }
 
             for (const seqNum of seqNums) {
                 const evalData = evaluations[seqNum];
                 const metrics = evalData?.metrics || {};
+                const binderMetrics = evalData?.binder_metrics || {};
+                const af3Metrics = evalData?.af3_metrics || {};
                 const isBest = seqNum === bestSeq;
                 const isCurrent = seqNum === currentSeqNum;
                 const rowClass = isBest ? 'best-seq' : '';
                 const currentMark = isCurrent ? ' ◀' : '';
                 const bestMark = isBest ? ' ★' : '';
 
-                html += `<tr class="${rowClass}">
-                    <td>${seqNum}${bestMark}${currentMark}</td>
-                    <td>${metrics.bb_lddt?.toFixed(4) || '-'}</td>
-                    <td>${metrics.tm_score?.toFixed(3) || '-'}</td>
-                    <td>${metrics.rmsd?.toFixed(2) || '-'}</td>
-                </tr>`;
+                if (isBinder) {
+                    html += `<tr class="${rowClass}">
+                        <td>${seqNum}${bestMark}${currentMark}</td>
+                        <td>${af3Metrics.iptm?.toFixed(3) || '-'}</td>
+                        <td>${binderMetrics.binder_tm_score?.toFixed(3) || '-'}</td>
+                        <td>${binderMetrics.binder_rmsd?.toFixed(2) || '-'}</td>
+                    </tr>`;
+                } else {
+                    html += `<tr class="${rowClass}">
+                        <td>${seqNum}${bestMark}${currentMark}</td>
+                        <td>${metrics.bb_lddt?.toFixed(4) || '-'}</td>
+                        <td>${metrics.tm_score?.toFixed(3) || '-'}</td>
+                        <td>${metrics.rmsd?.toFixed(2) || '-'}</td>
+                    </tr>`;
+                }
             }
 
             html += '</tbody></table>';

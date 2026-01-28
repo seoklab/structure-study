@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Structure Viewer - Protein Competition</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/molstar@latest/build/viewer/molstar.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pdbe-molstar@3.3.0/build/pdbe-molstar.css">
     <style>
         * {
             margin: 0;
@@ -44,9 +44,10 @@
         #molstar-viewer {
             width: 100%;
             height: 100%;
+            position: relative;
         }
         .sidebar {
-            width: 300px;
+            width: 320px;
             background: #16213e;
             padding: 1.5rem;
             overflow-y: auto;
@@ -99,10 +100,16 @@
             cursor: pointer;
             text-align: center;
             text-decoration: none;
-            margin-top: 1rem;
+            margin-top: 0.5rem;
         }
         .download-btn:hover {
             background: #ff6b6b;
+        }
+        .download-btn.secondary {
+            background: #0f3460;
+        }
+        .download-btn.secondary:hover {
+            background: #1a4a7a;
         }
         .loading {
             display: flex;
@@ -115,6 +122,145 @@
             color: #e94560;
             padding: 2rem;
             text-align: center;
+        }
+
+        /* Problem selector for multi-problem results */
+        .problem-selector {
+            margin-bottom: 1rem;
+        }
+        .problem-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .problem-tab {
+            padding: 0.5rem 1rem;
+            background: #0f0f23;
+            border: 2px solid #2a3f5f;
+            border-radius: 6px;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .problem-tab:hover {
+            border-color: #65cbf3;
+            color: #fff;
+        }
+        .problem-tab.active {
+            background: #e94560;
+            border-color: #e94560;
+            color: #fff;
+        }
+
+        /* Files list */
+        .files-list {
+            margin-top: 1rem;
+        }
+        .files-list h3 {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 0.5rem;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: #0f0f23;
+            border-radius: 4px;
+            margin-bottom: 0.25rem;
+            font-size: 0.8rem;
+        }
+        .file-item a {
+            color: #65cbf3;
+            text-decoration: none;
+        }
+        .file-item a:hover {
+            text-decoration: underline;
+        }
+
+        /* Metrics display */
+        .metrics-card {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .metrics-card h3 {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 0.75rem;
+        }
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid #2a3f5f;
+            font-size: 0.9rem;
+        }
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+        .metric-name {
+            color: #aaa;
+        }
+        .metric-value {
+            font-weight: 600;
+            color: #65cbf3;
+        }
+        .metric-value.primary {
+            color: #e94560;
+            font-size: 1.1rem;
+        }
+        .metrics-comparison {
+            margin-top: 1rem;
+        }
+        .metrics-comparison table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .metrics-comparison th, .metrics-comparison td {
+            padding: 0.4rem;
+            text-align: center;
+            border-bottom: 1px solid #2a3f5f;
+        }
+        .metrics-comparison th {
+            color: #aaa;
+            font-weight: normal;
+        }
+        .metrics-comparison tr.best-seq {
+            background: rgba(233, 69, 96, 0.15);
+        }
+        .metrics-comparison tr.best-seq td {
+            color: #e94560;
+            font-weight: 600;
+        }
+        .best-badge {
+            background: #e94560;
+            color: white;
+            font-size: 0.65rem;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            margin-left: 0.3rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 40vh;
+                border-left: none;
+                border-top: 1px solid #0f3460;
+            }
+            .viewer-panel {
+                height: 60vh;
+            }
         }
     </style>
 </head>
@@ -132,21 +278,27 @@
         </div>
 
         <div class="sidebar">
+            <div id="problem-selector" class="problem-selector" style="display: none;">
+                <h2>Select Problem</h2>
+                <div class="problem-tabs" id="problem-tabs"></div>
+            </div>
+
             <h2>Structure Info</h2>
 
             <div class="info-card">
-                <h3>Sequence Name</h3>
-                <p id="sequence-name">-</p>
+                <h3>Participant</h3>
+                <p id="participant-id">-</p>
             </div>
 
-            <div class="info-card">
-                <h3>Sequence Length</h3>
-                <p id="sequence-length">-</p>
+            <div class="info-card" id="problem-info-card" style="display: none;">
+                <h3>Current Problem</h3>
+                <p id="current-problem">-</p>
             </div>
 
-            <div class="info-card">
-                <h3>Mean pLDDT</h3>
-                <p id="mean-plddt">-</p>
+            <div class="metrics-card" id="metrics-card" style="display: none;">
+                <h3>Evaluation Metrics</h3>
+                <div id="metrics-display"></div>
+                <div id="metrics-comparison" class="metrics-comparison"></div>
             </div>
 
             <div class="info-card">
@@ -171,21 +323,31 @@
                 </div>
             </div>
 
-            <a id="download-cif" class="download-btn" href="#" download>Download Structure (CIF)</a>
-            <a id="download-json" class="download-btn" href="#" download style="background: #0f3460;">Download Metadata (JSON)</a>
+            <a id="download-current" class="download-btn" href="#" download>Download Current Structure</a>
+
+            <div class="files-list" id="files-list">
+                <h3>All Files</h3>
+                <div id="files-container"></div>
+            </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/molstar@latest/build/viewer/molstar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdbe-molstar@3.3.0/build/pdbe-molstar-plugin.js"></script>
     <script>
         // Get token from URL
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
 
-        // Base URL for results (configure this for your deployment)
-        const RESULTS_BASE_URL = window.location.origin + '/results/';
+        // Base URL for results
+        const RESULTS_BASE_URL = new URL('./results/', window.location.href).href;
 
-        async function loadStructure() {
+        let metadata = null;
+        let submission = null;
+        let viewerInstance = null;
+        let currentProblem = null;
+        let evaluationCache = {};  // Cache for evaluation data
+
+        async function loadResults() {
             if (!token) {
                 document.getElementById('molstar-viewer').innerHTML =
                     '<div class="error">No token provided. Please use the link from your submission.</div>';
@@ -201,80 +363,467 @@
                     throw new Error('Results not found. The link may have expired or be invalid.');
                 }
 
-                const metadata = await metadataResponse.json();
+                metadata = await metadataResponse.json();
 
                 // Load submission info
                 const submissionUrl = `${RESULTS_BASE_URL}${token}/submission.json`;
                 const submissionResponse = await fetch(submissionUrl);
-                const submission = await submissionResponse.json();
+                submission = await submissionResponse.json();
 
-                // Update UI
+                // Update header
                 document.getElementById('submission-info').textContent =
-                    `Submission: ${submission.participant_id} / ${submission.sequence_name}`;
-                document.getElementById('sequence-name').textContent = submission.sequence_name;
-                document.getElementById('sequence-length').textContent = `${submission.sequence_length} residues`;
+                    `Submission: ${submission.participant_id || submission.submission_id}`;
+                document.getElementById('participant-id').textContent =
+                    submission.participant_id || 'Unknown';
 
-                // Find CIF file
-                const cifFile = metadata.files.find(f => f.endsWith('.cif'));
-                if (!cifFile) {
-                    throw new Error('No structure file found in results.');
+                // Check if this is a multi-problem result
+                if (metadata.problems && Object.keys(metadata.problems).length > 0) {
+                    setupMultiProblemView();
+                } else {
+                    setupSingleProblemView();
                 }
 
-                const cifUrl = `${RESULTS_BASE_URL}${token}/${cifFile}`;
-
-                // Set download links
-                document.getElementById('download-cif').href = cifUrl;
-                document.getElementById('download-json').href = submissionUrl;
-
-                // Initialize Mol* viewer
-                const viewerContainer = document.getElementById('molstar-viewer');
-                viewerContainer.innerHTML = '';
-
-                const viewer = await molstar.Viewer.create(viewerContainer, {
-                    layoutIsExpanded: false,
-                    layoutShowControls: true,
-                    layoutShowRemoteState: false,
-                    layoutShowSequence: true,
-                    layoutShowLog: false,
-                    layoutShowLeftPanel: false,
-                    viewportShowExpand: true,
-                    viewportShowSelectionMode: true,
-                    viewportShowAnimation: false,
-                });
-
-                // Load structure
-                await viewer.loadStructureFromUrl(cifUrl, 'mmcif');
-
-                // Apply pLDDT coloring (uses B-factor which contains pLDDT)
-                // Mol* has built-in AlphaFold confidence coloring
-                const state = viewer.plugin.state.data;
-                const structures = state.select(molstar.StateSelection.Generators.rootsOfType(
-                    molstar.PluginStateObject.Molecule.Structure
-                ));
-
-                if (structures.length > 0) {
-                    // Apply pLDDT coloring
-                    await viewer.plugin.builders.structure.representation.applyPreset(
-                        structures[0],
-                        'polymer-cartoon',
-                        {
-                            theme: {
-                                globalName: 'plddt-confidence',
-                                carbonColor: 'plddt-confidence'
-                            }
-                        }
-                    );
-                }
+                // Display file list
+                displayFileList();
 
             } catch (error) {
                 document.getElementById('molstar-viewer').innerHTML =
                     `<div class="error">${error.message}</div>`;
-                console.error('Error loading structure:', error);
+                console.error('Error loading results:', error);
             }
         }
 
+        let currentSequence = null;
+
+        function setupMultiProblemView() {
+            const problems = Object.keys(metadata.problems).sort();
+
+            // Show problem selector
+            const selectorDiv = document.getElementById('problem-selector');
+            const tabsDiv = document.getElementById('problem-tabs');
+            selectorDiv.style.display = 'block';
+            document.getElementById('problem-info-card').style.display = 'block';
+
+            // Create tabs for each problem
+            tabsDiv.innerHTML = problems.map(problemId => {
+                const problemData = metadata.problems[problemId];
+                const seqCount = problemData.sequences ? Object.keys(problemData.sequences).length : 1;
+                const displayName = problemId.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+                const seqBadge = seqCount > 1 ? ` <span style="font-size: 0.7rem; opacity: 0.7;">(${seqCount})</span>` : '';
+                return `<button class="problem-tab" data-problem="${problemId}">${displayName}${seqBadge}</button>`;
+            }).join('');
+
+            // Add click handlers
+            tabsDiv.querySelectorAll('.problem-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const problemId = tab.dataset.problem;
+                    selectProblem(problemId);
+                });
+            });
+
+            // Select first problem by default
+            if (problems.length > 0) {
+                selectProblem(problems[0]);
+            }
+        }
+
+        function setupSingleProblemView() {
+            // Find the CIF file
+            const cifFile = metadata.files.find(f => f.endsWith('.cif'));
+            if (!cifFile) {
+                throw new Error('No structure file found in results.');
+            }
+
+            loadStructure(cifFile);
+
+            // Set download link
+            document.getElementById('download-current').href = `${RESULTS_BASE_URL}${token}/${cifFile}`;
+        }
+
+        function selectProblem(problemId) {
+            currentProblem = problemId;
+            currentSequence = null;
+
+            // Update tab states
+            document.querySelectorAll('.problem-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.problem === problemId);
+            });
+
+            // Update current problem display
+            const displayName = problemId.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+            document.getElementById('current-problem').textContent = displayName;
+
+            // Check if this problem has multiple sequences
+            const problemData = metadata.problems[problemId];
+            const sequences = problemData?.sequences || {};
+            const seqNums = Object.keys(sequences).sort((a, b) => parseInt(a) - parseInt(b));
+
+            // Show/hide sequence selector
+            let seqSelectorHtml = '';
+            if (seqNums.length > 1) {
+                seqSelectorHtml = `
+                    <div style="margin-top: 0.5rem;">
+                        <span style="color: #888; font-size: 0.85rem;">Sequences: </span>
+                        ${seqNums.map(seqNum =>
+                            `<button class="problem-tab seq-tab" data-seq="${seqNum}" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Seq ${seqNum}</button>`
+                        ).join(' ')}
+                    </div>
+                `;
+            }
+
+            // Add sequence selector to current-problem card
+            const problemInfoCard = document.getElementById('problem-info-card');
+            let seqContainer = problemInfoCard.querySelector('.seq-selector');
+            if (!seqContainer) {
+                seqContainer = document.createElement('div');
+                seqContainer.className = 'seq-selector';
+                problemInfoCard.appendChild(seqContainer);
+            }
+            seqContainer.innerHTML = seqSelectorHtml;
+
+            // Add click handlers for sequence tabs
+            seqContainer.querySelectorAll('.seq-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const seqNum = tab.dataset.seq;
+                    selectSequence(problemId, seqNum);
+                });
+            });
+
+            // Select first sequence by default
+            if (seqNums.length > 0) {
+                selectSequence(problemId, seqNums[0]);
+            } else {
+                // Fall back to finding file directly (legacy format)
+                const problemFiles = problemData?.files || [];
+                const cifFile = problemFiles.find(f => f.endsWith('_model.cif')) ||
+                               metadata.files.find(f => f.includes(problemId) && f.endsWith('.cif'));
+
+                if (cifFile) {
+                    loadStructure(cifFile);
+                    document.getElementById('download-current').href = `${RESULTS_BASE_URL}${token}/${cifFile}`;
+                } else {
+                    document.getElementById('molstar-viewer').innerHTML =
+                        `<div class="error">No structure file found for ${displayName}.</div>`;
+                }
+            }
+        }
+
+        async function selectSequence(problemId, seqNum) {
+            currentSequence = seqNum;
+
+            // Update sequence tab states
+            document.querySelectorAll('.seq-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.seq === seqNum);
+            });
+
+            // Find the model file for this sequence
+            const problemData = metadata.problems[problemId];
+            const seqData = problemData?.sequences?.[seqNum];
+            const seqFiles = seqData?.files || [];
+
+            // Look for model file
+            let cifFile = seqFiles.find(f => f.endsWith('_model.cif'));
+
+            // If not found in sequence data, try problem files with seq suffix
+            if (!cifFile) {
+                cifFile = problemData?.files?.find(f => f.includes(`_seq${seqNum}_`) && f.endsWith('_model.cif'));
+            }
+
+            // Fall back to any model file for this problem
+            if (!cifFile) {
+                cifFile = metadata.files.find(f => f.includes(problemId) && f.includes(`seq${seqNum}`) && f.endsWith('.cif'));
+            }
+
+            if (cifFile) {
+                loadStructure(cifFile);
+                document.getElementById('download-current').href = `${RESULTS_BASE_URL}${token}/${cifFile}`;
+            } else {
+                document.getElementById('molstar-viewer').innerHTML =
+                    `<div class="error">No structure file found for sequence ${seqNum}.</div>`;
+            }
+
+            // Load and display evaluation metrics
+            const evaluations = await loadAllEvaluations(problemId);
+            const bestSeq = findBestSequence(evaluations);
+            const currentEval = evaluations[seqNum];
+            displayMetrics(currentEval, seqNum === bestSeq);
+            displayMetricsComparison(evaluations, seqNum);
+        }
+
+        function loadStructure(cifFile) {
+            const viewerContainer = document.getElementById('molstar-viewer');
+            viewerContainer.innerHTML = '';
+
+            const cifUrl = `${RESULTS_BASE_URL}${token}/${cifFile}`;
+
+            viewerInstance = new PDBeMolstarPlugin();
+
+            const options = {
+                customData: {
+                    url: cifUrl,
+                    format: 'cif',
+                    binary: false
+                },
+                alphafoldView: true,
+                bgColor: { r: 26, g: 26, b: 46 },
+                hideControls: false,
+                sequencePanel: true,
+                landscape: true
+            };
+
+            viewerInstance.render(viewerContainer, options);
+        }
+
+        async function loadEvaluation(problemId, seqNum) {
+            const cacheKey = `${problemId}_seq${seqNum}`;
+            if (evaluationCache[cacheKey]) {
+                return evaluationCache[cacheKey];
+            }
+
+            // Try to find evaluation file
+            const participantId = submission.participant_id || 'unknown';
+            const patterns = [
+                `${participantId}_${problemId}_seq${seqNum}_evaluation.json`,
+                `${participantId}_${problemId}seq${seqNum}_evaluation.json`,
+                `evaluation_${problemId}_seq${seqNum}.json`,
+            ];
+
+            for (const pattern of patterns) {
+                try {
+                    const url = `${RESULTS_BASE_URL}${token}/${pattern}`;
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const data = await response.json();
+                        evaluationCache[cacheKey] = data;
+                        return data;
+                    }
+                } catch (e) {
+                    // Continue to next pattern
+                }
+            }
+            return null;
+        }
+
+        async function loadAllEvaluations(problemId) {
+            const problemData = metadata.problems[problemId];
+            const sequences = problemData?.sequences || {};
+            const seqNums = Object.keys(sequences).sort((a, b) => parseInt(a) - parseInt(b));
+
+            const evaluations = {};
+            for (const seqNum of seqNums) {
+                const evalData = await loadEvaluation(problemId, seqNum);
+                if (evalData) {
+                    evaluations[seqNum] = evalData;
+                }
+            }
+            return evaluations;
+        }
+
+        function findBestSequence(evaluations, primaryMetric = 'bb_lddt') {
+            let bestSeq = null;
+            let bestScore = -Infinity;
+
+            for (const [seqNum, evalData] of Object.entries(evaluations)) {
+                const score = evalData.primary_score || evalData.metrics?.[primaryMetric] || 0;
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestSeq = seqNum;
+                }
+            }
+            return bestSeq;
+        }
+
+        function displayMetrics(evalData, isBest = false) {
+            const metricsCard = document.getElementById('metrics-card');
+            const metricsDisplay = document.getElementById('metrics-display');
+
+            if (!evalData) {
+                metricsCard.style.display = 'none';
+                return;
+            }
+
+            metricsCard.style.display = 'block';
+            const metrics = evalData.metrics || {};
+            const af3Metrics = evalData.af3_metrics || {};
+            const primaryMetric = evalData.primary_metric || 'bb_lddt';
+            const primaryScore = evalData.primary_score;
+
+            let html = '';
+
+            // Primary metric first
+            if (primaryScore !== null && primaryScore !== undefined) {
+                const bestLabel = isBest ? '<span class="best-badge">BEST</span>' : '';
+                html += `<div class="metric-row">
+                    <span class="metric-name">${primaryMetric}${bestLabel}</span>
+                    <span class="metric-value primary">${primaryScore.toFixed(4)}</span>
+                </div>`;
+            }
+
+            // Check if this is a binder problem (has binder_metrics)
+            const binderMetrics = evalData.binder_metrics || {};
+            const isBinder = Object.keys(binderMetrics).length > 0 || evalData.problem_type === 'binder';
+
+            if (isBinder) {
+                // Binder-specific metrics
+                if (binderMetrics.binder_tm_score != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">Binder TM-score</span>
+                        <span class="metric-value">${binderMetrics.binder_tm_score.toFixed(4)}</span>
+                    </div>`;
+                }
+                if (binderMetrics.binder_rmsd != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">Binder RMSD (Å)</span>
+                        <span class="metric-value">${binderMetrics.binder_rmsd.toFixed(2)}</span>
+                    </div>`;
+                }
+                if (binderMetrics.binder_lddt != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">Binder lDDT</span>
+                        <span class="metric-value">${binderMetrics.binder_lddt.toFixed(4)}</span>
+                    </div>`;
+                }
+                // Complex metrics
+                if (metrics.complex_tm_score != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">Complex TM-score</span>
+                        <span class="metric-value">${metrics.complex_tm_score.toFixed(4)}</span>
+                    </div>`;
+                }
+                if (metrics.complex_rmsd != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">Complex RMSD (Å)</span>
+                        <span class="metric-value">${metrics.complex_rmsd.toFixed(2)}</span>
+                    </div>`;
+                }
+            } else {
+                // Monomer metrics
+                if (metrics.tm_score != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">TM-score</span>
+                        <span class="metric-value">${metrics.tm_score.toFixed(4)}</span>
+                    </div>`;
+                }
+                if (metrics.rmsd != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">RMSD (Å)</span>
+                        <span class="metric-value">${metrics.rmsd.toFixed(2)}</span>
+                    </div>`;
+                }
+                if (metrics.aligned_length) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">Aligned Length</span>
+                        <span class="metric-value">${metrics.aligned_length}</span>
+                    </div>`;
+                }
+            }
+
+            // AF3 metrics
+            if (af3Metrics.ptm != null) {
+                html += `<div class="metric-row">
+                    <span class="metric-name">pTM</span>
+                    <span class="metric-value">${af3Metrics.ptm.toFixed(2)}</span>
+                </div>`;
+            }
+            if (af3Metrics.iptm != null) {
+                html += `<div class="metric-row">
+                    <span class="metric-name">ipTM</span>
+                    <span class="metric-value">${af3Metrics.iptm.toFixed(2)}</span>
+                </div>`;
+            }
+            if (af3Metrics.ranking_score != null) {
+                html += `<div class="metric-row">
+                    <span class="metric-name">Ranking Score</span>
+                    <span class="metric-value">${af3Metrics.ranking_score.toFixed(2)}</span>
+                </div>`;
+            }
+
+            metricsDisplay.innerHTML = html;
+        }
+
+        function displayMetricsComparison(evaluations, currentSeqNum) {
+            const compDiv = document.getElementById('metrics-comparison');
+            const seqNums = Object.keys(evaluations).sort((a, b) => parseInt(a) - parseInt(b));
+
+            if (seqNums.length <= 1) {
+                compDiv.innerHTML = '';
+                return;
+            }
+
+            const bestSeq = findBestSequence(evaluations);
+
+            // Check if this is a binder problem
+            const firstEval = evaluations[seqNums[0]];
+            const isBinder = firstEval?.binder_metrics && Object.keys(firstEval.binder_metrics).length > 0;
+
+            let html = '<h4 style="color: #aaa; font-size: 0.85rem; margin-bottom: 0.5rem;">All Sequences</h4>';
+
+            if (isBinder) {
+                html += '<table><thead><tr><th>Seq</th><th>ipTM</th><th>Binder TM</th><th>Binder RMSD</th></tr></thead><tbody>';
+            } else {
+                html += '<table><thead><tr><th>Seq</th><th>bb_lddt</th><th>TM</th><th>RMSD</th></tr></thead><tbody>';
+            }
+
+            for (const seqNum of seqNums) {
+                const evalData = evaluations[seqNum];
+                const metrics = evalData?.metrics || {};
+                const binderMetrics = evalData?.binder_metrics || {};
+                const af3Metrics = evalData?.af3_metrics || {};
+                const isBest = seqNum === bestSeq;
+                const isCurrent = seqNum === currentSeqNum;
+                const rowClass = isBest ? 'best-seq' : '';
+                const currentMark = isCurrent ? ' ◀' : '';
+                const bestMark = isBest ? ' ★' : '';
+
+                if (isBinder) {
+                    html += `<tr class="${rowClass}">
+                        <td>${seqNum}${bestMark}${currentMark}</td>
+                        <td>${af3Metrics.iptm?.toFixed(3) || '-'}</td>
+                        <td>${binderMetrics.binder_tm_score?.toFixed(3) || '-'}</td>
+                        <td>${binderMetrics.binder_rmsd?.toFixed(2) || '-'}</td>
+                    </tr>`;
+                } else {
+                    html += `<tr class="${rowClass}">
+                        <td>${seqNum}${bestMark}${currentMark}</td>
+                        <td>${metrics.bb_lddt?.toFixed(4) || '-'}</td>
+                        <td>${metrics.tm_score?.toFixed(3) || '-'}</td>
+                        <td>${metrics.rmsd?.toFixed(2) || '-'}</td>
+                    </tr>`;
+                }
+            }
+
+            html += '</tbody></table>';
+            html += '<p style="font-size: 0.7rem; color: #666; margin-top: 0.5rem;">★ = best, ◀ = current</p>';
+
+            compDiv.innerHTML = html;
+        }
+
+        function displayFileList() {
+            const container = document.getElementById('files-container');
+
+            // Group files by type
+            const structures = metadata.files.filter(f => f.endsWith('.cif'));
+            const otherFiles = metadata.files.filter(f => !f.endsWith('.cif') && f !== 'submission.json' && f !== 'metadata.json');
+
+            let html = '';
+
+            // Structure files
+            structures.forEach(file => {
+                const url = `${RESULTS_BASE_URL}${token}/${file}`;
+                html += `<div class="file-item"><span>${file}</span><a href="${url}" download>Download</a></div>`;
+            });
+
+            // Other files (confidences, etc.)
+            otherFiles.forEach(file => {
+                const url = `${RESULTS_BASE_URL}${token}/${file}`;
+                html += `<div class="file-item"><span>${file}</span><a href="${url}" download>Download</a></div>`;
+            });
+
+            container.innerHTML = html || '<p style="color: #888; font-size: 0.85rem;">No additional files.</p>';
+        }
+
         // Load on page ready
-        loadStructure();
+        loadResults();
     </script>
 </body>
 </html>
