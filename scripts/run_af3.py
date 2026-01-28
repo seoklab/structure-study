@@ -38,6 +38,8 @@ def generate_sbatch_script(
     log_dir: Path,
     mode: str = "full",
     participant_id: str | None = None,
+    partition: str | None = None,
+    exclude_nodes: str | None = None,
 ) -> str:
     """
     Generate sbatch script content for AF3 job.
@@ -49,6 +51,8 @@ def generate_sbatch_script(
         log_dir: Directory for SLURM logs
         mode: "full" (both phases), "cpu" (data pipeline only), "gpu" (inference only)
         participant_id: Team/participant ID for singleton job grouping
+        partition: Override default GPU partition (e.g., gpu-super.q for larger jobs)
+        exclude_nodes: Comma-separated list of nodes to exclude
 
     Returns:
         str: sbatch script content
@@ -62,12 +66,18 @@ def generate_sbatch_script(
     # Add singleton dependency if participant_id is provided
     singleton_line = "#SBATCH --dependency=singleton\n" if participant_id else ""
 
+    # Add node exclusion if specified
+    exclude_line = f"#SBATCH --exclude={exclude_nodes}\n" if exclude_nodes else ""
+
+    # Determine GPU partition (allow override)
+    gpu_partition = partition if partition else SLURM_CONFIG["partition_gpu"]
+
     script = f"""#!/bin/bash
 #SBATCH -J {job_name}
 #SBATCH -o {log_file}
 #SBATCH -e {log_file}
 #SBATCH --nice={SLURM_CONFIG['nice']}
-{singleton_line}"""
+{singleton_line}{exclude_line}"""
 
     # Conda environment activation
     conda_activate = "source /opt/conda/etc/profile.d/conda.sh && conda activate /opt/conda/envs/alphafold3"
@@ -93,7 +103,7 @@ echo "Data pipeline complete for {submission_id}"
 """
     elif mode == "gpu":
         # GPU-only: inference (assumes data pipeline already ran)
-        script += f"""#SBATCH -p {SLURM_CONFIG['partition_gpu']}
+        script += f"""#SBATCH -p {gpu_partition}
 #SBATCH --gres=gpu:1
 #SBATCH -N 1
 #SBATCH -c {SLURM_CONFIG['cpus']}
@@ -114,7 +124,7 @@ echo "Inference complete for {submission_id}"
 """
     else:
         # Full: both phases in sequence (GPU partition)
-        script += f"""#SBATCH -p {SLURM_CONFIG['partition_gpu']}
+        script += f"""#SBATCH -p {gpu_partition}
 #SBATCH --gres=gpu:1
 #SBATCH -N 1
 #SBATCH -c {SLURM_CONFIG['cpus']}
@@ -178,6 +188,16 @@ def main():
         default=None,
         help="Directory for SLURM logs (default: submission_dir/logs)",
     )
+    parser.add_argument(
+        "--partition",
+        default=None,
+        help="Override GPU partition (default: gpu-micro.q)",
+    )
+    parser.add_argument(
+        "--exclude",
+        default=None,
+        help="Comma-separated list of nodes to exclude",
+    )
 
     args = parser.parse_args()
 
@@ -201,6 +221,8 @@ def main():
         log_dir=log_dir.resolve(),
         mode=args.mode,
         participant_id=args.participant_id,
+        partition=args.partition,
+        exclude_nodes=args.exclude,
     )
 
     # Save script
