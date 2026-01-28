@@ -746,17 +746,30 @@ def compute_interface_lddt(model_coords_a: np.ndarray, model_coords_b: np.ndarra
     return result
 
 
-def get_af3_metrics(result_dir: str, problem_id: str, participant_id: str) -> dict:
+def get_af3_metrics(result_dir: str, problem_id: str, participant_id: str,
+                    seq_id: str = None) -> dict:
     """
     Extract AF3 confidence metrics from summary_confidences.json and confidences.json.
+
+    Args:
+        result_dir: Directory containing AF3 result files
+        problem_id: Problem ID (e.g., problem_5)
+        participant_id: Participant ID
+        seq_id: Optional sequence ID (e.g., seq1, seq2) for multi-sequence submissions
     """
     result = {}
 
+    # Build pattern with optional seq_id
+    if seq_id:
+        base_pattern = f"{participant_id}_{problem_id}_{seq_id}"
+    else:
+        base_pattern = f"{participant_id}_{problem_id}"
+
     # First try summary_confidences.json
     patterns = [
-        f"{participant_id}_{problem_id}_summary_confidences.json",
-        f"*_{problem_id}_summary_confidences.json",
-        f"*{problem_id}_summary_confidences.json"
+        f"{base_pattern}_summary_confidences.json",
+        f"*_{problem_id}_{seq_id}_summary_confidences.json" if seq_id else f"*_{problem_id}_summary_confidences.json",
+        f"*{problem_id}*_summary_confidences.json"
     ]
 
     for pattern in patterns:
@@ -779,9 +792,9 @@ def get_af3_metrics(result_dir: str, problem_id: str, participant_id: str) -> di
 
     # Try to get mean pLDDT from full confidences.json
     plddt_patterns = [
-        f"{participant_id}_{problem_id}_confidences.json",
-        f"*_{problem_id}_confidences.json",
-        f"*{problem_id}_confidences.json"
+        f"{base_pattern}_confidences.json",
+        f"*_{problem_id}_{seq_id}_confidences.json" if seq_id else f"*_{problem_id}_confidences.json",
+        f"*{problem_id}*_confidences.json"
     ]
 
     for pattern in plddt_patterns:
@@ -813,6 +826,7 @@ def main():
     parser.add_argument("--participant-id", required=True, help="Participant ID")
     parser.add_argument("--token", required=True, help="Result token")
     parser.add_argument("--result-dir", help="Directory containing AF3 result files")
+    parser.add_argument("--seq-id", help="Sequence ID (e.g., seq1, seq2) for multi-sequence submissions")
     parser.add_argument("--output", required=True, help="Output JSON path")
     parser.add_argument("--keep-temp", action="store_true",
                         help="Keep temporary PDB files for manual inspection")
@@ -846,7 +860,7 @@ def main():
     # Get AF3 metrics
     if args.result_dir:
         result["af3_metrics"] = get_af3_metrics(
-            args.result_dir, args.problem_id, args.participant_id
+            args.result_dir, args.problem_id, args.participant_id, args.seq_id
         )
 
     # Run TMalign for TM-score, RMSD, and alignment

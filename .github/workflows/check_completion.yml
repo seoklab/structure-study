@@ -299,8 +299,10 @@ jobs:
                 # Extract sequence number if present (e.g., problem_1_seq2_model.cif -> seq2)
                 MODEL_NAME=$(basename "$MODEL_FILE")
                 SEQ_SUFFIX=""
+                SEQ_ID=""
                 if echo "$MODEL_NAME" | grep -q "_seq[0-9]"; then
                   SEQ_SUFFIX=$(echo "$MODEL_NAME" | grep -oP '_seq\d+' | head -1)
+                  SEQ_ID=$(echo "$SEQ_SUFFIX" | sed 's/^_//')  # Remove leading underscore
                 fi
 
                 # Build evaluation file name
@@ -311,6 +313,10 @@ jobs:
 
                 echo "Evaluating $TOKEN / $problem_id$SEQ_SUFFIX..."
 
+                # Build seq-id argument if present
+                SEQ_ARG=""
+                [ -n "$SEQ_ID" ] && SEQ_ARG="--seq-id $SEQ_ID"
+
                 # Run evaluation using TMalign + Python lDDT
                 python3 scripts/evaluate_structure.py \
                   --model "$MODEL_FILE" \
@@ -320,7 +326,8 @@ jobs:
                   --participant-id "$PARTICIPANT_ID" \
                   --token "$TOKEN" \
                   --result-dir "$token_dir" \
-                  --output "$EVAL_FILE" || echo "Warning: Evaluation failed for $TOKEN/$problem_id$SEQ_SUFFIX"
+                  --output "$EVAL_FILE" \
+                  $SEQ_ARG || echo "Warning: Evaluation failed for $TOKEN/$problem_id$SEQ_SUFFIX"
               done
             done
           done
