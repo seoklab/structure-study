@@ -285,7 +285,9 @@ def package_multi_results(submission_dir: Path, output_dir: Path, status_file: P
     else:
         status = {}
 
-    status["status"] = "completed" if all_complete else "partial"
+    # Use "packaged" status - the workflow will set "completed" after copying to docs/results/
+    # This prevents a race condition where status is "completed" but files aren't in docs/results/
+    status["status"] = "packaged" if all_complete else "partial"
     status["result_token"] = token
     status["completed_problems"] = len(completed_sequences)
     status["completed_sequences"] = total_completed_sequences

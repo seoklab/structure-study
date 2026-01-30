@@ -13,6 +13,8 @@ jobs:
 
     env:
       SUBMISSIONS_BASE: /data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions
+      ADMIN_EMAILS: "oilbeen@snu.ac.kr,j2hosim@snu.ac.kr"
+      SITE_URL: https://kidds2026.netlify.app
 
     steps:
       - name: Checkout repository
@@ -120,11 +122,18 @@ jobs:
         if: success()
         run: |
           PROBLEM_COUNT=$(python3 -c "import json; print(len(json.load(open('$SUBMISSION_DIR/submission.json')).get('sequences', {})))" 2>/dev/null || echo "0")
+          PROBLEM_LIST=$(python3 -c "import json; d=json.load(open('$SUBMISSION_DIR/submission.json')); print(', '.join(d.get('sequences', {}).keys()))" 2>/dev/null || echo "")
 
           if [ -n "$EMAIL" ]; then
             printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Submission Received - KIDDS 2026\n\nHello,\n\nYour submission has been received and queued for AlphaFold3 structure prediction.\n\nSubmission ID: %s\nParticipant: %s\nProblems submitted: %s\n\nYou will receive another email when your results are ready.\n\nBest regards,\nKIDDS 2026 Winter Workshop\n" "$EMAIL" "$SUBMISSION_ID" "$PARTICIPANT_ID" "$PROBLEM_COUNT" | sendmail -t
             echo "Confirmation email sent to $EMAIL"
           fi
+
+          # Send admin notification (to multiple admins)
+          for ADMIN in $(echo "${ADMIN_EMAILS}" | tr ',' ' '); do
+            printf "To: %s\nFrom: noreply@seoklab.org\nSubject: [ADMIN] New Submission - %s\n\nNew submission received!\n\nSubmission ID: %s\nParticipant: %s (%s)\nProblems: %s (%s)\n\nSubmission directory:\n%s\n" "$ADMIN" "$SUBMISSION_ID" "$SUBMISSION_ID" "$PARTICIPANT_ID" "$EMAIL" "$PROBLEM_COUNT" "$PROBLEM_LIST" "$SUBMISSION_DIR" | sendmail -t || true
+          done
+          echo "Admin notifications sent"
 
       - name: Log failure
         if: failure()

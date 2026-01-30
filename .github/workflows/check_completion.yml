@@ -15,7 +15,7 @@ jobs:
       SUBMISSIONS_BASE: /data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions
       PUBLIC_RESULTS: /data/galaxy4/user/j2ho/kidds2026/protein-competition/public_results
       SITE_URL: https://kidds2026.netlify.app
-      ADMIN_EMAIL: jihosim1010@gmail.com
+      ADMIN_EMAILS: "oilbeen@snu.ac.kr,j2hosim@snu.ac.kr"
       # Set to "true" for email after each problem (uses more Netlify deploys)
       # Set to "false" for single email when all problems complete (default)
       INCREMENTAL_NOTIFICATIONS: "false"
@@ -39,6 +39,7 @@ jobs:
             STATUS=$(python3 -c "import json; print(json.load(open('$STATUS_FILE')).get('status', 'unknown'))" 2>/dev/null || echo "unknown")
 
             # Skip if already completed or notified_partial or notified_failed
+            # Note: "packaged" status means results are ready but not yet in docs/results/ - don't skip
             [ "$STATUS" = "completed" ] || [ "$STATUS" = "notified_partial" ] || [ "$STATUS" = "notified_failed" ] && continue
 
             SUBMISSION_ID=$(basename "$dir")
@@ -188,6 +189,18 @@ jobs:
                   mkdir -p docs/results/${TOKEN}
                   cp -r ${PUBLIC_RESULTS}/${TOKEN}/* docs/results/${TOKEN}/
                   RESULTS_UPDATED=true
+
+                  # Mark as completed if all problems done (do this AFTER copy succeeds)
+                  if [ "$COMPLETED_COUNT" -ge "$TOTAL_PROBLEMS" ]; then
+                    python3 -c "import json; f=open('$STATUS_FILE'); d=json.load(f); f.close(); d['status']='completed'; f=open('$STATUS_FILE','w'); json.dump(d,f,indent=2); f.close()"
+                    echo "Marked submission as completed"
+
+                    # Send admin notification with token for easy access
+                    for ADMIN in $(echo "${ADMIN_EMAILS}" | tr ',' ' '); do
+                      printf "To: %s\nFrom: noreply@seoklab.org\nSubject: [ADMIN] Results Ready - %s\n\nResults are ready!\n\nSubmission ID: %s\nParticipant: %s (%s)\nCompleted: %s problems (%s)\n\nToken: %s\n\nView results:\n%s/viewer.html?token=%s\n\nDirect files:\n%s/results/%s/\n\nSubmission directory:\n%s\n" "$ADMIN" "$SUBMISSION_ID" "$SUBMISSION_ID" "$PARTICIPANT_ID" "$EMAIL" "$COMPLETED_COUNT" "$COMPLETED_LIST" "$TOKEN" "${SITE_URL}" "$TOKEN" "${SITE_URL}" "$TOKEN" "$dir" | sendmail -t || true
+                    done
+                    echo "Admin notifications sent"
+                  fi
                 fi
               fi
 
@@ -196,8 +209,7 @@ jobs:
                 if [ "$COMPLETED_COUNT" -ge "$TOTAL_PROBLEMS" ]; then
                   # All done - send final email
                   echo "Sending FINAL results email to: $EMAIL"
-                  python3 -c "import json; f=open('$STATUS_FILE'); d=json.load(f); f.close(); d['status']='completed'; f=open('$STATUS_FILE','w'); json.dump(d,f,indent=2); f.close()"
-                  printf "To: %s\nFrom: noreply@seoklab.org\nSubject: All Results Ready - KIDDS 2026\n\nHello %s,\n\nGreat news! All %s of your AlphaFold3 structure predictions are complete.\n\nCompleted: %s\n\nView your results:\n%s/viewer.html?token=%s\n\nDownload all files:\n%s/results/%s/\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$PARTICIPANT_ID" "$COMPLETED_COUNT" "$COMPLETED_LIST" "${SITE_URL}" "$TOKEN" "${SITE_URL}" "$TOKEN" | sendmail -t
+                  printf "To: %s\nFrom: noreply@seoklab.org\nSubject: All Results Ready - KIDDS 2026\n\nHello %s,\n\nGreat news! All %s of your AlphaFold3 structure predictions are complete.\n\nCompleted: %s\n\nView your results:\n%s/viewer.html?token=%s\n\nDownload all files:\n%s/results/%s/\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$PARTICIPANT_ID" "$COMPLETED_COUNT" "$COMPLETED_LIST" "${SITE_URL}" "$TOKEN" "${SITE_URL}" "$TOKEN" | sendmail -t || true
                   echo "Processed submission: $SUBMISSION_ID"
                 elif [ "$INCREMENTAL_NOTIFICATIONS" = "true" ] && [ -n "$NEW_COMPLETED_LIST" ]; then
                   # Incremental mode: send progress email
@@ -221,7 +233,9 @@ jobs:
                 fi
 
                 # Send admin notification
-                printf "To: %s\nFrom: noreply@seoklab.org\nSubject: [ADMIN] Submission Failure - %s\n\nSubmission ID: %s\nParticipant: %s\n\nCompleted (%s): %s\nFailed (%s): %s\n\nLogs: %s/\n" "${ADMIN_EMAIL}" "$SUBMISSION_ID" "$SUBMISSION_ID" "$PARTICIPANT_ID" "$COMPLETED_COUNT" "$COMPLETED_LIST" "$FAILED_COUNT" "$FAILED_LIST" "$dir" | sendmail -t
+                for ADMIN in $(echo "${ADMIN_EMAILS}" | tr ',' ' '); do
+                  printf "To: %s\nFrom: noreply@seoklab.org\nSubject: [ADMIN] Submission Failure - %s\n\nSubmission ID: %s\nParticipant: %s (%s)\n\nCompleted (%s): %s\nFailed (%s): %s\n\nLogs: %s/\n" "$ADMIN" "$SUBMISSION_ID" "$SUBMISSION_ID" "$PARTICIPANT_ID" "$EMAIL" "$COMPLETED_COUNT" "$COMPLETED_LIST" "$FAILED_COUNT" "$FAILED_LIST" "$dir" | sendmail -t || true
+                done
               fi
 
             else
