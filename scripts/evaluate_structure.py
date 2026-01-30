@@ -33,6 +33,8 @@ import numpy as np
 # Global flag for keeping temp files
 KEEP_TEMP_FILES = False
 TEMP_OUTPUT_DIR = None
+# Persistent storage for converted PDBs (always saved for verification)
+CONVERTED_PDB_DIR = None
 
 
 def parse_pdb_ca_coords(pdb_path: str) -> tuple[np.ndarray, list[str]]:
@@ -289,6 +291,19 @@ def maybe_keep_temp(temp_path: str, label: str) -> str:
         dest = os.path.join(TEMP_OUTPUT_DIR, f"{label}_{os.path.basename(temp_path)}")
         shutil.copy2(temp_path, dest)
         print(f"  Saved temp file: {dest}")
+        return dest
+    return temp_path
+
+
+def save_converted_pdb(temp_path: str, label: str, problem_id: str, participant_id: str) -> str:
+    """Save converted PDB to persistent storage for verification."""
+    global CONVERTED_PDB_DIR
+    if CONVERTED_PDB_DIR and os.path.exists(temp_path):
+        os.makedirs(CONVERTED_PDB_DIR, exist_ok=True)
+        filename = f"{participant_id}_{problem_id}_{label}.pdb"
+        dest = os.path.join(CONVERTED_PDB_DIR, filename)
+        shutil.copy2(temp_path, dest)
+        print(f"  Saved converted PDB: {dest}")
         return dest
     return temp_path
 
@@ -913,11 +928,18 @@ def main():
     parser.add_argument("--keep-temp", action="store_true",
                         help="Keep temporary PDB files for manual inspection")
     parser.add_argument("--temp-dir", help="Directory to save temp files (requires --keep-temp)")
+    parser.add_argument("--save-converted-pdbs", help="Directory to save converted PDB files for verification")
 
     args = parser.parse_args()
 
-    # Set up temp file handling
-    if args.keep_temp:
+    # Set up temp file handling and persistent storage for converted PDBs
+    if args.save_converted_pdbs:
+        # When saving converted PDBs, also enable keep_temp
+        KEEP_TEMP_FILES = True
+        TEMP_OUTPUT_DIR = args.save_converted_pdbs
+        os.makedirs(TEMP_OUTPUT_DIR, exist_ok=True)
+        print(f"Converted PDBs will be saved to: {TEMP_OUTPUT_DIR}")
+    elif args.keep_temp:
         KEEP_TEMP_FILES = True
         if args.temp_dir:
             TEMP_OUTPUT_DIR = args.temp_dir
