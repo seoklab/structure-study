@@ -195,10 +195,14 @@ def process_sequence_entry(
             f"{participant_id}_{problem_id}{seq_suffix}_evaluation.json",
             f"{participant_id}_{problem_id}_seq{seq_num}_evaluation.json",
             f"evaluation_{problem_id}_seq{seq_num}.json",
+            # Fallback to legacy patterns (no seq suffix) for older submissions
+            f"{participant_id}_{problem_id}_evaluation.json",
+            f"evaluation_{problem_id}.json",
         ]
         conf_patterns = [
             f"*{problem_id}{seq_suffix}_summary_confidences.json",
             f"*{problem_id}_seq{seq_num}_summary_confidences.json",
+            f"*{problem_id}_summary_confidences.json",
         ]
     else:
         file_patterns = [

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-01-30T04:08:25.410715Z",
+  "last_updated": "2026-01-30T07:33:50.682671Z",
   "problems": {
     "problem_1": {
       "name": "Problem 1 - 3-Helix Bundle",
@@ -13,6 +13,21 @@
           "participant_id": "admin1_day1_round1",
           "token": "h90hcZUHJvDfazVueNlD9J9kHSBKZPH3",
           "submitted_at": "2026-01-27T09:50:23.362Z",
+          "primary_score": 0.6656,
+          "primary_metric": "bb_lddt",
+          "best_seq": "1",
+          "bb_lddt": 0.6656,
+          "tm_score": 0.66988,
+          "rmsd": 2.51,
+          "ptm": 0.66,
+          "plddt": null,
+          "ranking_score": 0.66
+        },
+        {
+          "rank": 1,
+          "participant_id": "reference",
+          "token": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
+          "submitted_at": "2026-01-30T03:01:27.490Z",
           "primary_score": 0.6656,
           "primary_metric": "bb_lddt",
           "best_seq": "1",
@@ -48,7 +63,22 @@
           "ranking_score": 0.81
         },
         {
-          "rank": 2,
+          "rank": 1,
+          "participant_id": "reference",
+          "token": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
+          "submitted_at": "2026-01-30T03:01:27.490Z",
+          "primary_score": 0.9405,
+          "primary_metric": "bb_lddt",
+          "best_seq": "1",
+          "bb_lddt": 0.9405,
+          "tm_score": 0.93593,
+          "rmsd": 1.14,
+          "ptm": 0.81,
+          "plddt": 88.73,
+          "ranking_score": 0.81
+        },
+        {
+          "rank": 3,
           "participant_id": "sumin",
           "token": "JXWjZr9AOVfw87-FjAC0Ne7pXE4xazKy",
           "submitted_at": "2026-01-29T13:26:08.754Z",
@@ -100,6 +130,21 @@
           "ptm": 0.5,
           "plddt": null,
           "ranking_score": 0.5
+        },
+        {
+          "rank": 3,
+          "participant_id": "reference",
+          "token": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
+          "submitted_at": "2026-01-30T03:01:27.490Z",
+          "primary_score": 0.4951,
+          "primary_metric": "bb_lddt",
+          "best_seq": "1",
+          "bb_lddt": 0.4951,
+          "tm_score": 0.50477,
+          "rmsd": 1.55,
+          "ptm": 0.77,
+          "plddt": null,
+          "ranking_score": 0.77
         }
       ]
     },
@@ -130,6 +175,27 @@
           "binder_lddt": 0.9575,
           "interface_lddt": null,
           "interface_contacts": null
+        },
+        {
+          "rank": 2,
+          "participant_id": "reference",
+          "token": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
+          "submitted_at": "2026-01-30T03:01:27.490Z",
+          "primary_score": 0.955,
+          "primary_metric": "bb_lddt",
+          "best_seq": "1",
+          "iptm": 0.51,
+          "ptm": 0.83,
+          "plddt": null,
+          "ranking_score": 0.92,
+          "complex_tm": 0.83453,
+          "complex_rmsd": 2.77,
+          "complex_lddt": 0.955,
+          "binder_tm": 0.88331,
+          "binder_rmsd": 0.58,
+          "binder_lddt": 0.955,
+          "interface_lddt": 0.8847,
+          "interface_contacts": 1255
         }
       ]
     },
@@ -142,6 +208,27 @@
       "rankings": [
         {
           "rank": 1,
+          "participant_id": "reference",
+          "token": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
+          "submitted_at": "2026-01-30T03:01:27.490Z",
+          "primary_score": 0.9107,
+          "primary_metric": "bb_lddt",
+          "best_seq": "1",
+          "iptm": 0.01,
+          "ptm": 0.87,
+          "plddt": 89.02,
+          "ranking_score": 0.81,
+          "complex_tm": 0.84606,
+          "complex_rmsd": 2.53,
+          "complex_lddt": 0.9107,
+          "binder_tm": 0.30218,
+          "binder_rmsd": 0.88,
+          "binder_lddt": 0.9107,
+          "interface_lddt": 0.5166,
+          "interface_contacts": 571
+        },
+        {
+          "rank": 2,
           "participant_id": "admin1_day2_round1",
           "token": "fhh1YwSZF5DzPFLeREGhF7ZJY1omWd25",
           "submitted_at": "2026-01-28T02:21:48.351Z",
@@ -182,15 +269,42 @@
         "problem_4": "fhh1YwSZF5DzPFLeREGhF7ZJY1omWd25",
         "problem_5": "fhh1YwSZF5DzPFLeREGhF7ZJY1omWd25"
       },
-      "overall_z_score": 0.0,
+      "overall_z_score": 0.18001440396633983,
       "problem_z_scores": {
         "problem_1": 0.0,
-        "problem_2": 1.0,
-        "problem_3": -1.0,
-        "problem_4": 0.0,
-        "problem_5": 0.0
+        "problem_2": 0.7071067811865479,
+        "problem_3": 0.19296523864518947,
+        "problem_4": 0.9999999999999556,
+        "problem_5": -0.9999999999999938
       },
       "rank": 1
+    },
+    {
+      "team": "reference",
+      "problems_completed": 5,
+      "problem_scores": {
+        "problem_1": 0.6656,
+        "problem_2": 0.9405,
+        "problem_3": 0.4951,
+        "problem_4": 0.955,
+        "problem_5": 0.9107
+      },
+      "problem_tokens": {
+        "problem_1": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
+        "problem_2": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
+        "problem_3": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
+        "problem_4": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
+        "problem_5": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y"
+      },
+      "overall_z_score": -0.12053322436599116,
+      "problem_z_scores": {
+        "problem_1": 0.0,
+        "problem_2": 0.7071067811865479,
+        "problem_3": -1.3097729030164655,
+        "problem_4": -1.0000000000000444,
+        "problem_5": 1.0000000000000062
+      },
+      "rank": 2
     },
     {
       "team": "baker",
@@ -201,11 +315,11 @@
       "problem_tokens": {
         "problem_3": "riWsdmIudfsgJhwMhnwta11zoQTz5va5"
       },
-      "overall_z_score": 1.0,
+      "overall_z_score": 1.116807664371276,
       "problem_z_scores": {
-        "problem_3": 1.0
+        "problem_3": 1.116807664371276
       },
-      "rank": 2
+      "rank": 3
     },
     {
       "team": "sumin",
@@ -216,11 +330,11 @@
       "problem_tokens": {
         "problem_2": "JXWjZr9AOVfw87-FjAC0Ne7pXE4xazKy"
       },
-      "overall_z_score": -1.0,
+      "overall_z_score": -1.4142135623730947,
       "problem_z_scores": {
-        "problem_2": -1.0
+        "problem_2": -1.4142135623730947
       },
-      "rank": 3
+      "rank": 4
     }
   ]
 }
