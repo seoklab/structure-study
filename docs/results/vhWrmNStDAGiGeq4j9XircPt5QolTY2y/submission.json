@@ -1,0 +1,23 @@
+{
+  "email": "jihosim1010@gmail.com",
+  "participant_id": "reference",
+  "sequences": {
+    "problem_1": [
+      "MGSWAEFKQRLAAIKTRLQALGGSEAELAAFEKEIAAFESELQAYKGKGNPEVEALRKEAAAIRDELQAYRHN"
+    ],
+    "problem_2": [
+      "PSEEEEKRRAKQVAKEKILEQNPSSKVQVRRVQKQGNTIRVELEITENGKKTNITVEVEKQGNTFTVKRITETVGS"
+    ],
+    "problem_3": [
+      "DIQVQVNIDDNGKNFDYTYTVTTESELQKVLNELMDYIKKQGAKRVRISITARTKKEAEKFAAILIKVFAELGYNDINVTFDGDTVTVEGQL"
+    ],
+    "problem_4": [
+      "HAEGTFTSDVSSYLEGQAAKEFIAWLVKGR"
+    ],
+    "problem_5": [
+      "CKNFFWKTFTSC"
+    ]
+  },
+  "submission_id": "reference_ml0aqu6a_zrsi",
+  "submitted_at": "2026-01-30T03:01:27.490Z"
+}
