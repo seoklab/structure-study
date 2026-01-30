@@ -66,7 +66,10 @@ def get_problem_info(config: dict) -> dict:
             "description": p.get("description", ""),
             # Primary metric for z-score ranking (configurable per problem in config.json)
             # Options: bb_lddt, binder_lddt, interface_lddt, iptm, tm_score, etc.
-            "primary_metric": p.get("primary_metric", "bb_lddt")
+            "primary_metric": p.get("primary_metric", "bb_lddt"),
+            # Day and visibility for auto-hiding problems
+            "day": p.get("day", 1),
+            "hidden": p.get("hidden")  # None = auto, True = always hide, False = always show
         }
     return problems
 
@@ -575,6 +578,8 @@ def generate_leaderboard(
             "name": info["name"],
             "type": info["type"],
             "primary_metric": primary_metric,
+            "day": info.get("day", 1),
+            "hidden": info.get("hidden"),  # None = auto, True = always hide, False = always show
             "rankings": rankings
         }
 

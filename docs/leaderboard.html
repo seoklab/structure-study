@@ -321,6 +321,28 @@
     <script>
         const LEADERBOARD_URL = './leaderboard_data.json';
 
+        // Competition day start dates (problems auto-show on their day)
+        // Local time (KST for this competition)
+        const COMPETITION_DAYS = {
+            1: new Date('2026-01-01T00:00:00'),  // Day 1: always visible
+            2: new Date('2026-02-04T08:30:00')   // Day 2: Wednesday, Feb 4, 8:30 AM KST
+        };
+
+        // Check if a problem should be visible
+        function isProblemVisible(problem) {
+            // Manual override: hidden = true -> always hide, hidden = false -> always show
+            if (problem.hidden === true) return false;
+            if (problem.hidden === false) return true;
+
+            // Auto-hide based on day (if no manual override)
+            const problemDay = problem.day || 1;
+            const dayStart = COMPETITION_DAYS[problemDay];
+            if (!dayStart) return true;  // No date config, show by default
+
+            const now = new Date();
+            return now >= dayStart;
+        }
+
         let leaderboardData = null;
         let currentSorts = {}; // Track current sort state per table
 
@@ -351,9 +373,11 @@
             const tabsContainer = document.getElementById('tabs');
             const panelsContainer = document.getElementById('panels');
 
-            // Create problem tabs
+            // Create problem tabs (filter by visibility)
             const problems = leaderboardData.problems || {};
-            const sortedProblems = Object.keys(problems).sort();
+            const sortedProblems = Object.keys(problems).sort().filter(pid =>
+                isProblemVisible(problems[pid])
+            );
 
             sortedProblems.forEach(problemId => {
                 const problem = problems[problemId];
@@ -519,9 +543,11 @@
                 `;
             }
 
-            // Get sorted problem IDs
+            // Get sorted problem IDs (filtered by visibility)
             const problems = leaderboardData.problems || {};
-            const problemIds = Object.keys(problems).sort();
+            const problemIds = Object.keys(problems).sort().filter(pid =>
+                isProblemVisible(problems[pid])
+            );
 
             // Build problem column headers
             const problemHeaders = problemIds.map(pid => {

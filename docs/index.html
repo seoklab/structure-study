@@ -601,6 +601,28 @@
 
         const VALID_AMINO_ACIDS = new Set('ACDEFGHIKLMNPQRSTVWY');
 
+        // Competition day start dates (problems auto-show on their day)
+        // Format: day number -> Date object (local time, KST for this competition)
+        const COMPETITION_DAYS = {
+            1: new Date('2026-01-01T00:00:00'),  // Day 1: always visible
+            2: new Date('2026-02-04T08:30:00')   // Day 2: Wednesday, Feb 4, 8:30 AM KST
+        };
+
+        // Check if a problem should be visible
+        function isProblemVisible(problem) {
+            // Manual override: hidden = true -> always hide, hidden = false -> always show
+            if (problem.hidden === true) return false;
+            if (problem.hidden === false) return true;
+
+            // Auto-hide based on day (if no manual override)
+            const problemDay = problem.day || 1;
+            const dayStart = COMPETITION_DAYS[problemDay];
+            if (!dayStart) return true;  // No date config, show by default
+
+            const now = new Date();
+            return now >= dayStart;
+        }
+
         const form = document.getElementById('submission-form');
         const submitBtn = document.getElementById('submit-btn');
         const btnText = document.getElementById('btn-text');
@@ -632,8 +654,10 @@
         function renderProblems() {
             if (!problemsConfig || !problemsConfig.problems) return;
 
-            // Filter out example problems (those starting with _)
-            const problems = problemsConfig.problems.filter(p => !p.id.startsWith('_'));
+            // Filter out example problems and hidden problems
+            const problems = problemsConfig.problems.filter(p =>
+                !p.id.startsWith('_') && isProblemVisible(p)
+            );
 
             // Initialize sequence counts
             problems.forEach(p => {
