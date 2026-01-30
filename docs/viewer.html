@@ -25,6 +25,27 @@
             align-items: center;
             border-bottom: 1px solid #0f3460;
         }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        .nav-links a {
+            color: #65cbf3;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .nav-links a:hover {
+            background: rgba(101, 203, 243, 0.1);
+            text-decoration: none;
+        }
         .header h1 {
             font-size: 1.5rem;
             color: #e94560;
@@ -266,7 +287,13 @@
 </head>
 <body>
     <div class="header">
-        <h1>Protein Structure Viewer</h1>
+        <div class="header-left">
+            <nav class="nav-links">
+                <a href="./">← Submit</a>
+                <a href="./leaderboard.html">🏆 Leaderboard</a>
+            </nav>
+            <h1>Structure Viewer</h1>
+        </div>
         <div class="submission-info" id="submission-info">Loading...</div>
     </div>
 

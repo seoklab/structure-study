@@ -32,6 +32,26 @@
             font-size: 1.8rem;
             color: #e94560;
         }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .nav-links a {
+            color: #65cbf3;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .nav-links a:hover {
+            background: rgba(101, 203, 243, 0.1);
+        }
         .header-links {
             display: flex;
             gap: 1rem;
@@ -268,7 +288,12 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <h1>Protein Design Leaderboard</h1>
+            <div class="header-left">
+                <nav class="nav-links">
+                    <a href="./">← Submit</a>
+                </nav>
+                <h1>🏆 Leaderboard</h1>
+            </div>
             <div class="header-links">
                 <a href="index.html">Submit Sequences</a>
             </div>
