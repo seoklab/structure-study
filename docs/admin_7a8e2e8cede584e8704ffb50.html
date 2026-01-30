@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - All Submissions</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        h1 { color: #e94560; margin-bottom: 0.5rem; }
+        .warning {
+            background: #4a2c2c;
+            border: 1px solid #e94560;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            color: #ff8a8a;
+        }
+        .stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .stat-box {
+            background: #16213e;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #0f3460;
+        }
+        .stat-box .label { color: #888; font-size: 0.85rem; }
+        .stat-box .value { font-size: 1.5rem; color: #65cbf3; font-weight: 600; }
+        .submissions-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #16213e;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .submissions-table th,
+        .submissions-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #0f3460;
+        }
+        .submissions-table th {
+            background: #0f3460;
+            color: #65cbf3;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        .submissions-table tr:hover { background: #1f2f4f; }
+        .status-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-completed { background: #1a4a3a; color: #4ade80; }
+        .status-processing { background: #4a4a1a; color: #fde047; }
+        .status-pending { background: #2a3f5f; color: #65cbf3; }
+        .status-error { background: #4a2c2c; color: #ff8a8a; }
+        a { color: #65cbf3; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .btn {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            background: #0f3460;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 0.3rem;
+            margin-bottom: 0.3rem;
+        }
+        .btn:hover { background: #1a4a7a; }
+        .problem-links { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+        .loading { text-align: center; padding: 3rem; color: #888; }
+        .refresh-btn {
+            background: #0f3460;
+            color: #65cbf3;
+            border: 1px solid #65cbf3;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .refresh-btn:hover { background: #1a4a7a; }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .team-name { font-weight: 600; color: #fff; }
+        .token-id { font-family: monospace; font-size: 0.8rem; color: #888; }
+        .timestamp { font-size: 0.85rem; color: #aaa; }
+    </style>
+</head>
+<body>
+    <div class="header-row">
+        <h1>Admin - All Submissions</h1>
+        <button class="refresh-btn" onclick="loadSubmissions()">Refresh</button>
+    </div>
+
+    <div class="warning">
+        This page is for admins only. Do not share this URL with participants.
+    </div>
+
+    <div class="stats" id="stats">
+        <div class="stat-box">
+            <div class="label">Total Submissions</div>
+            <div class="value" id="total-count">-</div>
+        </div>
+        <div class="stat-box">
+            <div class="label">Completed</div>
+            <div class="value" id="completed-count">-</div>
+        </div>
+        <div class="stat-box">
+            <div class="label">Processing</div>
+            <div class="value" id="processing-count">-</div>
+        </div>
+        <div class="stat-box">
+            <div class="label">Unique Teams</div>
+            <div class="value" id="teams-count">-</div>
+        </div>
+    </div>
+
+    <div id="content">
+        <div class="loading">Loading submissions...</div>
+    </div>
+
+    <script>
+        // Extract team name from participant ID
+        function extractTeam(participantId) {
+            const match = participantId.match(/^([^_]+)_day\d+_round\d+$/);
+            if (match) return match[1];
+            return participantId.split('_')[0];
+        }
+
+        async function loadSubmissions() {
+            const content = document.getElementById('content');
+            content.innerHTML = '<div class="loading">Loading submissions...</div>';
+
+            try {
+                // Fetch the list of result directories
+                const response = await fetch('./results/index.json');
+                if (!response.ok) throw new Error('index.json not found');
+
+                const submissions = await response.json();
+                renderSubmissions(submissions);
+            } catch (error) {
+                console.error('Error:', error);
+                content.innerHTML = `
+                    <div class="warning">
+                        Could not load submissions. Make sure results/index.json exists.<br>
+                        Run: <code>python scripts/generate_admin_index.py</code>
+                    </div>
+                `;
+            }
+        }
+
+        function renderSubmissions(submissions) {
+            // Sort by submitted_at descending (newest first)
+            submissions.sort((a, b) => new Date(b.submitted_at) - new Date(a.submitted_at));
+
+            // Calculate stats
+            const total = submissions.length;
+            const completed = submissions.filter(s => s.status === 'completed').length;
+            const processing = submissions.filter(s => ['processing', 'pending', 'packaged'].includes(s.status)).length;
+            const teams = new Set(submissions.map(s => extractTeam(s.participant_id))).size;
+
+            document.getElementById('total-count').textContent = total;
+            document.getElementById('completed-count').textContent = completed;
+            document.getElementById('processing-count').textContent = processing;
+            document.getElementById('teams-count').textContent = teams;
+
+            if (submissions.length === 0) {
+                document.getElementById('content').innerHTML = '<div class="loading">No submissions yet.</div>';
+                return;
+            }
+
+            const rows = submissions.map(sub => {
+                const team = extractTeam(sub.participant_id);
+                const statusClass = `status-${sub.status === 'completed' ? 'completed' :
+                    ['processing', 'pending', 'packaged'].includes(sub.status) ? 'processing' :
+                    sub.status === 'error' ? 'error' : 'pending'}`;
+
+                const timestamp = new Date(sub.submitted_at).toLocaleString();
+
+                // Build problem links
+                const problemLinks = (sub.problems || []).map(p => {
+                    const viewerUrl = `viewer.html?token=${sub.token}&problem=${p.problem_id}`;
+                    return `<a class="btn" href="${viewerUrl}" target="_blank">${p.problem_id.replace('problem_', 'P')}</a>`;
+                }).join('');
+
+                return `
+                    <tr>
+                        <td>
+                            <div class="team-name">${team}</div>
+                            <div class="token-id">${sub.participant_id}</div>
+                        </td>
+                        <td class="token-id">${sub.token}</td>
+                        <td class="timestamp">${timestamp}</td>
+                        <td><span class="status-badge ${statusClass}">${sub.status}</span></td>
+                        <td class="problem-links">${problemLinks || '-'}</td>
+                        <td>
+                            <a class="btn" href="./results/${sub.token}/" target="_blank">Files</a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('content').innerHTML = `
+                <table class="submissions-table">
+                    <thead>
+                        <tr>
+                            <th>Team / Participant</th>
+                            <th>Token</th>
+                            <th>Submitted</th>
+                            <th>Status</th>
+                            <th>View Problems</th>
+                            <th>Raw Files</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+        }
+
+        // Load on page load
+        loadSubmissions();
+    </script>
+</body>
+</html>

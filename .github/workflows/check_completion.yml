@@ -353,6 +353,10 @@ jobs:
             --config "${GITHUB_WORKSPACE}/docs/targets/config.json" \
             --output "${GITHUB_WORKSPACE}/docs/leaderboard_data.json"
 
+          # Update admin index
+          echo "Regenerating admin index..."
+          python3 scripts/generate_admin_index.py
+
           echo "Leaderboard update complete"
 
       - name: Commit and push results
