@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-01-30T01:50:18.278784Z",
+  "last_updated": "2026-01-30T03:12:58.856903Z",
   "problems": {
     "problem_1": {
       "name": "Problem 1 - 3-Helix Bundle",
@@ -100,15 +100,15 @@
     "problem_4": {
       "name": "Problem 4 - Peptide Binder 1",
       "type": "binder",
-      "primary_metric": "iptm",
+      "primary_metric": "bb_lddt",
       "rankings": [
         {
           "rank": 1,
           "participant_id": "admin1_day2_round1",
           "token": "fhh1YwSZF5DzPFLeREGhF7ZJY1omWd25",
           "submitted_at": "2026-01-28T02:21:48.351Z",
-          "primary_score": 0.49,
-          "primary_metric": "iptm",
+          "primary_score": 0.9575,
+          "primary_metric": "bb_lddt",
           "best_seq": "1",
           "iptm": 0.49,
           "ptm": 0.75,
@@ -128,15 +128,15 @@
     "problem_5": {
       "name": "Problem 5 - Peptide Binder 2",
       "type": "binder",
-      "primary_metric": "iptm",
+      "primary_metric": "bb_lddt",
       "rankings": [
         {
           "rank": 1,
           "participant_id": "admin1_day2_round1",
           "token": "fhh1YwSZF5DzPFLeREGhF7ZJY1omWd25",
           "submitted_at": "2026-01-28T02:21:48.351Z",
-          "primary_score": 0.01,
-          "primary_metric": "iptm",
+          "primary_score": 0.8929,
+          "primary_metric": "bb_lddt",
           "best_seq": "1",
           "iptm": 0.01,
           "ptm": 0.87,
@@ -156,66 +156,61 @@
   },
   "overall_rankings": [
     {
-      "participant_id": "admin1_day1_round1",
-      "token": "h90hcZUHJvDfazVueNlD9J9kHSBKZPH3",
-      "problems_completed": 3,
-      "total_rank_points": 200.0,
+      "team": "admin1",
+      "problems_completed": 5,
       "problem_scores": {
         "problem_1": 0.6656,
         "problem_2": 0.9405,
-        "problem_3": 0.5831
+        "problem_3": 0.5831,
+        "problem_4": 0.9575,
+        "problem_5": 0.8929
       },
-      "problem_ranks": {
-        "problem_1": 1,
-        "problem_2": 1,
-        "problem_3": 2
+      "problem_tokens": {
+        "problem_1": "h90hcZUHJvDfazVueNlD9J9kHSBKZPH3",
+        "problem_2": "h90hcZUHJvDfazVueNlD9J9kHSBKZPH3",
+        "problem_3": "h90hcZUHJvDfazVueNlD9J9kHSBKZPH3",
+        "problem_4": "fhh1YwSZF5DzPFLeREGhF7ZJY1omWd25",
+        "problem_5": "fhh1YwSZF5DzPFLeREGhF7ZJY1omWd25"
       },
-      "rank": 1,
-      "avg_rank_points": 66.66666666666667
+      "overall_z_score": 0.0,
+      "problem_z_scores": {
+        "problem_1": 0.0,
+        "problem_2": 1.0,
+        "problem_3": -1.0,
+        "problem_4": 0.0,
+        "problem_5": 0.0
+      },
+      "rank": 1
     },
     {
-      "participant_id": "admin1_day2_round1",
-      "token": "fhh1YwSZF5DzPFLeREGhF7ZJY1omWd25",
-      "problems_completed": 2,
-      "total_rank_points": 200,
-      "problem_scores": {
-        "problem_4": 0.49,
-        "problem_5": 0.01
-      },
-      "problem_ranks": {
-        "problem_4": 1,
-        "problem_5": 1
-      },
-      "rank": 2,
-      "avg_rank_points": 100.0
-    },
-    {
-      "participant_id": "baker",
-      "token": "riWsdmIudfsgJhwMhnwta11zoQTz5va5",
+      "team": "baker",
       "problems_completed": 1,
-      "total_rank_points": 100.0,
       "problem_scores": {
         "problem_3": 0.6372
       },
-      "problem_ranks": {
-        "problem_3": 1
+      "problem_tokens": {
+        "problem_3": "riWsdmIudfsgJhwMhnwta11zoQTz5va5"
       },
-      "rank": 3,
-      "avg_rank_points": 100.0
+      "overall_z_score": 1.0,
+      "problem_z_scores": {
+        "problem_3": 1.0
+      },
+      "rank": 2
     },
     {
-      "participant_id": "sumin",
-      "token": "JXWjZr9AOVfw87-FjAC0Ne7pXE4xazKy",
+      "team": "sumin",
       "problems_completed": 1,
-      "total_rank_points": 0.0,
       "problem_scores": {
         "problem_2": 0.5558
       },
-      "problem_ranks": {
-        "problem_2": 2
+      "problem_tokens": {
+        "problem_2": "JXWjZr9AOVfw87-FjAC0Ne7pXE4xazKy"
       },
-      "rank": 4,
-      "avg_rank_points": 0.0
+      "overall_z_score": -1.0,
+      "problem_z_scores": {
+        "problem_2": -1.0
+      },
+      "rank": 3
     }
   ]
 }

@@ -513,30 +513,44 @@
                 return `
                     <div class="panel-header">
                         <h2>Overall Rankings</h2>
-                        <p>Aggregate rankings across all problems.</p>
+                        <p>Aggregate rankings across all problems by team.</p>
                     </div>
                     <div class="no-data">No submissions yet. Rankings will appear once results are evaluated.</div>
                 `;
             }
 
-            const problemCount = Object.keys(leaderboardData.problems || {}).length;
+            // Get sorted problem IDs
+            const problems = leaderboardData.problems || {};
+            const problemIds = Object.keys(problems).sort();
+
+            // Build problem column headers
+            const problemHeaders = problemIds.map(pid => {
+                const pnum = pid.replace('problem_', '');
+                return `<th class="sortable" data-key="problem_${pnum}" data-type="number">P${pnum}</th>`;
+            }).join('');
 
             const tableRows = rankings.map(entry => {
                 const rankClass = entry.rank <= 3 ? `rank-${entry.rank}` : '';
 
-                // Show problem-specific ranks
-                const problemRanks = Object.entries(entry.problem_ranks || {})
-                    .sort(([a], [b]) => a.localeCompare(b))
-                    .map(([pid, rank]) => `P${pid.replace('problem_', '')}:#${rank}`)
-                    .join(', ');
+                // Format z-score
+                const zScore = entry.overall_z_score !== undefined ?
+                    (entry.overall_z_score >= 0 ? '+' : '') + entry.overall_z_score.toFixed(2) : '-';
+
+                // Build problem score cells
+                const problemCells = problemIds.map(pid => {
+                    const score = entry.problem_scores ? entry.problem_scores[pid] : null;
+                    if (score !== null && score !== undefined) {
+                        return `<td class="score-cell">${score.toFixed(3)}</td>`;
+                    }
+                    return `<td class="score-cell secondary">-</td>`;
+                }).join('');
 
                 return `
                     <tr>
                         <td class="rank-cell ${rankClass}">#${entry.rank}</td>
-                        <td class="participant-id">${escapeHtml(entry.participant_id)}</td>
-                        <td class="score-cell">${entry.problems_completed}/${problemCount}</td>
-                        <td class="score-cell primary">${entry.avg_rank_points.toFixed(1)}</td>
-                        <td class="score-cell secondary">${problemRanks || '-'}</td>
+                        <td class="participant-id">${escapeHtml(entry.team)}</td>
+                        <td class="score-cell primary">${zScore}</td>
+                        ${problemCells}
                     </tr>
                 `;
             }).join('');
@@ -544,17 +558,16 @@
             return `
                 <div class="panel-header">
                     <h2>Overall Rankings</h2>
-                    <p>Aggregate rankings based on average placement across all problems. Higher points = better average rank.</p>
+                    <p>Rankings by team, based on z-score of primary metric (bb-lDDT) across all problems. Shows best score per problem per team.</p>
                 </div>
                 <div class="table-container">
                     <table class="ranking-table" data-table-id="overall">
                         <thead>
                             <tr>
                                 <th class="sortable" data-key="rank" data-type="number">Rank</th>
-                                <th class="sortable" data-key="participant_id" data-type="string">Participant</th>
-                                <th class="sortable" data-key="problems_completed" data-type="number">Problems</th>
-                                <th class="sortable" data-key="avg_rank_points" data-type="number">Avg Points</th>
-                                <th>Per-Problem Ranks</th>
+                                <th class="sortable" data-key="team" data-type="string">Team</th>
+                                <th class="sortable" data-key="z_score" data-type="number">Z-Score</th>
+                                ${problemHeaders}
                             </tr>
                         </thead>
                         <tbody>${tableRows}</tbody>

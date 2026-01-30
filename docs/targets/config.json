@@ -1,4 +1,5 @@
 {
+  "_comment_primary_metric": "primary_metric: bb_lddt (monomer), binder_lddt (binder), interface_lddt, iptm, tm_score, etc. Used for z-score ranking.",
   "problems": [
     {
       "id": "problem_1",
@@ -7,6 +8,7 @@
       "target_file": "3H-scaffold.pdb",
       "residue_count": 73,
       "type": "monomer",
+      "primary_metric": "bb_lddt",
       "msa_mode": "none",
       "day": 1
     },
@@ -17,6 +19,7 @@
       "target_file": "4B1H-scaffold.pdb",
       "residue_count": 76,
       "type": "monomer",
+      "primary_metric": "bb_lddt",
       "msa_mode": "none",
       "day": 1
     },
@@ -27,6 +30,7 @@
       "target_file": "top7-scaffold.pdb",
       "residue_count": 92,
       "type": "monomer",
+      "primary_metric": "bb_lddt",
       "msa_mode": "none",
       "day": 1
     },
@@ -37,6 +41,7 @@
       "target_file": "PepBinder1-scaffold.pdb",
       "residue_count": 30,
       "type": "binder",
+      "primary_metric": "bb_lddt",
       "target_sequence": "TVSLWETVQKWREYRRQCQRSLTEDPPPATDLFCNRTFDEYACWPDGEPGSFVNVSCPWYLPWASSVPQGHVYRFCTAEGLWLQKDNSSLPWRDLSECEESKRGERSSPEEQLLFLYIIYTVGYALSFSALVIASAILLGFRHLHCTRNYIHLNLFASFILRALSVFIKDAALKWMYSTAAQQHQWDGLLSYQDSLSCRLVFLLMQYCVAANYYWLLVEGVYLYTLLAFSVFSEQWIFRLYVSIGWGVPLLFVVPWGIVKYLYEDEGCWTRNSNMNYWLIIRLPILFAIGVNFLIFVRVICIVVSKLKANLMCKTDIKCRLAKSTLTLIPLLGTHEVIFAFVMDEHARGTLRFIKLFTELSFTSFQGLMVAILYCFVNNEVQLEFRKSWERWRLE",
       "target_msa_file": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/docs/targets/PepBinder1_target.a3m",
       "participant_msa_mode": "none",
@@ -50,6 +55,7 @@
       "target_file": "PepBinder2-scaffold.pdb",
       "residue_count": 12,
       "type": "binder",
+      "primary_metric": "bb_lddt",
       "target_sequence": "MVAIQCIYALVCLVGLVGNALVIFVILRYAKMKTATNIYLLNLAVADELFMLSVPFVASSAALRHWPFGSVLCRAVLSVDGLNMFTSVFCLTVLSVDRYVAVVHPLRAATYRRPSVAKLINLGVWLASLLVTLPIAIFADTRPARGGQAVACNLQWPHPAWSAVFVVYTFLLGFLLPVLAIGLCYLLIVGKMRAVALRAGWQQRRRSEKKITRLVLMFVVVFVLCWMPFYVVQLLNLFVTSLDATVNHVSLILSYANSCANPILYGFLSDNFRRFF",
       "target_msa_file": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/docs/targets/PepBinder2_target.a3m",
       "participant_msa_mode": "none",

@@ -13,10 +13,38 @@ Usage:
 import argparse
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+import numpy as np
+
+
+def extract_team_name(participant_id: str) -> str:
+    """
+    Extract team name from participant_id.
+
+    Expected format: team1_day1_round1 -> team1
+    Also handles: admin1_day2_round1 -> admin1
+                  baker_mkz59sge_jt65 -> baker (for legacy format)
+
+    Falls back to full participant_id if pattern not matched.
+    """
+    # Pattern: teamname_day<N>_round<M>
+    match = re.match(r'^([^_]+)_day\d+_round\d+$', participant_id)
+    if match:
+        return match.group(1)
+
+    # Legacy pattern: try to extract first segment before underscore
+    # Only if it looks like a team name (alphanumeric)
+    parts = participant_id.split('_')
+    if len(parts) >= 1 and parts[0].isalnum():
+        # For legacy submissions, use the first part
+        return parts[0]
+
+    return participant_id
 
 
 def load_config(config_path: str) -> dict:
@@ -35,7 +63,10 @@ def get_problem_info(config: dict) -> dict:
             "name": p["name"],
             "type": p.get("type", "monomer"),
             "residue_count": p.get("residue_count"),
-            "description": p.get("description", "")
+            "description": p.get("description", ""),
+            # Primary metric for z-score ranking (configurable per problem in config.json)
+            # Options: bb_lddt, binder_lddt, interface_lddt, iptm, tm_score, etc.
+            "primary_metric": p.get("primary_metric", "bb_lddt")
         }
     return problems
 
@@ -250,6 +281,61 @@ def process_sequence_entry(
     return entry
 
 
+def get_metric_value(entry: dict, metric_name: str, problem_type: str) -> float | None:
+    """
+    Extract a metric value from an entry based on metric name.
+
+    Supported metrics:
+      - bb_lddt: backbone lDDT (from metrics or binder_metrics for binders)
+      - binder_lddt: binder-only lDDT (binder problems)
+      - interface_lddt: interface lDDT (binder problems)
+      - tm_score: TM-score
+      - binder_tm: binder TM-score (binder problems)
+      - iptm: interface pTM from AF3
+      - ptm: pTM from AF3
+      - plddt: mean pLDDT from AF3
+
+    To change the ranking metric for a problem, edit 'primary_metric' in config.json.
+    """
+    metrics = entry.get("metrics", {})
+    binder_metrics = entry.get("binder_metrics", {})
+    interface_metrics = entry.get("interface_metrics", {})
+    af3_metrics = entry.get("af3_metrics", {})
+
+    if metric_name == "bb_lddt":
+        # For binder problems, use binder_lddt as bb_lddt
+        if problem_type == "binder":
+            return binder_metrics.get("binder_lddt") or metrics.get("bb_lddt")
+        return metrics.get("bb_lddt")
+
+    elif metric_name == "binder_lddt":
+        return binder_metrics.get("binder_lddt")
+
+    elif metric_name == "interface_lddt":
+        return interface_metrics.get("interface_lddt")
+
+    elif metric_name == "tm_score":
+        return metrics.get("tm_score")
+
+    elif metric_name == "binder_tm":
+        return binder_metrics.get("binder_tm_score")
+
+    elif metric_name == "iptm":
+        chain_iptm = af3_metrics.get("chain_pair_iptm")
+        if chain_iptm and isinstance(chain_iptm, list) and len(chain_iptm) > 0:
+            if isinstance(chain_iptm[0], list) and len(chain_iptm[0]) > 1:
+                return chain_iptm[0][1]  # Off-diagonal element
+        return af3_metrics.get("iptm")
+
+    elif metric_name == "ptm":
+        return af3_metrics.get("ptm")
+
+    elif metric_name == "plddt":
+        return af3_metrics.get("mean_plddt")
+
+    return None
+
+
 def rank_entries(entries: list[dict], descending: bool = True) -> list[dict]:
     """
     Rank entries by primary score.
@@ -286,71 +372,125 @@ def rank_entries(entries: list[dict], descending: bool = True) -> list[dict]:
     return ranked
 
 
-def compute_overall_rankings(problem_results: dict[str, list], _problem_info: dict) -> list[dict]:
+def compute_overall_rankings(problem_results: dict[str, list], problem_info: dict) -> list[dict]:
     """
     Compute overall rankings by aggregating scores across problems.
 
-    Uses each participant's BEST submission per problem.
-    Uses average normalized rank (lower is better).
+    Groups submissions by TEAM (extracted from participant_id, e.g., team1_day1_round1 -> team1).
+    Uses configurable primary_metric per problem for z-score calculation.
+    Overall ranking = average z-score across all problems (higher is better).
+
+    To change the primary metric for a problem:
+      Edit 'primary_metric' in docs/targets/config.json for that problem.
+      Options: bb_lddt, binder_lddt, interface_lddt, iptm, tm_score, etc.
     """
-    participant_data: dict[str, dict[str, Any]] = {}
+    # Step 1: Aggregate by team - find best score per team per problem
+    team_data: dict[str, dict[str, Any]] = {}
 
     for problem_id, entries in problem_results.items():
         if not entries:
             continue
 
-        # First, deduplicate: keep only the best entry per participant
-        best_by_participant: dict[str, dict] = {}
+        pinfo = problem_info.get(problem_id, {})
+        ptype = pinfo.get("type", "monomer")
+        primary_metric = pinfo.get("primary_metric", "bb_lddt")
+
+        # Group by team and keep best primary_metric score per team
+        best_by_team: dict[str, dict] = {}
         for entry in entries:
-            pid = entry["participant_id"]
-            score = entry.get("primary_score") or 0
-            if pid not in best_by_participant or score > (best_by_participant[pid].get("primary_score") or 0):
-                best_by_participant[pid] = entry
+            participant_id = entry["participant_id"]
+            team = extract_team_name(participant_id)
 
-        # Now rank the deduplicated entries
-        unique_entries = list(best_by_participant.values())
-        ranked = rank_entries(unique_entries)
+            # Get the configured primary metric value
+            score = get_metric_value(entry, primary_metric, ptype)
 
-        for entry in ranked:
-            pid = entry["participant_id"]
-            if pid not in participant_data:
-                participant_data[pid] = {
-                    "participant_id": pid,
+            if score is None:
+                continue
+
+            if team not in best_by_team or score > (best_by_team[team].get("score") or 0):
+                best_by_team[team] = {
+                    "team": team,
+                    "participant_id": participant_id,
                     "token": entry["token"],
-                    "problems_completed": 0,
-                    "total_rank_points": 0,
-                    "problem_scores": {},
-                    "problem_ranks": {}
+                    "score": score,
+                    "problem_id": problem_id,
+                    "metric_name": primary_metric
                 }
 
-            # Normalize rank: 1 = 100 points, last = 0 points
-            max_rank = len(ranked)
-            if max_rank > 1:
-                rank_points = 100 * (max_rank - entry["rank"]) / (max_rank - 1)
-            else:
-                rank_points = 100
+        # Add best scores to team data
+        for team, best in best_by_team.items():
+            if team not in team_data:
+                team_data[team] = {
+                    "team": team,
+                    "problems_completed": 0,
+                    "problem_scores": {},  # problem_id -> score
+                    "problem_tokens": {}   # problem_id -> token (for reference)
+                }
 
-            participant_data[pid]["problems_completed"] += 1
-            participant_data[pid]["total_rank_points"] += rank_points
-            participant_data[pid]["problem_scores"][problem_id] = entry.get("primary_score")
-            participant_data[pid]["problem_ranks"][problem_id] = entry["rank"]
-            # Update token to the best submission's token
-            participant_data[pid]["token"] = entry["token"]
+            team_data[team]["problems_completed"] += 1
+            team_data[team]["problem_scores"][problem_id] = best["score"]
+            team_data[team]["problem_tokens"][problem_id] = best["token"]
 
-    # Sort by total rank points (higher is better)
+    # Step 2: Calculate z-scores for each problem
+    problem_ids = sorted(problem_info.keys())
+    problem_z_scores: dict[str, dict[str, float]] = {pid: {} for pid in problem_ids}
+
+    for problem_id in problem_ids:
+        scores = []
+        teams_with_scores = []
+        for team, data in team_data.items():
+            score = data["problem_scores"].get(problem_id)
+            if score is not None:
+                scores.append(score)
+                teams_with_scores.append(team)
+
+        if len(scores) < 2:
+            # Not enough data for z-score, use 0 (neutral)
+            for team in teams_with_scores:
+                problem_z_scores[problem_id][team] = 0.0
+            continue
+
+        # Calculate z-scores
+        mean = np.mean(scores)
+        std = np.std(scores)
+        if std == 0:
+            std = 1  # Avoid division by zero
+
+        for team in teams_with_scores:
+            score = team_data[team]["problem_scores"][problem_id]
+            z = (score - mean) / std
+            problem_z_scores[problem_id][team] = z
+
+    # Step 3: Calculate overall z-score (average of z-scores across problems)
+    for team, data in team_data.items():
+        z_scores = []
+        for problem_id in problem_ids:
+            if problem_id in data["problem_scores"]:
+                z = problem_z_scores[problem_id].get(team)
+                if z is not None:
+                    z_scores.append(z)
+
+        if z_scores:
+            data["overall_z_score"] = float(np.mean(z_scores))
+        else:
+            data["overall_z_score"] = 0.0
+
+        # Store per-problem z-scores for display
+        data["problem_z_scores"] = {
+            pid: problem_z_scores[pid].get(team)
+            for pid in problem_ids if pid in data["problem_scores"]
+        }
+
+    # Step 4: Sort by overall z-score (higher is better), with problems_completed as tiebreaker
     overall = sorted(
-        participant_data.values(),
-        key=lambda x: (x["problems_completed"], x["total_rank_points"]),
+        team_data.values(),
+        key=lambda x: (x["problems_completed"], x["overall_z_score"]),
         reverse=True
     )
 
     # Add overall ranks
     for i, entry in enumerate(overall):
         entry["rank"] = i + 1
-        entry["avg_rank_points"] = (
-            entry["total_rank_points"] / entry["problems_completed"]
-            if entry["problems_completed"] > 0 else 0
-        )
 
     return overall
 
@@ -370,13 +510,17 @@ def generate_leaderboard(
     # Generate per-problem rankings
     for problem_id, info in problem_info.items():
         entries = problem_results.get(problem_id, [])
-        ranked = rank_entries(entries)
 
-        # Determine primary metric based on problem type
-        if info["type"] == "binder":
-            primary_metric = "iptm"
-        else:
-            primary_metric = "bb_lddt"
+        # Use configurable primary metric for ranking
+        primary_metric = info.get("primary_metric", "bb_lddt")
+        ptype = info.get("type", "monomer")
+
+        # Re-score entries using the configured primary metric
+        for entry in entries:
+            entry["primary_score"] = get_metric_value(entry, primary_metric, ptype)
+            entry["primary_metric"] = primary_metric
+
+        ranked = rank_entries(entries)
 
         # Build simplified ranking entries
         rankings = []
@@ -480,11 +624,12 @@ def main():
     print(f"Last updated: {leaderboard['last_updated']}")
 
     # Print summary
-    print("\n=== Overall Rankings ===")
+    print("\n=== Overall Rankings (by Team) ===")
     for entry in leaderboard["overall_rankings"][:10]:
-        print(f"  #{entry['rank']}: {entry['participant_id']} "
+        z_score = entry.get('overall_z_score', 0)
+        print(f"  #{entry['rank']}: {entry['team']} "
               f"({entry['problems_completed']} problems, "
-              f"{entry['avg_rank_points']:.1f} avg points)")
+              f"z-score: {z_score:+.2f})")
 
     return 0
 
