@@ -211,9 +211,8 @@ def package_multi_results(submission_dir: Path, output_dir: Path, status_file: P
                     suffix = filepath.suffix
                     stem = filepath.stem
 
-                    # Determine sequence suffix (only add if multiple sequences)
-                    num_seqs = len(seq_outputs)
-                    seq_suffix = f"_seq{seq_num}" if num_seqs > 1 or int(seq_num) > 1 else ""
+                    # Always include sequence suffix for consistency with viewer
+                    seq_suffix = f"_seq{seq_num}"
 
                     # Extract the file type (model, confidences, etc.)
                     if "_model" in stem:

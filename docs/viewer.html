@@ -613,6 +613,8 @@
                 `${participantId}_${problemId}_seq${seqNum}_evaluation.json`,
                 `${participantId}_${problemId}seq${seqNum}_evaluation.json`,
                 `evaluation_${problemId}_seq${seqNum}.json`,
+                // Legacy format without seq number (for single-sequence submissions before fix)
+                `${participantId}_${problemId}_evaluation.json`,
             ];
 
             for (const pattern of patterns) {
