@@ -282,7 +282,7 @@ jobs:
           declare -A PROBLEM_REFS=(
             ["problem_1"]="3H-scaffold.pdb:monomer"
             ["problem_2"]="4B1H-scaffold.pdb:monomer"
-            ["problem_3"]="Top7-scaffold.pdb:monomer"
+            ["problem_3"]="top7-scaffold.pdb:monomer"
             ["problem_4"]="PepBinder1-scaffold.pdb:binder"
             ["problem_5"]="PepBinder2-scaffold.pdb:binder"
           )

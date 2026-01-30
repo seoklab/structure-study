@@ -5,7 +5,7 @@
   "token": "riWsdmIudfsgJhwMhnwta11zoQTz5va5",
   "model_file": "baker_problem_3_model.cif",
   "reference_file": "top7-scaffold.pdb",
-  "evaluated_at": "2026-01-30T01:41:10.292958Z",
+  "evaluated_at": "2026-01-30T07:42:40.059196Z",
   "metrics": {
     "tm_score": 0.32689,
     "tm_score_ref": null,

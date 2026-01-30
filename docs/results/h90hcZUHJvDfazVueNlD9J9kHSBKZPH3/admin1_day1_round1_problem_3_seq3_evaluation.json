@@ -4,20 +4,30 @@
   "participant_id": "admin1_day1_round1",
   "token": "h90hcZUHJvDfazVueNlD9J9kHSBKZPH3",
   "model_file": "admin1_day1_round1_problem_3_seq3_model.cif",
-  "reference_file": "Top7-scaffold.pdb",
-  "evaluated_at": "2026-01-27T10:06:51.023709Z",
+  "reference_file": "top7-scaffold.pdb",
+  "evaluated_at": "2026-01-30T07:42:29.510932Z",
   "metrics": {
-    "tm_score": 0.4456,
+    "tm_score": 0.35747,
     "tm_score_ref": null,
-    "rmsd": 2.47,
-    "aligned_length": 53,
+    "rmsd": 2.65,
+    "aligned_length": 43,
     "seq_identity": 0.0,
-    "bb_lddt": 0.5831,
+    "bb_lddt": 0.7468,
     "model_ca_count": 90,
     "ref_ca_count": 92,
-    "lddt_aligned_count": 53
+    "lddt_aligned_count": 43
   },
-  "af3_metrics": {},
-  "primary_score": 0.5831,
+  "af3_metrics": {
+    "ptm": 0.5,
+    "iptm": null,
+    "ranking_score": 0.5,
+    "chain_pair_iptm": [
+      [
+        0.5
+      ]
+    ],
+    "fraction_disordered": 0.0
+  },
+  "primary_score": 0.7468,
   "primary_metric": "bb_lddt"
 }
