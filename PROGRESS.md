@@ -4,7 +4,7 @@
 **Status:** Phase 2 complete, ready for deployment
 
 ## Requirements Recap
-1. ✅ Participants submit amino acid sequences via GitHub Issues
+1. ✅ Participants submit amino acid sequences via Netlify form (`repository_dispatch`) — GitHub Issues supported as an alternative
 2. ✅ AF3 modeling via sbatch to gpu-micro.q
 3. ✅ Private results with Mol* viewer (pLDDT coloring)
 4. ✅ Unlimited resubmissions
