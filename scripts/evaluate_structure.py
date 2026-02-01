@@ -1150,18 +1150,34 @@ def main():
     af3 = result.get("af3_metrics", {})
 
     if args.problem_type == "binder":
-        # For binders, use ipTM from AF3 as primary
-        chain_iptm = af3.get("chain_pair_iptm")
-        if chain_iptm and isinstance(chain_iptm, list) and len(chain_iptm) > 0:
-            if isinstance(chain_iptm[0], list) and len(chain_iptm[0]) > 0:
-                result["primary_score"] = chain_iptm[0][0]
+        # For binders, choose the maximum off-diagonal chain_pair_iptm (best interface) as primary.
+        # If no off-diagonal entries are available, fall back to af3['iptm'] then to ranking_score.
+        chain_pair_iptm = af3.get("chain_pair_iptm")
+        max_off_diag = None
+        if chain_pair_iptm and isinstance(chain_pair_iptm, list):
+            for i, row in enumerate(chain_pair_iptm):
+                if not isinstance(row, list):
+                    continue
+                for j, val in enumerate(row):
+                    # Skip diagonal (i == j) which represent per-chain pTM
+                    if i == j:
+                        continue
+                    if val is None:
+                        continue
+                    if max_off_diag is None or val > max_off_diag:
+                        max_off_diag = val
+
+        if max_off_diag is not None:
+            result["primary_score"] = max_off_diag
+            result["primary_metric"] = "iptm"
+        else:
+            # Fall back to global af3 iptm summary if present
+            if af3.get("iptm") is not None:
+                result["primary_score"] = af3.get("iptm")
                 result["primary_metric"] = "iptm"
             else:
                 result["primary_score"] = af3.get("ranking_score")
                 result["primary_metric"] = "ranking_score"
-        else:
-            result["primary_score"] = af3.get("ranking_score")
-            result["primary_metric"] = "ranking_score"
     else:
         # For monomers, use bb-lDDT as primary if available
         if metrics.get("bb_lddt") is not None:
