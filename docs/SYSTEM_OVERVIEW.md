@@ -31,16 +31,16 @@
 
 ### 2. Netlify Function (`netlify/functions/submit.js`)
 - **Endpoint**: `https://kidds2026.netlify.app/api/submit`
-- Validates input
-- Creates GitHub Issue with `submission` label
+- Validates input and triggers a GitHub `repository_dispatch` event (`event_type`: `new_submission`)
+- Does **not** create a public GitHub Issue by default (avoids exposing sequences)
 - Returns success/error to user
 
 ### 3. Process Submission Workflow (`.github/workflows/process_submission.yml`)
-- **Trigger**: Issue labeled `submission`
+- **Trigger**: `repository_dispatch` event (`new_submission`) — or (optional) GitHub Issue labeled `submission` for issue-based submissions
 - **Runner**: Self-hosted on galaxy4 HPC
 - Steps:
   1. Create submission directory
-  2. Parse issue body → `submission.json`
+  2. Parse submission payload → `submission.json`
   3. Prepare AF3 input → `af3_input.json`
   4. Generate SLURM script → copy to job queue
   5. Send confirmation email
