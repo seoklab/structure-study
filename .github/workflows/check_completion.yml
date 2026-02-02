@@ -215,6 +215,12 @@ jobs:
                   # Incremental mode: send progress email
                   echo "Sending PROGRESS email to: $EMAIL ($COMPLETED_COUNT/$TOTAL_PROBLEMS)"
                   printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Progress Update (%s/%s) - KIDDS 2026\n\nHello %s,\n\nYour AlphaFold3 predictions are in progress.\n\nCompleted: %s/%s (%s)\nJust finished: %s\nStill running: %s\n\nView your results (updates as more complete):\n%s/viewer.html?token=%s\n\nYou will receive another email when more results are ready.\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$COMPLETED_COUNT" "$TOTAL_PROBLEMS" "$PARTICIPANT_ID" "$COMPLETED_COUNT" "$TOTAL_PROBLEMS" "$COMPLETED_LIST" "$NEW_COMPLETED_LIST" "$PENDING_LIST" "${SITE_URL}" "$TOKEN" | sendmail -t
+
+                  # Send admin notification for progress
+                  for ADMIN in $(echo "${ADMIN_EMAILS}" | tr ',' ' '); do
+                    printf "To: %s\nFrom: noreply@seoklab.org\nSubject: [ADMIN] Progress Update - %s (%s/%s)\n\nProgress update!\n\nSubmission ID: %s\nParticipant: %s (%s)\n\nCompleted: %s/%s (%s)\nJust finished: %s\nStill running: %s\n\nToken: %s\n\nView results:\n%s/viewer.html?token=%s\n\nSubmission directory:\n%s\n" "$ADMIN" "$SUBMISSION_ID" "$COMPLETED_COUNT" "$TOTAL_PROBLEMS" "$SUBMISSION_ID" "$PARTICIPANT_ID" "$EMAIL" "$COMPLETED_COUNT" "$TOTAL_PROBLEMS" "$COMPLETED_LIST" "$NEW_COMPLETED_LIST" "$PENDING_LIST" "$TOKEN" "${SITE_URL}" "$TOKEN" "$dir" | sendmail -t || true
+                  done
+
                   echo "Processed submission: $SUBMISSION_ID"
                 fi
               fi
@@ -261,6 +267,11 @@ jobs:
                   if [ -n "$EMAIL" ]; then
                     printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Your Protein Structure Results are Ready\n\nHello,\n\nYour AlphaFold3 structure prediction for \"%s\" is now complete!\n\nView your results:\n%s/viewer.html?token=%s\n\nDownload files:\n%s/results/%s/\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$SEQ_NAME" "${SITE_URL}" "$TOKEN" "${SITE_URL}" "$TOKEN" | sendmail -t
                   fi
+
+                  # Send admin notification
+                  for ADMIN in $(echo "${ADMIN_EMAILS}" | tr ',' ' '); do
+                    printf "To: %s\nFrom: noreply@seoklab.org\nSubject: [ADMIN] Results Ready - %s\n\nResults are ready!\n\nSubmission ID: %s\nParticipant: %s (%s)\nSequence: %s\n\nToken: %s\n\nView results:\n%s/viewer.html?token=%s\n\nDirect files:\n%s/results/%s/\n\nSubmission directory:\n%s\n" "$ADMIN" "$SUBMISSION_ID" "$SUBMISSION_ID" "$PARTICIPANT_ID" "$EMAIL" "$SEQ_NAME" "$TOKEN" "${SITE_URL}" "$TOKEN" "${SITE_URL}" "$TOKEN" "$dir" | sendmail -t || true
+                  done
 
                   echo "Processed submission: $SUBMISSION_ID"
                 fi
