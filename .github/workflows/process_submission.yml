@@ -79,19 +79,12 @@ jobs:
 
               JOB_ID="${SUBMISSION_ID}_${PROBLEM_ID}_seq${SEQ_NUM}"
 
-              # Determine partition based on problem (problem_4 needs larger GPU)
-              PARTITION_ARGS=""
-              if [ "$PROBLEM_ID" = "problem_4" ]; then
-                PARTITION_ARGS="--partition gpu-super.q --exclude nova005,nova010,nova015,nova016,nova017"
-              fi
-
               # Generate the SLURM script (singleton groups by participant for fair scheduling)
               python3 scripts/run_af3.py \
                 --submission-dir "$seq_dir" \
                 --submission-id "$JOB_ID" \
                 --participant-id "$PARTICIPANT_ID" \
-                --mode full \
-                $PARTITION_ARGS
+                --mode full
 
               # Copy to queue directory
               SCRIPT_FILE="$seq_dir/scripts/run_${JOB_ID}_full.sh"
