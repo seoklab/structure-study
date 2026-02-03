@@ -102,19 +102,20 @@ jobs:
                     fi
                   done
 
-                  # Problem is complete if at least one sequence completed
-                  if [ "$PROBLEM_COMPLETED" -gt 0 ]; then
-                    COMPLETED_COUNT=$((COMPLETED_COUNT + 1))
-                    COMPLETED_LIST="${COMPLETED_LIST}${PROBLEM_ID}(${PROBLEM_COMPLETED}/${SEQ_COUNT}), "
-                    if ! echo ",$NOTIFIED_PROBLEMS," | grep -q ",${PROBLEM_ID},"; then
-                      NEW_COMPLETED_LIST="${NEW_COMPLETED_LIST}${PROBLEM_ID}, "
+                  # Problem is done when all sequences finished (completed or failed, none pending)
+                  if [ "$PROBLEM_PENDING" -eq 0 ]; then
+                    if [ "$PROBLEM_COMPLETED" -gt 0 ]; then
+                      COMPLETED_COUNT=$((COMPLETED_COUNT + 1))
+                      COMPLETED_LIST="${COMPLETED_LIST}${PROBLEM_ID}(${PROBLEM_COMPLETED}/${SEQ_COUNT}), "
+                      if ! echo ",$NOTIFIED_PROBLEMS," | grep -q ",${PROBLEM_ID},"; then
+                        NEW_COMPLETED_LIST="${NEW_COMPLETED_LIST}${PROBLEM_ID}, "
+                      fi
                     fi
-                  fi
-                  if [ "$PROBLEM_FAILED" -gt 0 ] && [ "$PROBLEM_PENDING" -eq 0 ] && [ "$PROBLEM_COMPLETED" -eq 0 ]; then
-                    FAILED_COUNT=$((FAILED_COUNT + 1))
-                    FAILED_LIST="${FAILED_LIST}${PROBLEM_ID}(${PROBLEM_FAILED}/${SEQ_COUNT} failed), "
-                  fi
-                  if [ "$PROBLEM_PENDING" -gt 0 ]; then
+                    if [ "$PROBLEM_FAILED" -gt 0 ]; then
+                      FAILED_COUNT=$((FAILED_COUNT + 1))
+                      FAILED_LIST="${FAILED_LIST}${PROBLEM_ID}(${PROBLEM_FAILED}/${SEQ_COUNT} failed), "
+                    fi
+                  else
                     PENDING_LIST="${PENDING_LIST}${PROBLEM_ID}(${PROBLEM_PENDING} pending), "
                   fi
                 else
