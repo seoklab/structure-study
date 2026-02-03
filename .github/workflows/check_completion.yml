@@ -1,9 +1,9 @@
 name: Check Job Completion
 
 on:
-  # Runs every minute when enabled
+  # Runs every 5 minutes when enabled
   schedule:
-    - cron: '* * * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 jobs:
