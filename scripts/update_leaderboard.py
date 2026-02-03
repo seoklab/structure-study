@@ -322,6 +322,9 @@ def get_metric_value(entry: dict, metric_name: str, problem_type: str) -> float 
         return interface_metrics.get("interface_lddt")
 
     elif metric_name == "tm_score":
+        # For binders, use binder_tm_score; for monomers, use tm_score
+        if problem_type == "binder":
+            return binder_metrics.get("binder_tm_score") or metrics.get("complex_tm_score") or metrics.get("tm_score")
         return metrics.get("tm_score")
 
     elif metric_name == "binder_tm":

@@ -1262,29 +1262,34 @@ def main():
     af3 = result.get("af3_metrics", {})
 
     if args.problem_type == "binder":
-        # For binders, choose the maximum off-diagonal chain_pair_iptm (best interface) as primary.
-        # If no off-diagonal entries are available, fall back to af3['iptm'] then to ranking_score.
-        chain_pair_iptm = af3.get("chain_pair_iptm")
-        max_off_diag = None
-        if chain_pair_iptm and isinstance(chain_pair_iptm, list):
-            for i, row in enumerate(chain_pair_iptm):
-                if not isinstance(row, list):
-                    continue
-                for j, val in enumerate(row):
-                    # Skip diagonal (i == j) which represent per-chain pTM
-                    if i == j:
-                        continue
-                    if val is None:
-                        continue
-                    if max_off_diag is None or val > max_off_diag:
-                        max_off_diag = val
-
-        if max_off_diag is not None:
-            result["primary_score"] = max_off_diag
-            result["primary_metric"] = "iptm"
+        # For binders, use TM-score (binder_tm or complex_tm) as primary metric
+        binder_metrics = result.get("binder_metrics", {})
+        if binder_metrics.get("binder_tm_score") is not None:
+            result["primary_score"] = binder_metrics["binder_tm_score"]
+            result["primary_metric"] = "tm_score"
+        elif metrics.get("complex_tm_score") is not None:
+            result["primary_score"] = metrics["complex_tm_score"]
+            result["primary_metric"] = "tm_score"
+        elif metrics.get("tm_score") is not None:
+            result["primary_score"] = metrics["tm_score"]
+            result["primary_metric"] = "tm_score"
         else:
-            # Fall back to global af3 iptm summary if present
-            if af3.get("iptm") is not None:
+            # Fall back to iptm if no TM-score available
+            chain_pair_iptm = af3.get("chain_pair_iptm")
+            max_off_diag = None
+            if chain_pair_iptm and isinstance(chain_pair_iptm, list):
+                for i, row in enumerate(chain_pair_iptm):
+                    if not isinstance(row, list):
+                        continue
+                    for j, val in enumerate(row):
+                        if i == j:
+                            continue
+                        if val is not None and (max_off_diag is None or val > max_off_diag):
+                            max_off_diag = val
+            if max_off_diag is not None:
+                result["primary_score"] = max_off_diag
+                result["primary_metric"] = "iptm"
+            elif af3.get("iptm") is not None:
                 result["primary_score"] = af3.get("iptm")
                 result["primary_metric"] = "iptm"
             else:
