@@ -28,6 +28,7 @@ SLURM_CONFIG = {
     "partition_cpu": "normal.q",
     "cpus": 6,
     "nice": 100,  # Lower priority for competition jobs
+    "exclude_nodes": "nova012",  # Nodes with broken AF3 database mounts
 }
 
 
@@ -66,8 +67,9 @@ def generate_sbatch_script(
     # Add singleton dependency if participant_id is provided
     singleton_line = "#SBATCH --dependency=singleton\n" if participant_id else ""
 
-    # Add node exclusion if specified
-    exclude_line = f"#SBATCH --exclude={exclude_nodes}\n" if exclude_nodes else ""
+    # Add node exclusion (use default from config if not specified)
+    effective_exclude = exclude_nodes if exclude_nodes else SLURM_CONFIG.get("exclude_nodes")
+    exclude_line = f"#SBATCH --exclude={effective_exclude}\n" if effective_exclude else ""
 
     # Determine GPU partition (allow override)
     gpu_partition = partition if partition else SLURM_CONFIG["partition_gpu"]
