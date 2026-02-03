@@ -1,0 +1,10 @@
+{
+  "token": "E3jh4HBWECz8h3PA3zCW2Ggw3QvqH7Tt",
+  "files": [
+    "submission_6_model.cif",
+    "submission_6_confidences.json",
+    "submission_6_summary_confidences.json",
+    "submission_6_ranking_scores.csv"
+  ],
+  "source_dir": "/home.galaxy4/j2ho/job_queue/completed/test/submission_6"
+}

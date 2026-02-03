@@ -1,0 +1,262 @@
+{
+  "token": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j",
+  "participant_id": "test_day1_round1",
+  "total_problems": 3,
+  "completed_problems": 3,
+  "total_sequences": 15,
+  "all_complete": true,
+  "files": [
+    "test_day1_round1_problem_3_seq1_model.cif",
+    "test_day1_round1_problem_3_seq3_model.cif",
+    "test_day1_round1_problem_1_seq4_summary_confidences.json",
+    "test_day1_round1_problem_2_seq2_confidences.json",
+    "test_day1_round1_problem_2_seq1_ranking_scores.csv",
+    "test_day1_round1_problem_2_seq1_summary_confidences.json",
+    "test_day1_round1_problem_3_seq5_ranking_scores.csv",
+    "test_day1_round1_problem_3_seq1_summary_confidences.json",
+    "test_day1_round1_problem_2_seq4_summary_confidences.json",
+    "test_day1_round1_problem_3_seq3_confidences.json",
+    "test_day1_round1_problem_3_seq4_ranking_scores.csv",
+    "test_day1_round1_problem_1_seq5_model.cif",
+    "test_day1_round1_problem_1_seq1_ranking_scores.csv",
+    "test_day1_round1_problem_3_seq2_summary_confidences.json",
+    "test_day1_round1_problem_2_seq4_model.cif",
+    "test_day1_round1_problem_2_seq4_ranking_scores.csv",
+    "test_day1_round1_problem_1_seq2_summary_confidences.json",
+    "test_day1_round1_problem_3_seq4_confidences.json",
+    "test_day1_round1_problem_3_seq3_ranking_scores.csv",
+    "test_day1_round1_problem_1_seq3_model.cif",
+    "test_day1_round1_problem_1_seq3_ranking_scores.csv",
+    "submission.json",
+    "test_day1_round1_problem_3_seq1_confidences.json",
+    "test_day1_round1_problem_1_seq2_ranking_scores.csv",
+    "test_day1_round1_problem_1_seq2_model.cif",
+    "test_day1_round1_problem_3_seq1_ranking_scores.csv",
+    "test_day1_round1_problem_3_seq5_model.cif",
+    "test_day1_round1_problem_3_seq5_summary_confidences.json",
+    "test_day1_round1_problem_1_seq4_model.cif",
+    "test_day1_round1_problem_2_seq5_summary_confidences.json",
+    "test_day1_round1_problem_2_seq1_model.cif",
+    "test_day1_round1_problem_2_seq2_ranking_scores.csv",
+    "test_day1_round1_problem_2_seq5_ranking_scores.csv",
+    "test_day1_round1_problem_2_seq3_ranking_scores.csv",
+    "test_day1_round1_problem_3_seq2_ranking_scores.csv",
+    "test_day1_round1_problem_1_seq5_summary_confidences.json",
+    "test_day1_round1_problem_3_seq3_summary_confidences.json",
+    "test_day1_round1_problem_1_seq1_model.cif",
+    "test_day1_round1_problem_1_seq4_confidences.json",
+    "test_day1_round1_problem_2_seq2_summary_confidences.json",
+    "test_day1_round1_problem_2_seq5_model.cif",
+    "test_day1_round1_problem_2_seq2_model.cif",
+    "test_day1_round1_problem_3_seq4_summary_confidences.json",
+    "test_day1_round1_problem_2_seq3_model.cif",
+    "test_day1_round1_problem_3_seq2_model.cif",
+    "test_day1_round1_problem_3_seq4_model.cif",
+    "test_day1_round1_problem_1_seq3_summary_confidences.json",
+    "test_day1_round1_problem_1_seq1_summary_confidences.json",
+    "test_day1_round1_problem_1_seq5_ranking_scores.csv",
+    "test_day1_round1_problem_1_seq4_ranking_scores.csv",
+    "test_day1_round1_problem_2_seq3_summary_confidences.json"
+  ],
+  "problems": {
+    "problem_1": {
+      "files": [
+        "test_day1_round1_problem_1_seq1_model.cif",
+        "test_day1_round1_problem_1_seq1_summary_confidences.json",
+        "test_day1_round1_problem_1_seq1_summary_confidences.json",
+        "test_day1_round1_problem_1_seq1_ranking_scores.csv",
+        "test_day1_round1_problem_1_seq2_model.cif",
+        "test_day1_round1_problem_1_seq2_summary_confidences.json",
+        "test_day1_round1_problem_1_seq2_summary_confidences.json",
+        "test_day1_round1_problem_1_seq2_ranking_scores.csv",
+        "test_day1_round1_problem_1_seq3_model.cif",
+        "test_day1_round1_problem_1_seq3_summary_confidences.json",
+        "test_day1_round1_problem_1_seq3_summary_confidences.json",
+        "test_day1_round1_problem_1_seq3_ranking_scores.csv",
+        "test_day1_round1_problem_1_seq4_model.cif",
+        "test_day1_round1_problem_1_seq4_confidences.json",
+        "test_day1_round1_problem_1_seq4_summary_confidences.json",
+        "test_day1_round1_problem_1_seq4_ranking_scores.csv",
+        "test_day1_round1_problem_1_seq5_model.cif",
+        "test_day1_round1_problem_1_seq5_summary_confidences.json",
+        "test_day1_round1_problem_1_seq5_summary_confidences.json",
+        "test_day1_round1_problem_1_seq5_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "test_day1_round1_problem_1_seq1_model.cif",
+            "test_day1_round1_problem_1_seq1_summary_confidences.json",
+            "test_day1_round1_problem_1_seq1_summary_confidences.json",
+            "test_day1_round1_problem_1_seq1_ranking_scores.csv"
+          ]
+        },
+        "2": {
+          "files": [
+            "test_day1_round1_problem_1_seq2_model.cif",
+            "test_day1_round1_problem_1_seq2_summary_confidences.json",
+            "test_day1_round1_problem_1_seq2_summary_confidences.json",
+            "test_day1_round1_problem_1_seq2_ranking_scores.csv"
+          ]
+        },
+        "3": {
+          "files": [
+            "test_day1_round1_problem_1_seq3_model.cif",
+            "test_day1_round1_problem_1_seq3_summary_confidences.json",
+            "test_day1_round1_problem_1_seq3_summary_confidences.json",
+            "test_day1_round1_problem_1_seq3_ranking_scores.csv"
+          ]
+        },
+        "4": {
+          "files": [
+            "test_day1_round1_problem_1_seq4_model.cif",
+            "test_day1_round1_problem_1_seq4_confidences.json",
+            "test_day1_round1_problem_1_seq4_summary_confidences.json",
+            "test_day1_round1_problem_1_seq4_ranking_scores.csv"
+          ]
+        },
+        "5": {
+          "files": [
+            "test_day1_round1_problem_1_seq5_model.cif",
+            "test_day1_round1_problem_1_seq5_summary_confidences.json",
+            "test_day1_round1_problem_1_seq5_summary_confidences.json",
+            "test_day1_round1_problem_1_seq5_ranking_scores.csv"
+          ]
+        }
+      }
+    },
+    "problem_2": {
+      "files": [
+        "test_day1_round1_problem_2_seq1_model.cif",
+        "test_day1_round1_problem_2_seq1_summary_confidences.json",
+        "test_day1_round1_problem_2_seq1_summary_confidences.json",
+        "test_day1_round1_problem_2_seq1_ranking_scores.csv",
+        "test_day1_round1_problem_2_seq2_model.cif",
+        "test_day1_round1_problem_2_seq2_confidences.json",
+        "test_day1_round1_problem_2_seq2_summary_confidences.json",
+        "test_day1_round1_problem_2_seq2_ranking_scores.csv",
+        "test_day1_round1_problem_2_seq3_model.cif",
+        "test_day1_round1_problem_2_seq3_summary_confidences.json",
+        "test_day1_round1_problem_2_seq3_summary_confidences.json",
+        "test_day1_round1_problem_2_seq3_ranking_scores.csv",
+        "test_day1_round1_problem_2_seq4_model.cif",
+        "test_day1_round1_problem_2_seq4_summary_confidences.json",
+        "test_day1_round1_problem_2_seq4_summary_confidences.json",
+        "test_day1_round1_problem_2_seq4_ranking_scores.csv",
+        "test_day1_round1_problem_2_seq5_model.cif",
+        "test_day1_round1_problem_2_seq5_summary_confidences.json",
+        "test_day1_round1_problem_2_seq5_summary_confidences.json",
+        "test_day1_round1_problem_2_seq5_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "test_day1_round1_problem_2_seq1_model.cif",
+            "test_day1_round1_problem_2_seq1_summary_confidences.json",
+            "test_day1_round1_problem_2_seq1_summary_confidences.json",
+            "test_day1_round1_problem_2_seq1_ranking_scores.csv"
+          ]
+        },
+        "2": {
+          "files": [
+            "test_day1_round1_problem_2_seq2_model.cif",
+            "test_day1_round1_problem_2_seq2_confidences.json",
+            "test_day1_round1_problem_2_seq2_summary_confidences.json",
+            "test_day1_round1_problem_2_seq2_ranking_scores.csv"
+          ]
+        },
+        "3": {
+          "files": [
+            "test_day1_round1_problem_2_seq3_model.cif",
+            "test_day1_round1_problem_2_seq3_summary_confidences.json",
+            "test_day1_round1_problem_2_seq3_summary_confidences.json",
+            "test_day1_round1_problem_2_seq3_ranking_scores.csv"
+          ]
+        },
+        "4": {
+          "files": [
+            "test_day1_round1_problem_2_seq4_model.cif",
+            "test_day1_round1_problem_2_seq4_summary_confidences.json",
+            "test_day1_round1_problem_2_seq4_summary_confidences.json",
+            "test_day1_round1_problem_2_seq4_ranking_scores.csv"
+          ]
+        },
+        "5": {
+          "files": [
+            "test_day1_round1_problem_2_seq5_model.cif",
+            "test_day1_round1_problem_2_seq5_summary_confidences.json",
+            "test_day1_round1_problem_2_seq5_summary_confidences.json",
+            "test_day1_round1_problem_2_seq5_ranking_scores.csv"
+          ]
+        }
+      }
+    },
+    "problem_3": {
+      "files": [
+        "test_day1_round1_problem_3_seq1_model.cif",
+        "test_day1_round1_problem_3_seq1_confidences.json",
+        "test_day1_round1_problem_3_seq1_summary_confidences.json",
+        "test_day1_round1_problem_3_seq1_ranking_scores.csv",
+        "test_day1_round1_problem_3_seq2_model.cif",
+        "test_day1_round1_problem_3_seq2_summary_confidences.json",
+        "test_day1_round1_problem_3_seq2_summary_confidences.json",
+        "test_day1_round1_problem_3_seq2_ranking_scores.csv",
+        "test_day1_round1_problem_3_seq3_model.cif",
+        "test_day1_round1_problem_3_seq3_confidences.json",
+        "test_day1_round1_problem_3_seq3_summary_confidences.json",
+        "test_day1_round1_problem_3_seq3_ranking_scores.csv",
+        "test_day1_round1_problem_3_seq4_model.cif",
+        "test_day1_round1_problem_3_seq4_confidences.json",
+        "test_day1_round1_problem_3_seq4_summary_confidences.json",
+        "test_day1_round1_problem_3_seq4_ranking_scores.csv",
+        "test_day1_round1_problem_3_seq5_model.cif",
+        "test_day1_round1_problem_3_seq5_summary_confidences.json",
+        "test_day1_round1_problem_3_seq5_summary_confidences.json",
+        "test_day1_round1_problem_3_seq5_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "test_day1_round1_problem_3_seq1_model.cif",
+            "test_day1_round1_problem_3_seq1_confidences.json",
+            "test_day1_round1_problem_3_seq1_summary_confidences.json",
+            "test_day1_round1_problem_3_seq1_ranking_scores.csv"
+          ]
+        },
+        "2": {
+          "files": [
+            "test_day1_round1_problem_3_seq2_model.cif",
+            "test_day1_round1_problem_3_seq2_summary_confidences.json",
+            "test_day1_round1_problem_3_seq2_summary_confidences.json",
+            "test_day1_round1_problem_3_seq2_ranking_scores.csv"
+          ]
+        },
+        "3": {
+          "files": [
+            "test_day1_round1_problem_3_seq3_model.cif",
+            "test_day1_round1_problem_3_seq3_confidences.json",
+            "test_day1_round1_problem_3_seq3_summary_confidences.json",
+            "test_day1_round1_problem_3_seq3_ranking_scores.csv"
+          ]
+        },
+        "4": {
+          "files": [
+            "test_day1_round1_problem_3_seq4_model.cif",
+            "test_day1_round1_problem_3_seq4_confidences.json",
+            "test_day1_round1_problem_3_seq4_summary_confidences.json",
+            "test_day1_round1_problem_3_seq4_ranking_scores.csv"
+          ]
+        },
+        "5": {
+          "files": [
+            "test_day1_round1_problem_3_seq5_model.cif",
+            "test_day1_round1_problem_3_seq5_summary_confidences.json",
+            "test_day1_round1_problem_3_seq5_summary_confidences.json",
+            "test_day1_round1_problem_3_seq5_ranking_scores.csv"
+          ]
+        }
+      }
+    }
+  },
+  "source_dir": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions/testday1round1_ml5yekcs_vn5d"
+}
