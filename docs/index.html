@@ -865,6 +865,7 @@
 
         function updateSequenceCountBadge(problemId) {
             const badge = document.getElementById(`seq-count-${problemId}`);
+            if (!badge) return;
             const count = problemSequenceCounts[problemId] || 1;
             badge.textContent = `${count}/${MAX_SEQUENCES_PER_PROBLEM}`;
         }
