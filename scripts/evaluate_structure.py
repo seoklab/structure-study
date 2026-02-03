@@ -590,11 +590,6 @@ def compute_global_rmsd(model_coords: np.ndarray, ref_coords: np.ndarray,
         aligned_ref = ref_coords[:min_len]
         result["n_aligned"] = min_len
 
-    # Compute aligned RMSD (this is what TMalign reports)
-    diff_aligned = aligned_model - aligned_ref
-    aligned_rmsd = np.sqrt(np.mean(np.sum(diff_aligned ** 2, axis=1)))
-    result["aligned_rmsd"] = round(float(aligned_rmsd), 3)
-
     # Compute optimal rotation using Kabsch algorithm
     # Center the structures
     centroid_model = np.mean(aligned_model, axis=0)
@@ -618,18 +613,22 @@ def compute_global_rmsd(model_coords: np.ndarray, ref_coords: np.ndarray,
     # Apply transformation to all model coordinates
     transformed_model = (model_coords - centroid_model) @ R.T + centroid_ref
 
-    # For global RMSD, we need to compare corresponding residues
-    # Use aligned pairs if available
+    # Compute aligned RMSD (after Kabsch superposition, on aligned residues only)
     if aligned_pairs is not None and len(aligned_pairs) > 1:
-        # Compute RMSD only on aligned residues in the transformed structure
         transformed_aligned = transformed_model[model_indices]
-        diff_global = transformed_aligned - ref_coords[ref_indices]
-        global_rmsd = np.sqrt(np.mean(np.sum(diff_global ** 2, axis=1)))
+        diff_aligned = transformed_aligned - ref_coords[ref_indices]
     else:
-        # Use all residues up to min length
         min_len = min(len(transformed_model), len(ref_coords))
-        diff_global = transformed_model[:min_len] - ref_coords[:min_len]
-        global_rmsd = np.sqrt(np.mean(np.sum(diff_global ** 2, axis=1)))
+        diff_aligned = transformed_model[:min_len] - ref_coords[:min_len]
+    
+    aligned_rmsd = np.sqrt(np.mean(np.sum(diff_aligned ** 2, axis=1)))
+    result["aligned_rmsd"] = round(float(aligned_rmsd), 3)
+
+    # For global RMSD, compute RMSD on ALL residues (not just aligned)
+    # Always use min length for global RMSD calculation
+    min_len = min(len(transformed_model), len(ref_coords))
+    diff_global = transformed_model[:min_len] - ref_coords[:min_len]
+    global_rmsd = np.sqrt(np.mean(np.sum(diff_global ** 2, axis=1)))
 
     result["global_rmsd"] = round(float(global_rmsd), 3)
 
