@@ -1,0 +1,38 @@
+{
+  "problem_id": "problem_1",
+  "problem_type": "monomer",
+  "participant_id": "ProteinMPNN_day1",
+  "token": "Cu5IinL9gs5d-0_pqp9debMCeBcc1oy3",
+  "model_file": "ProteinMPNN_day1_problem_1_seq2_model.cif",
+  "reference_file": "3H-scaffold.pdb",
+  "evaluated_at": "2026-02-03T13:29:21.837946Z",
+  "metrics": {
+    "tm_score": 0.68326,
+    "tm_score_ref": null,
+    "rmsd": 2.44,
+    "aligned_length": 70,
+    "seq_identity": 0.0,
+    "bb_lddt": 0.6665,
+    "model_ca_count": 73,
+    "ref_ca_count": 73,
+    "lddt_aligned_count": 70,
+    "bb_lddt_cov": 0.6391,
+    "coverage": 0.9589,
+    "global_rmsd": 2.954,
+    "kabsch_aligned_rmsd": 2.435
+  },
+  "af3_metrics": {
+    "ptm": 0.68,
+    "iptm": null,
+    "ranking_score": 0.68,
+    "chain_pair_iptm": [
+      [
+        0.68
+      ]
+    ],
+    "fraction_disordered": 0.0,
+    "mean_plddt": 80.99
+  },
+  "primary_score": 0.68326,
+  "primary_metric": "tm_score"
+}
