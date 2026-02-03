@@ -15,36 +15,68 @@ import json
 import os
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 
 
-def extract_team_name(participant_id: str) -> str:
+def extract_team_name(participant_id: str, submitted_at: str = None) -> str:
     """
-    Extract team name from participant_id.
+    Extract team name from participant_id and append trial number based on submission time.
 
-    Expected format: team1_day1_round1 -> team1
-    Also handles: admin1_day2_round1 -> admin1
-                  baker_mkz59sge_jt65 -> baker (for legacy format)
+    Expected format: team1_day1_round1 -> team1_trial1 or team1_trial2
+    
+    Trial determination (KST, Feb 3, 2026):
+      - Before 18:00 (6 PM): trial1
+      - 18:00-20:00: trial1
+      - After 20:00 (8 PM): trial2
 
     Falls back to full participant_id if pattern not matched.
     """
     # Pattern: teamname_day<N>_round<M>
     match = re.match(r'^([^_]+)_day\d+_round\d+$', participant_id)
     if match:
-        return match.group(1)
+        team_base = match.group(1)
+    else:
+        # Legacy pattern: try to extract first segment before underscore
+        # Only if it looks like a team name (alphanumeric)
+        parts = participant_id.split('_')
+        if len(parts) >= 1 and parts[0].isalnum():
+            team_base = parts[0]
+        else:
+            return participant_id
 
-    # Legacy pattern: try to extract first segment before underscore
-    # Only if it looks like a team name (alphanumeric)
-    parts = participant_id.split('_')
-    if len(parts) >= 1 and parts[0].isalnum():
-        # For legacy submissions, use the first part
-        return parts[0]
-
-    return participant_id
+    # Determine trial number from submission time
+    if submitted_at:
+        try:
+            # Parse ISO timestamp (e.g., "2026-02-03T10:30:00Z")
+            dt = datetime.fromisoformat(submitted_at.replace('Z', '+00:00'))
+            # Convert to KST (UTC+9)
+            kst_time = dt + timedelta(hours=9)
+            
+            # Check if it's Feb 3, 2026 (for trial logic)
+            if kst_time.year == 2026 and kst_time.month == 2 and kst_time.day == 3:
+                hour = kst_time.hour
+                if hour < 18:
+                    trial = "trial1"
+                elif hour < 20:
+                    trial = "trial1"  # 18:00-19:59
+                else:
+                    trial = "trial2"  # 20:00+
+            else:
+                # For other dates, default to trial1
+                trial = "trial1"
+            
+            return f"{team_base}_{trial}"
+        except Exception as e:
+            # If parsing fails, return base team name without trial
+            print(f"Warning: Could not parse timestamp '{submitted_at}': {e}", file=sys.stderr)
+            return team_base
+    
+    # No timestamp provided, return base name only
+    return team_base
 
 
 def load_config(config_path: str) -> dict:
@@ -414,7 +446,8 @@ def compute_overall_rankings(problem_results: dict[str, list], problem_info: dic
         best_by_team: dict[str, dict] = {}
         for entry in entries:
             participant_id = entry["participant_id"]
-            team = extract_team_name(participant_id)
+            submitted_at = entry.get("submitted_at", "")
+            team = extract_team_name(participant_id, submitted_at)
 
             # Get the configured primary metric value
             score = get_metric_value(entry, primary_metric, ptype)
