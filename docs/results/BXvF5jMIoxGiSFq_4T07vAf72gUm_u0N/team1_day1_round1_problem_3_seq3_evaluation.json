@@ -1,0 +1,37 @@
+{
+  "problem_id": "problem_3",
+  "problem_type": "monomer",
+  "participant_id": "team1_day1_round1",
+  "token": "BXvF5jMIoxGiSFq_4T07vAf72gUm_u0N",
+  "model_file": "team1_day1_round1_problem_3_seq3_model.cif",
+  "reference_file": "top7-scaffold.pdb",
+  "evaluated_at": "2026-02-03T09:42:10.169140Z",
+  "metrics": {
+    "tm_score": 0.29135,
+    "tm_score_ref": null,
+    "rmsd": 3.6,
+    "aligned_length": 38,
+    "seq_identity": 0.0,
+    "bb_lddt": 0.6478,
+    "model_ca_count": 90,
+    "ref_ca_count": 92,
+    "lddt_aligned_count": 38,
+    "bb_lddt_cov": 0.2676,
+    "coverage": 0.413,
+    "global_rmsd": 21.477,
+    "kabsch_aligned_rmsd": 3.603
+  },
+  "af3_metrics": {
+    "ptm": 0.38,
+    "iptm": null,
+    "ranking_score": 0.65,
+    "chain_pair_iptm": [
+      [
+        0.38
+      ]
+    ],
+    "fraction_disordered": 0.56
+  },
+  "primary_score": 0.29135,
+  "primary_metric": "tm_score"
+}
