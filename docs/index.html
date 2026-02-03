@@ -595,8 +595,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/pdbe-molstar@3.3.0/build/pdbe-molstar-plugin.js"></script>
     <script>
-        // Netlify Function endpoint
-        const SUBMIT_URL = 'https://kidds2026.netlify.app/api/submit';
+        // Netlify Function endpoint (use relative URL to avoid CORS issues)
+        const SUBMIT_URL = '/api/submit';
         const CONFIG_URL = './targets/config.json';
 
         let problemsConfig = null;
