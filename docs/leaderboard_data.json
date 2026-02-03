@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-03T12:33:50.034392Z",
+  "last_updated": "2026-02-03T13:00:16.605226Z",
   "problems": {
     "problem_1": {
       "name": "Problem 1 - 3-Helix Bundle",
@@ -106,6 +106,22 @@
         },
         {
           "rank": 7,
+          "participant_id": "team9_day1_round2",
+          "token": "KAuLc-QK9s1VtfmPOHXZQXr45hGzKZOQ",
+          "submitted_at": "2026-02-03T12:31:18.077Z",
+          "primary_score": 0.5495,
+          "primary_metric": "bb_lddt_cov",
+          "best_seq": "1",
+          "bb_lddt": 0.5813,
+          "bb_lddt_cov": 0.5495,
+          "tm_score": 0.65389,
+          "rmsd": 2.51,
+          "ptm": 0.31,
+          "plddt": 74.53,
+          "ranking_score": 0.47
+        },
+        {
+          "rank": 7,
           "participant_id": "team9_day1_round1",
           "token": "4ZUSQ0m_Bcuua7KwOTufKQ7nrTzMJKEX",
           "submitted_at": "2026-02-03T08:49:56.701Z",
@@ -121,7 +137,7 @@
           "ranking_score": 0.47
         },
         {
-          "rank": 8,
+          "rank": 9,
           "participant_id": "team4_day1_round1",
           "token": "8IGaWaqIog2rvtEXCK58VLyDEskxgbZ-",
           "submitted_at": "2026-02-03T08:48:00.156Z",
@@ -137,7 +153,7 @@
           "ranking_score": 0.36
         },
         {
-          "rank": 9,
+          "rank": 10,
           "participant_id": "team10_day1_round1",
           "token": "yM1xmVyzCSuw--S2Xi8IcO4dAvsl3cRD",
           "submitted_at": "2026-02-03T08:55:54.924Z",
@@ -153,7 +169,7 @@
           "ranking_score": 0.47
         },
         {
-          "rank": 10,
+          "rank": 11,
           "participant_id": "team4_day1_round2",
           "token": "QbgAMxLF7c6kcpn9XYiIF5-AoC7_2ei3",
           "submitted_at": "2026-02-03T11:57:08.405Z",
@@ -169,7 +185,7 @@
           "ranking_score": 0.59
         },
         {
-          "rank": 11,
+          "rank": 12,
           "participant_id": "team8_day1_round2",
           "token": "BUUS7FI9gOqJ9y0pTpkNcv4eCt_5is6A",
           "submitted_at": "2026-02-03T11:57:38.904Z",
@@ -185,7 +201,7 @@
           "ranking_score": 0.54
         },
         {
-          "rank": 12,
+          "rank": 13,
           "participant_id": "team6_day1_round2",
           "token": "FU2uWtIAKRULz5bIm0s4Dvrxi5zT60CY",
           "submitted_at": "2026-02-03T11:51:26.362Z",
@@ -201,7 +217,7 @@
           "ranking_score": 0.83
         },
         {
-          "rank": 13,
+          "rank": 14,
           "participant_id": "team6_day1_round1",
           "token": "M9hwQTaonQbbRIFfnl0TEcbMG6XSn1ak",
           "submitted_at": "2026-02-03T08:48:50.063Z",
@@ -217,7 +233,7 @@
           "ranking_score": 0.83
         },
         {
-          "rank": 14,
+          "rank": 15,
           "participant_id": "team5_day1_round2",
           "token": "nhiwFF-l7WJJP0uYsD2SfjE0zJlNiqU6",
           "submitted_at": "2026-02-03T11:43:12.794Z",
@@ -233,7 +249,7 @@
           "ranking_score": 0.6
         },
         {
-          "rank": 15,
+          "rank": 16,
           "participant_id": "team8_day1_round1",
           "token": "Dcpa6J34DvOLasHqnwEYofwpo2wUzGIN",
           "submitted_at": "2026-02-03T10:43:33.543Z",
@@ -249,7 +265,7 @@
           "ranking_score": 0.61
         },
         {
-          "rank": 16,
+          "rank": 17,
           "participant_id": "team2_day1_round1",
           "token": "aWQ5FDsRz6TOOpK4W2-igDZfZnFtWyMV",
           "submitted_at": "2026-02-03T08:49:12.977Z",
@@ -265,7 +281,7 @@
           "ranking_score": 0.5
         },
         {
-          "rank": 17,
+          "rank": 18,
           "participant_id": "team10_day1_round2",
           "token": "3mafZiUrMKNvjEJsTWM7KSuP_dxBE8fT",
           "submitted_at": "2026-02-03T12:00:10.507Z",
@@ -281,7 +297,7 @@
           "ranking_score": 0.81
         },
         {
-          "rank": 18,
+          "rank": 19,
           "participant_id": "test2_day1_round1",
           "token": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i",
           "submitted_at": "2026-02-03T04:12:10.132Z",
@@ -297,7 +313,7 @@
           "ranking_score": 0.56
         },
         {
-          "rank": 19,
+          "rank": 20,
           "participant_id": "team7_day1_round1",
           "token": "oG_YLxOeoq7iBbigwic4WeM1ZBTv1mef",
           "submitted_at": "2026-02-03T08:49:47.239Z",
@@ -499,6 +515,22 @@
         },
         {
           "rank": 12,
+          "participant_id": "team9_day1_round2",
+          "token": "KAuLc-QK9s1VtfmPOHXZQXr45hGzKZOQ",
+          "submitted_at": "2026-02-03T12:31:18.077Z",
+          "primary_score": 0.4806,
+          "primary_metric": "bb_lddt_cov",
+          "best_seq": "4",
+          "bb_lddt": 0.7771,
+          "bb_lddt_cov": 0.4806,
+          "tm_score": 0.43073,
+          "rmsd": 2.77,
+          "ptm": 0.49,
+          "plddt": 59.12,
+          "ranking_score": 0.49
+        },
+        {
+          "rank": 13,
           "participant_id": "team3_day1_round1",
           "token": "2qduKZ2jfdZ4AqHfk2qel80qpFUkyBri",
           "submitted_at": "2026-02-03T08:49:52.491Z",
@@ -514,7 +546,7 @@
           "ranking_score": 0.53
         },
         {
-          "rank": 13,
+          "rank": 14,
           "participant_id": "team5_day1_round2",
           "token": "nhiwFF-l7WJJP0uYsD2SfjE0zJlNiqU6",
           "submitted_at": "2026-02-03T11:43:12.794Z",
@@ -530,7 +562,7 @@
           "ranking_score": 0.6
         },
         {
-          "rank": 14,
+          "rank": 15,
           "participant_id": "team2_day1_round2",
           "token": "d-e2L3WPJ5E2kmO0bW3IImzun4hY0nfg",
           "submitted_at": "2026-02-03T12:00:09.069Z",
@@ -546,7 +578,7 @@
           "ranking_score": 0.61
         },
         {
-          "rank": 15,
+          "rank": 16,
           "participant_id": "team2_day1_round1",
           "token": "aWQ5FDsRz6TOOpK4W2-igDZfZnFtWyMV",
           "submitted_at": "2026-02-03T08:49:12.977Z",
@@ -562,7 +594,7 @@
           "ranking_score": 0.58
         },
         {
-          "rank": 16,
+          "rank": 17,
           "participant_id": "team4_day1_round1",
           "token": "8IGaWaqIog2rvtEXCK58VLyDEskxgbZ-",
           "submitted_at": "2026-02-03T08:48:00.156Z",
@@ -578,7 +610,7 @@
           "ranking_score": 0.61
         },
         {
-          "rank": 17,
+          "rank": 18,
           "participant_id": "team9_day1_round1",
           "token": "4ZUSQ0m_Bcuua7KwOTufKQ7nrTzMJKEX",
           "submitted_at": "2026-02-03T08:49:56.701Z",
@@ -594,7 +626,7 @@
           "ranking_score": 0.6
         },
         {
-          "rank": 18,
+          "rank": 19,
           "participant_id": "test2_day1_round1",
           "token": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i",
           "submitted_at": "2026-02-03T04:12:10.132Z",
@@ -610,7 +642,7 @@
           "ranking_score": 0.8
         },
         {
-          "rank": 19,
+          "rank": 20,
           "participant_id": "team_7",
           "token": "wSaDlaLVRd529TWWMmMXLLY_vG6Y83Xb",
           "submitted_at": "2026-02-03T08:55:59.488Z",
@@ -626,7 +658,7 @@
           "ranking_score": 0.73
         },
         {
-          "rank": 20,
+          "rank": 21,
           "participant_id": "team7_day1_round1",
           "token": "oG_YLxOeoq7iBbigwic4WeM1ZBTv1mef",
           "submitted_at": "2026-02-03T08:49:47.239Z",
@@ -684,6 +716,22 @@
         },
         {
           "rank": 3,
+          "participant_id": "team9_day1_round2",
+          "token": "KAuLc-QK9s1VtfmPOHXZQXr45hGzKZOQ",
+          "submitted_at": "2026-02-03T12:31:18.077Z",
+          "primary_score": 0.4423,
+          "primary_metric": "bb_lddt_cov",
+          "best_seq": "1",
+          "bb_lddt": 0.7535,
+          "bb_lddt_cov": 0.4423,
+          "tm_score": 0.47241,
+          "rmsd": 2.26,
+          "ptm": 0.46,
+          "plddt": 62.65,
+          "ranking_score": 0.46
+        },
+        {
+          "rank": 4,
           "participant_id": "team5_day1_round1",
           "token": "ZdhLYouKpMUpcDTWVXQo5WMPuiNrMAdu",
           "submitted_at": "2026-02-03T08:47:10.015Z",
@@ -699,7 +747,7 @@
           "ranking_score": 0.42
         },
         {
-          "rank": 4,
+          "rank": 5,
           "participant_id": "team5_day1_round2",
           "token": "nhiwFF-l7WJJP0uYsD2SfjE0zJlNiqU6",
           "submitted_at": "2026-02-03T11:43:12.794Z",
@@ -715,7 +763,7 @@
           "ranking_score": 0.37
         },
         {
-          "rank": 5,
+          "rank": 6,
           "participant_id": "team2_day1_round2",
           "token": "d-e2L3WPJ5E2kmO0bW3IImzun4hY0nfg",
           "submitted_at": "2026-02-03T12:00:09.069Z",
@@ -731,7 +779,7 @@
           "ranking_score": 0.54
         },
         {
-          "rank": 6,
+          "rank": 7,
           "participant_id": "team4_day1_round2",
           "token": "QbgAMxLF7c6kcpn9XYiIF5-AoC7_2ei3",
           "submitted_at": "2026-02-03T11:57:08.405Z",
@@ -747,7 +795,7 @@
           "ranking_score": 0.55
         },
         {
-          "rank": 7,
+          "rank": 8,
           "participant_id": "team1_day1_round1",
           "token": "yapvGxrkkoyMsPu29jFoKXnIoM-KHr8G",
           "submitted_at": "2026-02-03T08:48:41.040Z",
@@ -763,7 +811,7 @@
           "ranking_score": 0.58
         },
         {
-          "rank": 8,
+          "rank": 9,
           "participant_id": "team1_day1_round2",
           "token": "9dhEmMrrY5GTKIPiQ-P-XjX_i7oQkpOq",
           "submitted_at": "2026-02-03T12:00:54.517Z",
@@ -779,7 +827,7 @@
           "ranking_score": 0.46
         },
         {
-          "rank": 9,
+          "rank": 10,
           "participant_id": "team9_day1_round1",
           "token": "4ZUSQ0m_Bcuua7KwOTufKQ7nrTzMJKEX",
           "submitted_at": "2026-02-03T08:49:56.701Z",
@@ -795,7 +843,7 @@
           "ranking_score": 0.6
         },
         {
-          "rank": 10,
+          "rank": 11,
           "participant_id": "team3_day1_round1",
           "token": "2qduKZ2jfdZ4AqHfk2qel80qpFUkyBri",
           "submitted_at": "2026-02-03T08:49:52.491Z",
@@ -811,7 +859,7 @@
           "ranking_score": 0.59
         },
         {
-          "rank": 11,
+          "rank": 12,
           "participant_id": "team6_day1_round2",
           "token": "FU2uWtIAKRULz5bIm0s4Dvrxi5zT60CY",
           "submitted_at": "2026-02-03T11:51:26.362Z",
@@ -827,7 +875,7 @@
           "ranking_score": 0.41
         },
         {
-          "rank": 12,
+          "rank": 13,
           "participant_id": "team4_day1_round1",
           "token": "8IGaWaqIog2rvtEXCK58VLyDEskxgbZ-",
           "submitted_at": "2026-02-03T08:48:00.156Z",
@@ -843,7 +891,7 @@
           "ranking_score": 0.67
         },
         {
-          "rank": 13,
+          "rank": 14,
           "participant_id": "team6_day1_round1",
           "token": "M9hwQTaonQbbRIFfnl0TEcbMG6XSn1ak",
           "submitted_at": "2026-02-03T08:48:50.063Z",
@@ -859,7 +907,7 @@
           "ranking_score": 0.58
         },
         {
-          "rank": 14,
+          "rank": 15,
           "participant_id": "team10_day1_round2",
           "token": "3mafZiUrMKNvjEJsTWM7KSuP_dxBE8fT",
           "submitted_at": "2026-02-03T12:00:10.507Z",
@@ -875,7 +923,7 @@
           "ranking_score": 0.62
         },
         {
-          "rank": 15,
+          "rank": 16,
           "participant_id": "team8_day1_round1",
           "token": "Dcpa6J34DvOLasHqnwEYofwpo2wUzGIN",
           "submitted_at": "2026-02-03T10:43:33.543Z",
@@ -891,7 +939,7 @@
           "ranking_score": 0.8
         },
         {
-          "rank": 16,
+          "rank": 17,
           "participant_id": "7team",
           "token": "l8s9WWSIUeTF-KE0ClfynxOZhi8YMgMz",
           "submitted_at": "2026-02-03T08:50:22.253Z",
@@ -907,7 +955,7 @@
           "ranking_score": 0.64
         },
         {
-          "rank": 17,
+          "rank": 18,
           "participant_id": "test2_day1_round1",
           "token": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i",
           "submitted_at": "2026-02-03T04:12:10.132Z",
@@ -923,7 +971,7 @@
           "ranking_score": 0.49
         },
         {
-          "rank": 18,
+          "rank": 19,
           "participant_id": "team10_day1_round1",
           "token": "yM1xmVyzCSuw--S2Xi8IcO4dAvsl3cRD",
           "submitted_at": "2026-02-03T08:55:54.924Z",
@@ -939,7 +987,7 @@
           "ranking_score": 0.58
         },
         {
-          "rank": 19,
+          "rank": 20,
           "participant_id": "team2_day1_round1",
           "token": "aWQ5FDsRz6TOOpK4W2-igDZfZnFtWyMV",
           "submitted_at": "2026-02-03T08:49:12.977Z",
@@ -955,7 +1003,7 @@
           "ranking_score": 0.9
         },
         {
-          "rank": 20,
+          "rank": 21,
           "participant_id": "team7_day1_round1",
           "token": "oG_YLxOeoq7iBbigwic4WeM1ZBTv1mef",
           "submitted_at": "2026-02-03T08:49:47.239Z",
@@ -1051,11 +1099,11 @@
         "problem_4": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
         "problem_5": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y"
       },
-      "overall_z_score": 1.3334970037203557,
+      "overall_z_score": 1.3282343858613839,
       "problem_z_scores": {
         "problem_1": 1.173400323490783,
-        "problem_2": 2.40222347929156,
-        "problem_3": 3.0918612158194354,
+        "problem_2": 2.4089607320093966,
+        "problem_3": 3.0588108738067397,
         "problem_4": 0.0,
         "problem_5": 0.0
       },
@@ -1074,11 +1122,11 @@
         "problem_2": "ZdhLYouKpMUpcDTWVXQo5WMPuiNrMAdu",
         "problem_3": "ZdhLYouKpMUpcDTWVXQo5WMPuiNrMAdu"
       },
-      "overall_z_score": 0.5759062156881728,
+      "overall_z_score": 0.5544009445325856,
       "problem_z_scores": {
         "problem_1": 0.6669176895890611,
-        "problem_2": 0.862770404534293,
-        "problem_3": 0.19803055294116412
+        "problem_2": 0.8276363087806088,
+        "problem_3": 0.1686488352280869
       },
       "rank": 2
     },
@@ -1095,11 +1143,11 @@
         "problem_2": "9dhEmMrrY5GTKIPiQ-P-XjX_i7oQkpOq",
         "problem_3": "yapvGxrkkoyMsPu29jFoKXnIoM-KHr8G"
       },
-      "overall_z_score": 0.5045949976744503,
+      "overall_z_score": 0.480900127186092,
       "problem_z_scores": {
         "problem_1": 0.8585597672816042,
-        "problem_2": 0.6139536927643483,
-        "problem_3": 0.0412715329773983
+        "problem_2": 0.5720520693640679,
+        "problem_3": 0.012088544912603768
       },
       "rank": 3
     },
@@ -1116,11 +1164,11 @@
         "problem_2": "2qduKZ2jfdZ4AqHfk2qel80qpFUkyBri",
         "problem_3": "2qduKZ2jfdZ4AqHfk2qel80qpFUkyBri"
       },
-      "overall_z_score": 0.29737578333952425,
+      "overall_z_score": 0.2675110652769272,
       "problem_z_scores": {
         "problem_1": 1.1000678958023102,
-        "problem_2": -0.07470675465052888,
-        "problem_3": -0.13323379113320863
+        "problem_2": -0.13533914811784012,
+        "problem_3": -0.16219555185368847
       },
       "rank": 4
     },
@@ -1137,13 +1185,34 @@
         "problem_2": "QbgAMxLF7c6kcpn9XYiIF5-AoC7_2ei3",
         "problem_3": "QbgAMxLF7c6kcpn9XYiIF5-AoC7_2ei3"
       },
-      "overall_z_score": 0.13413250147414915,
+      "overall_z_score": 0.10782384934410312,
       "problem_z_scores": {
         "problem_1": 0.0020370118802356886,
-        "problem_2": 0.32714561210049886,
-        "problem_3": 0.07321488044171291
+        "problem_2": 0.2774431396280129,
+        "problem_3": 0.043991396524060776
       },
       "rank": 5
+    },
+    {
+      "team": "team9",
+      "problems_completed": 3,
+      "problem_scores": {
+        "problem_1": 0.5495,
+        "problem_2": 0.4806,
+        "problem_3": 0.4423
+      },
+      "problem_tokens": {
+        "problem_1": "KAuLc-QK9s1VtfmPOHXZQXr45hGzKZOQ",
+        "problem_2": "KAuLc-QK9s1VtfmPOHXZQXr45hGzKZOQ",
+        "problem_3": "KAuLc-QK9s1VtfmPOHXZQXr45hGzKZOQ"
+      },
+      "overall_z_score": 0.10519778389063346,
+      "problem_z_scores": {
+        "problem_1": 0.2161677007305781,
+        "problem_2": -0.11884984234903104,
+        "problem_3": 0.21827549329035334
+      },
+      "rank": 6
     },
     {
       "team": "team2",
@@ -1158,13 +1227,13 @@
         "problem_2": "d-e2L3WPJ5E2kmO0bW3IImzun4hY0nfg",
         "problem_3": "d-e2L3WPJ5E2kmO0bW3IImzun4hY0nfg"
       },
-      "overall_z_score": 0.1102902769001322,
+      "overall_z_score": 0.07844071959784361,
       "problem_z_scores": {
         "problem_1": 0.5398081482623739,
-        "problem_2": -0.2839268284183745,
-        "problem_3": 0.07498951085639718
+        "problem_2": -0.3502497666379849,
+        "problem_3": 0.04576377716914185
       },
-      "rank": 6
+      "rank": 7
     },
     {
       "team": "team8",
@@ -1179,13 +1248,13 @@
         "problem_2": "Dcpa6J34DvOLasHqnwEYofwpo2wUzGIN",
         "problem_3": "BUUS7FI9gOqJ9y0pTpkNcv4eCt_5is6A"
       },
-      "overall_z_score": 0.08718567175769439,
+      "overall_z_score": 0.059876099788328925,
       "problem_z_scores": {
         "problem_1": -0.3206256699490467,
-        "problem_2": 0.22975928620344552,
-        "problem_3": 0.35242339901868436
+        "problem_2": 0.17740801796390468,
+        "problem_3": 0.3228459513501288
       },
-      "rank": 7
+      "rank": 8
     },
     {
       "team": "team10",
@@ -1200,13 +1269,13 @@
         "problem_2": "3mafZiUrMKNvjEJsTWM7KSuP_dxBE8fT",
         "problem_3": "3mafZiUrMKNvjEJsTWM7KSuP_dxBE8fT"
       },
-      "overall_z_score": -0.057220000886564426,
+      "overall_z_score": -0.08236764780037158,
       "problem_z_scores": {
         "problem_1": -0.023384896385101103,
-        "problem_2": 0.42506702770028326,
-        "problem_3": -0.5733421339748754
+        "problem_2": 0.37802790481774806,
+        "problem_3": -0.6017459518337617
       },
-      "rank": 8
+      "rank": 9
     },
     {
       "team": "team6",
@@ -1221,32 +1290,11 @@
         "problem_2": "M9hwQTaonQbbRIFfnl0TEcbMG6XSn1ak",
         "problem_3": "FU2uWtIAKRULz5bIm0s4Dvrxi5zT60CY"
       },
-      "overall_z_score": -0.12484842591694423,
+      "overall_z_score": -0.15281799909656077,
       "problem_z_scores": {
         "problem_1": -0.3558252352395138,
-        "problem_2": 0.13344313971185415,
-        "problem_3": -0.152163182223173
-      },
-      "rank": 9
-    },
-    {
-      "team": "team9",
-      "problems_completed": 3,
-      "problem_scores": {
-        "problem_1": 0.5495,
-        "problem_2": 0.342,
-        "problem_3": 0.3782
-      },
-      "problem_tokens": {
-        "problem_1": "4ZUSQ0m_Bcuua7KwOTufKQ7nrTzMJKEX",
-        "problem_2": "4ZUSQ0m_Bcuua7KwOTufKQ7nrTzMJKEX",
-        "problem_3": "4ZUSQ0m_Bcuua7KwOTufKQ7nrTzMJKEX"
-      },
-      "overall_z_score": -0.23852661718059878,
-      "problem_z_scores": {
-        "problem_1": 0.2161677007305781,
-        "problem_2": -0.8002883915538498,
-        "problem_3": -0.13145916071852468
+        "problem_2": 0.07847218335105026,
+        "problem_3": -0.1811009454012187
       },
       "rank": 10
     },
@@ -1263,11 +1311,11 @@
         "problem_2": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i",
         "problem_3": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i"
       },
-      "overall_z_score": -1.1212089181465716,
+      "overall_z_score": -1.1591619095245325,
       "problem_z_scores": {
         "problem_1": -1.5936766146209436,
-        "problem_2": -0.9966663124561499,
-        "problem_3": -0.7732838273626219
+        "problem_2": -1.0823749427731069,
+        "problem_3": -0.8014341711795475
       },
       "rank": 11
     },
@@ -1284,11 +1332,11 @@
         "problem_2": "oG_YLxOeoq7iBbigwic4WeM1ZBTv1mef",
         "problem_3": "oG_YLxOeoq7iBbigwic4WeM1ZBTv1mef"
       },
-      "overall_z_score": -1.665303868102573,
+      "overall_z_score": -1.7069932720663041,
       "problem_z_scores": {
         "problem_1": -2.263446120842333,
-        "problem_2": -1.433299509884697,
-        "problem_3": -1.2991659735806886
+        "problem_2": -1.530884059684713,
+        "problem_3": -1.326649635671866
       },
       "rank": 12
     },
@@ -1301,9 +1349,9 @@
       "problem_tokens": {
         "problem_3": "l8s9WWSIUeTF-KE0ClfynxOZhi8YMgMz"
       },
-      "overall_z_score": -0.7691430230616924,
+      "overall_z_score": -0.7972986163410255,
       "problem_z_scores": {
-        "problem_3": -0.7691430230616924
+        "problem_3": -0.7972986163410255
       },
       "rank": 13
     },
@@ -1316,9 +1364,9 @@
       "problem_tokens": {
         "problem_2": "wSaDlaLVRd529TWWMmMXLLY_vG6Y83Xb"
       },
-      "overall_z_score": -1.405474845342682,
+      "overall_z_score": -1.5023025963521108,
       "problem_z_scores": {
-        "problem_2": -1.405474845342682
+        "problem_2": -1.5023025963521108
       },
       "rank": 14
     }
