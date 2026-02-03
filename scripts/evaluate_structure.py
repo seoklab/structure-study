@@ -540,6 +540,102 @@ def compute_lddt(model_coords: np.ndarray, ref_coords: np.ndarray,
     return _compute_lddt_core(model_coords, ref_coords, cutoff, thresholds)
 
 
+def compute_global_rmsd(model_coords: np.ndarray, ref_coords: np.ndarray,
+                        aligned_pairs: list[tuple[int, int]] = None) -> dict:
+    """
+    Compute global RMSD (on all residues) after superposition using aligned residues.
+
+    This differs from TMalign's RMSD which is only on aligned residues.
+    Here we:
+    1. Use aligned residues to compute the optimal rotation/translation
+    2. Apply that transformation to the model
+    3. Compute RMSD on all residues (not just aligned ones)
+
+    Args:
+        model_coords: Nx3 array of model CA coordinates
+        ref_coords: Mx3 array of reference CA coordinates
+        aligned_pairs: List of (model_idx, ref_idx) tuples from alignment
+
+    Returns:
+        dict with global_rmsd, aligned_rmsd, transformation info
+    """
+    result = {
+        "global_rmsd": None,
+        "aligned_rmsd": None,
+        "n_model": len(model_coords),
+        "n_ref": len(ref_coords),
+        "n_aligned": 0
+    }
+
+    if len(model_coords) == 0 or len(ref_coords) == 0:
+        return result
+
+    # Determine aligned coordinates for superposition
+    if aligned_pairs is not None and len(aligned_pairs) > 1:
+        model_indices = [p[0] for p in aligned_pairs]
+        ref_indices = [p[1] for p in aligned_pairs]
+
+        # Validate indices
+        if max(model_indices) >= len(model_coords) or max(ref_indices) >= len(ref_coords):
+            aligned_pairs = None
+        else:
+            aligned_model = model_coords[model_indices]
+            aligned_ref = ref_coords[ref_indices]
+            result["n_aligned"] = len(aligned_pairs)
+    
+    if aligned_pairs is None or len(aligned_pairs) < 2:
+        # Fallback: use min length for simple alignment
+        min_len = min(len(model_coords), len(ref_coords))
+        aligned_model = model_coords[:min_len]
+        aligned_ref = ref_coords[:min_len]
+        result["n_aligned"] = min_len
+
+    # Compute aligned RMSD (this is what TMalign reports)
+    diff_aligned = aligned_model - aligned_ref
+    aligned_rmsd = np.sqrt(np.mean(np.sum(diff_aligned ** 2, axis=1)))
+    result["aligned_rmsd"] = round(float(aligned_rmsd), 3)
+
+    # Compute optimal rotation using Kabsch algorithm
+    # Center the structures
+    centroid_model = np.mean(aligned_model, axis=0)
+    centroid_ref = np.mean(aligned_ref, axis=0)
+
+    centered_model = aligned_model - centroid_model
+    centered_ref = aligned_ref - centroid_ref
+
+    # Compute covariance matrix and SVD
+    H = centered_model.T @ centered_ref
+    U, S, Vt = np.linalg.svd(H)
+
+    # Compute rotation matrix
+    R = Vt.T @ U.T
+
+    # Handle reflection case
+    if np.linalg.det(R) < 0:
+        Vt[-1, :] *= -1
+        R = Vt.T @ U.T
+
+    # Apply transformation to all model coordinates
+    transformed_model = (model_coords - centroid_model) @ R.T + centroid_ref
+
+    # For global RMSD, we need to compare corresponding residues
+    # Use aligned pairs if available
+    if aligned_pairs is not None and len(aligned_pairs) > 1:
+        # Compute RMSD only on aligned residues in the transformed structure
+        transformed_aligned = transformed_model[model_indices]
+        diff_global = transformed_aligned - ref_coords[ref_indices]
+        global_rmsd = np.sqrt(np.mean(np.sum(diff_global ** 2, axis=1)))
+    else:
+        # Use all residues up to min length
+        min_len = min(len(transformed_model), len(ref_coords))
+        diff_global = transformed_model[:min_len] - ref_coords[:min_len]
+        global_rmsd = np.sqrt(np.mean(np.sum(diff_global ** 2, axis=1)))
+
+    result["global_rmsd"] = round(float(global_rmsd), 3)
+
+    return result
+
+
 def _compute_lddt_core(model_coords: np.ndarray, ref_coords: np.ndarray,
                        cutoff: float = 15.0, thresholds: tuple = (0.5, 1.0, 2.0, 4.0)) -> float:
     """Core lDDT computation on aligned coordinates."""
@@ -999,6 +1095,15 @@ def main():
             if aligned_pairs:
                 result["metrics"]["lddt_aligned_count"] = len(aligned_pairs)
             print(f"  bb-lDDT: {lddt_score:.4f} (model: {len(model_coords)} CA, ref: {len(ref_coords)} CA)")
+
+            # Compute global RMSD (all residues after superposition)
+            print("Computing RMSD (all residues, Kabsch)...")
+            global_rmsd_result = compute_global_rmsd(model_coords, ref_coords, aligned_pairs)
+            if global_rmsd_result["global_rmsd"] is not None:
+                result["metrics"]["global_rmsd"] = global_rmsd_result["global_rmsd"]
+                result["metrics"]["kabsch_aligned_rmsd"] = global_rmsd_result["aligned_rmsd"]
+                print(f"  RMSD (all residues, Kabsch): {global_rmsd_result['global_rmsd']:.3f} Å")
+                print(f"  RMSD (aligned residues): {global_rmsd_result['aligned_rmsd']:.3f} Å")
         else:
             result["metrics"]["lddt_error"] = "Could not extract CA coordinates"
     except Exception as e:
@@ -1050,7 +1155,7 @@ def main():
                     result["binder_metrics"]["binder_aligned_length"] = binder_tm.get("aligned_length")
                     binder_aligned_pairs = binder_tm.get("aligned_pairs")
                     print(f"  Binder TM-score: {binder_tm.get('tm_score')}")
-                    print(f"  Binder RMSD: {binder_tm.get('rmsd')}")
+                    print(f"  Binder Aligned RMSD: {binder_tm.get('rmsd')}")
                 else:
                     print(f"  Binder TMalign error: {binder_tm.get('error')}")
 

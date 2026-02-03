@@ -702,7 +702,7 @@
                 }
                 if (binderMetrics.binder_rmsd != null) {
                     html += `<div class="metric-row">
-                        <span class="metric-name">Binder RMSD (Å)</span>
+                        <span class="metric-name">Binder RMSD (aligned residues) (Å)</span>
                         <span class="metric-value">${binderMetrics.binder_rmsd.toFixed(2)}</span>
                     </div>`;
                 }
@@ -735,8 +735,14 @@
                 }
                 if (metrics.rmsd != null) {
                     html += `<div class="metric-row">
-                        <span class="metric-name">RMSD (Å)</span>
+                        <span class="metric-name">RMSD (aligned residues) (Å)</span>
                         <span class="metric-value">${metrics.rmsd.toFixed(2)}</span>
+                    </div>`;
+                }
+                if (metrics.global_rmsd != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">RMSD (all residues, Kabsch) (Å)</span>
+                        <span class="metric-value">${metrics.global_rmsd.toFixed(2)}</span>
                     </div>`;
                 }
                 if (metrics.aligned_length) {
