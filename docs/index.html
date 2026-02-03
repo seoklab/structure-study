@@ -1124,6 +1124,7 @@
                     const seqCount = Object.values(sequences).flat().length;
                     const problemCount = Object.keys(sequences).length;
                     showSuccess(`Your sequences have been submitted successfully!<br><strong>Submission ID:</strong> ${data.submission_id}<br><strong>Problems:</strong> ${problemCount}, <strong>Sequences:</strong> ${seqCount}<br><strong>Check your email for results!</strong>`);
+                    alert(`✅ Submission Successful!\n\nSubmission ID: ${data.submission_id}\nProblems: ${problemCount}, Sequences: ${seqCount}\n\nCheck your email for results!`);
                     clearForm();
                 } else {
                     showError(data.error || 'Submission failed. Please try again.');
