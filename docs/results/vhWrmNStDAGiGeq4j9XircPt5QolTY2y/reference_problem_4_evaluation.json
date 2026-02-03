@@ -5,7 +5,7 @@
   "token": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
   "model_file": "reference_problem_4_model.cif",
   "reference_file": "PepBinder1-scaffold.pdb",
-  "evaluated_at": "2026-01-30T03:55:18.708050Z",
+  "evaluated_at": "2026-02-03T05:37:07.900274Z",
   "metrics": {
     "tm_score": 0.07491,
     "tm_score_ref": null,
@@ -16,6 +16,10 @@
     "model_ca_count": 425,
     "ref_ca_count": 414,
     "lddt_aligned_count": 30,
+    "bb_lddt_cov": 0.0692,
+    "coverage": 0.0725,
+    "global_rmsd": 0.581,
+    "kabsch_aligned_rmsd": 217.194,
     "complex_tm_score": 0.83453,
     "complex_tm_score_ref": null,
     "complex_rmsd": 2.77,
@@ -53,6 +57,6 @@
     "interface_count_b": 28,
     "total_interface_contacts": 1255
   },
-  "primary_score": 0.51,
+  "primary_score": 0.89,
   "primary_metric": "iptm"
 }

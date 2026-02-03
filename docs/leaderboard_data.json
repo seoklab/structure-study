@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-03T05:02:41.531306Z",
+  "last_updated": "2026-02-03T05:37:24.106713Z",
   "problems": {
     "problem_1": {
       "name": "Problem 1 - 3-Helix Bundle",
@@ -28,30 +28,30 @@
           "participant_id": "test_day1_round1",
           "token": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j",
           "submitted_at": "2026-02-03T02:02:36.556Z",
-          "primary_score": 0.6043,
+          "primary_score": 0.5777,
           "primary_metric": "bb_lddt",
-          "best_seq": "4",
-          "bb_lddt": 0.6043,
-          "tm_score": 0.33712,
-          "rmsd": 2.7,
-          "ptm": 0.27,
-          "plddt": 46.92,
-          "ranking_score": 0.77
+          "best_seq": "2",
+          "bb_lddt": 0.5777,
+          "tm_score": 0.42313,
+          "rmsd": 2.96,
+          "ptm": 0.28,
+          "plddt": null,
+          "ranking_score": 0.52
         },
         {
           "rank": 3,
           "participant_id": "test2_day1_round1",
           "token": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i",
           "submitted_at": "2026-02-03T04:12:10.132Z",
-          "primary_score": 0.5663,
+          "primary_score": 0.5428,
           "primary_metric": "bb_lddt",
-          "best_seq": "3",
-          "bb_lddt": 0.5663,
-          "tm_score": 0.26944,
-          "rmsd": 2.91,
-          "ptm": 0.3,
-          "plddt": 48.55,
-          "ranking_score": 0.58
+          "best_seq": "5",
+          "bb_lddt": 0.5428,
+          "tm_score": 0.45848,
+          "rmsd": 3.04,
+          "ptm": 0.32,
+          "plddt": 50.25,
+          "ranking_score": 0.56
         }
       ]
     },
@@ -64,21 +64,6 @@
       "rankings": [
         {
           "rank": 1,
-          "participant_id": "test_day1_round1",
-          "token": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j",
-          "submitted_at": "2026-02-03T02:02:36.556Z",
-          "primary_score": 0.9861,
-          "primary_metric": "bb_lddt",
-          "best_seq": "4",
-          "bb_lddt": 0.9861,
-          "tm_score": 0.41697,
-          "rmsd": 0.61,
-          "ptm": 0.29,
-          "plddt": null,
-          "ranking_score": 0.35
-        },
-        {
-          "rank": 2,
           "participant_id": "test2_day1_round1",
           "token": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i",
           "submitted_at": "2026-02-03T04:12:10.132Z",
@@ -93,7 +78,7 @@
           "ranking_score": 0.8
         },
         {
-          "rank": 3,
+          "rank": 2,
           "participant_id": "reference",
           "token": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
           "submitted_at": "2026-01-30T03:01:27.490Z",
@@ -106,6 +91,21 @@
           "ptm": 0.81,
           "plddt": 88.73,
           "ranking_score": 0.81
+        },
+        {
+          "rank": 3,
+          "participant_id": "test_day1_round1",
+          "token": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j",
+          "submitted_at": "2026-02-03T02:02:36.556Z",
+          "primary_score": 0.6678,
+          "primary_metric": "bb_lddt",
+          "best_seq": "5",
+          "bb_lddt": 0.6678,
+          "tm_score": 0.50428,
+          "rmsd": 2.26,
+          "ptm": 0.4,
+          "plddt": null,
+          "ranking_score": 0.9
         }
       ]
     },
@@ -136,30 +136,30 @@
           "participant_id": "test_day1_round1",
           "token": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j",
           "submitted_at": "2026-02-03T02:02:36.556Z",
-          "primary_score": 0.7376,
+          "primary_score": 0.6544,
           "primary_metric": "bb_lddt",
-          "best_seq": "2",
-          "bb_lddt": 0.7376,
-          "tm_score": 0.40521,
-          "rmsd": 2.02,
-          "ptm": 0.31,
-          "plddt": null,
-          "ranking_score": 0.79
+          "best_seq": "3",
+          "bb_lddt": 0.6544,
+          "tm_score": 0.48142,
+          "rmsd": 2.66,
+          "ptm": 0.23,
+          "plddt": 46.68,
+          "ranking_score": 0.73
         },
         {
           "rank": 3,
           "participant_id": "test2_day1_round1",
           "token": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i",
           "submitted_at": "2026-02-03T04:12:10.132Z",
-          "primary_score": 0.6219,
+          "primary_score": 0.5394,
           "primary_metric": "bb_lddt",
-          "best_seq": "5",
-          "bb_lddt": 0.6219,
-          "tm_score": 0.38441,
-          "rmsd": 3.39,
-          "ptm": 0.19,
+          "best_seq": "4",
+          "bb_lddt": 0.5394,
+          "tm_score": 0.46371,
+          "rmsd": 3.04,
+          "ptm": 0.27,
           "plddt": null,
-          "ranking_score": 0.65
+          "ranking_score": 0.49
         }
       ]
     },
@@ -242,55 +242,55 @@
         "problem_4": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
         "problem_5": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y"
       },
-      "overall_z_score": 0.26707961885044473,
+      "overall_z_score": 0.6639826931964989,
       "problem_z_scores": {
-        "problem_1": 1.3085840554108834,
-        "problem_2": -1.2808854618037315,
-        "problem_3": 1.3076995006450718,
+        "problem_1": 1.3593757741065353,
+        "problem_2": 0.6079604704487723,
+        "problem_3": 1.352577221427187,
         "problem_4": 0.0,
         "problem_5": 0.0
       },
       "rank": 1
     },
     {
-      "team": "test",
-      "problems_completed": 3,
-      "problem_scores": {
-        "problem_1": 0.6043,
-        "problem_2": 0.9861,
-        "problem_3": 0.7376
-      },
-      "problem_tokens": {
-        "problem_1": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j",
-        "problem_2": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j",
-        "problem_3": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j"
-      },
-      "overall_z_score": 0.2607272847696847,
-      "problem_z_scores": {
-        "problem_1": -0.18985061326945032,
-        "problem_2": 1.1595759751705046,
-        "problem_3": -0.18754350759200014
-      },
-      "rank": 2
-    },
-    {
       "team": "test2",
       "problems_completed": 3,
       "problem_scores": {
-        "problem_1": 0.5663,
+        "problem_1": 0.5428,
         "problem_2": 0.9667,
-        "problem_3": 0.6219
+        "problem_3": 0.5394
       },
       "problem_tokens": {
         "problem_1": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i",
         "problem_2": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i",
         "problem_3": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i"
       },
-      "overall_z_score": -0.7058599828537623,
+      "overall_z_score": -0.4165130311498945,
       "problem_z_scores": {
-        "problem_1": -1.1187334421414332,
-        "problem_2": 0.12130948663322086,
-        "problem_3": -1.1201559930530745
+        "problem_1": -1.0174350240939747,
+        "problem_2": 0.8018172370908557,
+        "problem_3": -1.0339213064465647
+      },
+      "rank": 2
+    },
+    {
+      "team": "test",
+      "problems_completed": 3,
+      "problem_scores": {
+        "problem_1": 0.5777,
+        "problem_2": 0.6678,
+        "problem_3": 0.6544
+      },
+      "problem_tokens": {
+        "problem_1": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j",
+        "problem_2": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j",
+        "problem_3": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j"
+      },
+      "overall_z_score": -0.6901247908442709,
+      "problem_z_scores": {
+        "problem_1": -0.34194075001255864,
+        "problem_2": -1.4097777075396298,
+        "problem_3": -0.31865591498062423
       },
       "rank": 3
     }
