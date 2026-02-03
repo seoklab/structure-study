@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-01-30T07:42:40.192526Z",
+  "last_updated": "2026-02-03T02:13:35.091156Z",
   "problems": {
     "problem_1": {
       "name": "Problem 1 - 3-Helix Bundle",
@@ -10,6 +10,21 @@
       "rankings": [
         {
           "rank": 1,
+          "participant_id": "test",
+          "token": "IXigxD3vJaDV1HuQ9tyHTKPJtexRxZfK",
+          "submitted_at": "2026-02-03T02:07:37.772Z",
+          "primary_score": 0.9023,
+          "primary_metric": "bb_lddt",
+          "best_seq": "1",
+          "bb_lddt": 0.9023,
+          "tm_score": 0.51285,
+          "rmsd": 0.53,
+          "ptm": 0.03,
+          "plddt": null,
+          "ranking_score": 0.53
+        },
+        {
+          "rank": 2,
           "participant_id": "admin1_day1_round1",
           "token": "h90hcZUHJvDfazVueNlD9J9kHSBKZPH3",
           "submitted_at": "2026-01-27T09:50:23.362Z",
@@ -24,7 +39,7 @@
           "ranking_score": 0.66
         },
         {
-          "rank": 1,
+          "rank": 2,
           "participant_id": "reference",
           "token": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
           "submitted_at": "2026-01-30T03:01:27.490Z",
@@ -269,9 +284,9 @@
         "problem_4": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
         "problem_5": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y"
       },
-      "overall_z_score": 0.32297244281497034,
+      "overall_z_score": 0.18155108657766086,
       "problem_z_scores": {
-        "problem_1": 0.0,
+        "problem_1": -0.7071067811865472,
         "problem_2": 0.7071067811865479,
         "problem_3": 0.9077554328883418,
         "problem_4": -1.0000000000000444,
@@ -296,15 +311,30 @@
         "problem_4": "fhh1YwSZF5DzPFLeREGhF7ZJY1omWd25",
         "problem_5": "fhh1YwSZF5DzPFLeREGhF7ZJY1omWd25"
       },
-      "overall_z_score": 0.23847393177483206,
+      "overall_z_score": 0.09705257553752258,
       "problem_z_scores": {
-        "problem_1": 0.0,
+        "problem_1": -0.7071067811865472,
         "problem_2": 0.7071067811865479,
         "problem_3": 0.48526287768765053,
         "problem_4": 0.9999999999999556,
         "problem_5": -0.9999999999999938
       },
       "rank": 2
+    },
+    {
+      "team": "test",
+      "problems_completed": 1,
+      "problem_scores": {
+        "problem_1": 0.9023
+      },
+      "problem_tokens": {
+        "problem_1": "IXigxD3vJaDV1HuQ9tyHTKPJtexRxZfK"
+      },
+      "overall_z_score": 1.4142135623730954,
+      "problem_z_scores": {
+        "problem_1": 1.4142135623730954
+      },
+      "rank": 3
     },
     {
       "team": "baker",
@@ -319,7 +349,7 @@
       "problem_z_scores": {
         "problem_3": -1.393018310575995
       },
-      "rank": 3
+      "rank": 4
     },
     {
       "team": "sumin",
@@ -334,7 +364,7 @@
       "problem_z_scores": {
         "problem_2": -1.4142135623730947
       },
-      "rank": 4
+      "rank": 5
     }
   ]
 }
