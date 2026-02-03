@@ -1,0 +1,126 @@
+{
+  "token": "wWEpgex3fGdjuTNXRvAswzO-N8CNvZYB",
+  "participant_id": "team9_day1_round2",
+  "total_problems": 3,
+  "completed_problems": 3,
+  "total_sequences": 6,
+  "all_complete": true,
+  "files": [
+    "team9_day1_round2_problem_2_seq1_summary_confidences.json",
+    "team9_day1_round2_problem_1_seq2_summary_confidences.json",
+    "team9_day1_round2_problem_3_seq2_model.cif",
+    "team9_day1_round2_problem_3_seq1_model.cif",
+    "team9_day1_round2_problem_2_seq1_model.cif",
+    "team9_day1_round2_problem_3_seq1_summary_confidences.json",
+    "team9_day1_round2_problem_3_seq2_summary_confidences.json",
+    "team9_day1_round2_problem_3_seq2_confidences.json",
+    "team9_day1_round2_problem_1_seq2_model.cif",
+    "team9_day1_round2_problem_2_seq2_model.cif",
+    "team9_day1_round2_problem_2_seq2_ranking_scores.csv",
+    "team9_day1_round2_problem_1_seq1_confidences.json",
+    "team9_day1_round2_problem_3_seq1_confidences.json",
+    "team9_day1_round2_problem_1_seq1_summary_confidences.json",
+    "submission.json",
+    "team9_day1_round2_problem_2_seq2_confidences.json",
+    "team9_day1_round2_problem_1_seq1_ranking_scores.csv",
+    "team9_day1_round2_problem_3_seq2_ranking_scores.csv",
+    "team9_day1_round2_problem_2_seq2_summary_confidences.json",
+    "team9_day1_round2_problem_1_seq2_ranking_scores.csv",
+    "team9_day1_round2_problem_1_seq1_model.cif",
+    "team9_day1_round2_problem_2_seq1_ranking_scores.csv",
+    "team9_day1_round2_problem_3_seq1_ranking_scores.csv"
+  ],
+  "problems": {
+    "problem_1": {
+      "files": [
+        "team9_day1_round2_problem_1_seq1_model.cif",
+        "team9_day1_round2_problem_1_seq1_confidences.json",
+        "team9_day1_round2_problem_1_seq1_summary_confidences.json",
+        "team9_day1_round2_problem_1_seq1_ranking_scores.csv",
+        "team9_day1_round2_problem_1_seq2_model.cif",
+        "team9_day1_round2_problem_1_seq2_summary_confidences.json",
+        "team9_day1_round2_problem_1_seq2_summary_confidences.json",
+        "team9_day1_round2_problem_1_seq2_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "team9_day1_round2_problem_1_seq1_model.cif",
+            "team9_day1_round2_problem_1_seq1_confidences.json",
+            "team9_day1_round2_problem_1_seq1_summary_confidences.json",
+            "team9_day1_round2_problem_1_seq1_ranking_scores.csv"
+          ]
+        },
+        "2": {
+          "files": [
+            "team9_day1_round2_problem_1_seq2_model.cif",
+            "team9_day1_round2_problem_1_seq2_summary_confidences.json",
+            "team9_day1_round2_problem_1_seq2_summary_confidences.json",
+            "team9_day1_round2_problem_1_seq2_ranking_scores.csv"
+          ]
+        }
+      }
+    },
+    "problem_2": {
+      "files": [
+        "team9_day1_round2_problem_2_seq1_model.cif",
+        "team9_day1_round2_problem_2_seq1_summary_confidences.json",
+        "team9_day1_round2_problem_2_seq1_summary_confidences.json",
+        "team9_day1_round2_problem_2_seq1_ranking_scores.csv",
+        "team9_day1_round2_problem_2_seq2_model.cif",
+        "team9_day1_round2_problem_2_seq2_confidences.json",
+        "team9_day1_round2_problem_2_seq2_summary_confidences.json",
+        "team9_day1_round2_problem_2_seq2_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "team9_day1_round2_problem_2_seq1_model.cif",
+            "team9_day1_round2_problem_2_seq1_summary_confidences.json",
+            "team9_day1_round2_problem_2_seq1_summary_confidences.json",
+            "team9_day1_round2_problem_2_seq1_ranking_scores.csv"
+          ]
+        },
+        "2": {
+          "files": [
+            "team9_day1_round2_problem_2_seq2_model.cif",
+            "team9_day1_round2_problem_2_seq2_confidences.json",
+            "team9_day1_round2_problem_2_seq2_summary_confidences.json",
+            "team9_day1_round2_problem_2_seq2_ranking_scores.csv"
+          ]
+        }
+      }
+    },
+    "problem_3": {
+      "files": [
+        "team9_day1_round2_problem_3_seq1_model.cif",
+        "team9_day1_round2_problem_3_seq1_confidences.json",
+        "team9_day1_round2_problem_3_seq1_summary_confidences.json",
+        "team9_day1_round2_problem_3_seq1_ranking_scores.csv",
+        "team9_day1_round2_problem_3_seq2_model.cif",
+        "team9_day1_round2_problem_3_seq2_confidences.json",
+        "team9_day1_round2_problem_3_seq2_summary_confidences.json",
+        "team9_day1_round2_problem_3_seq2_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "team9_day1_round2_problem_3_seq1_model.cif",
+            "team9_day1_round2_problem_3_seq1_confidences.json",
+            "team9_day1_round2_problem_3_seq1_summary_confidences.json",
+            "team9_day1_round2_problem_3_seq1_ranking_scores.csv"
+          ]
+        },
+        "2": {
+          "files": [
+            "team9_day1_round2_problem_3_seq2_model.cif",
+            "team9_day1_round2_problem_3_seq2_confidences.json",
+            "team9_day1_round2_problem_3_seq2_summary_confidences.json",
+            "team9_day1_round2_problem_3_seq2_ranking_scores.csv"
+          ]
+        }
+      }
+    }
+  },
+  "source_dir": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions/team9day1round2_ml6jr11z_osuc"
+}
