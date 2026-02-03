@@ -693,8 +693,8 @@
             const isBinder = Object.keys(binderMetrics).length > 0 || evalData.problem_type === 'binder';
 
             if (isBinder) {
-                // Binder-specific metrics
-                if (binderMetrics.binder_tm_score != null) {
+                // Binder-specific metrics (skip if already shown as primary)
+                if (binderMetrics.binder_tm_score != null && primaryMetric !== 'tm_score') {
                     html += `<div class="metric-row">
                         <span class="metric-name">Binder TM-score</span>
                         <span class="metric-value">${binderMetrics.binder_tm_score.toFixed(4)}</span>
@@ -702,11 +702,11 @@
                 }
                 if (binderMetrics.binder_rmsd != null) {
                     html += `<div class="metric-row">
-                        <span class="metric-name">Binder RMSD (aligned residues) (Å)</span>
+                        <span class="metric-name">Binder RMSD (Å)</span>
                         <span class="metric-value">${binderMetrics.binder_rmsd.toFixed(2)}</span>
                     </div>`;
                 }
-                if (binderMetrics.binder_lddt != null) {
+                if (binderMetrics.binder_lddt != null && primaryMetric !== 'bb_lddt') {
                     html += `<div class="metric-row">
                         <span class="metric-name">Binder lDDT</span>
                         <span class="metric-value">${binderMetrics.binder_lddt.toFixed(4)}</span>
@@ -726,29 +726,41 @@
                     </div>`;
                 }
             } else {
-                // Monomer metrics
-                if (metrics.tm_score != null) {
+                // Monomer metrics (skip if already shown as primary)
+                if (metrics.tm_score != null && primaryMetric !== 'tm_score') {
                     html += `<div class="metric-row">
                         <span class="metric-name">TM-score</span>
                         <span class="metric-value">${metrics.tm_score.toFixed(4)}</span>
                     </div>`;
                 }
+                if (metrics.bb_lddt != null && primaryMetric !== 'bb_lddt') {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">BB-lDDT</span>
+                        <span class="metric-value">${metrics.bb_lddt.toFixed(4)}</span>
+                    </div>`;
+                }
+                if (metrics.bb_lddt_cov != null) {
+                    html += `<div class="metric-row">
+                        <span class="metric-name">lDDT × Coverage</span>
+                        <span class="metric-value">${metrics.bb_lddt_cov.toFixed(4)}</span>
+                    </div>`;
+                }
                 if (metrics.rmsd != null) {
                     html += `<div class="metric-row">
-                        <span class="metric-name">RMSD (aligned residues) (Å)</span>
+                        <span class="metric-name">RMSD (aligned) (Å)</span>
                         <span class="metric-value">${metrics.rmsd.toFixed(2)}</span>
                     </div>`;
                 }
                 if (metrics.global_rmsd != null) {
                     html += `<div class="metric-row">
-                        <span class="metric-name">RMSD (all residues, Kabsch) (Å)</span>
+                        <span class="metric-name">RMSD (Kabsch) (Å)</span>
                         <span class="metric-value">${metrics.global_rmsd.toFixed(2)}</span>
                     </div>`;
                 }
-                if (metrics.aligned_length) {
+                if (metrics.coverage != null) {
                     html += `<div class="metric-row">
-                        <span class="metric-name">Aligned Length</span>
-                        <span class="metric-value">${metrics.aligned_length}</span>
+                        <span class="metric-name">Coverage</span>
+                        <span class="metric-value">${(metrics.coverage * 100).toFixed(1)}%</span>
                     </div>`;
                 }
             }
