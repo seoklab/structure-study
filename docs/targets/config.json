@@ -26,9 +26,9 @@
     {
       "id": "problem_3",
       "name": "Problem 3 - Top7 Fold",
-      "description": "Design a sequence for a mixed alpha/beta fold (92 residues)",
+      "description": "Design a sequence for a mixed alpha/beta fold (90 residues)",
       "target_file": "top7-scaffold.pdb",
-      "residue_count": 92,
+      "residue_count": 90,
       "type": "monomer",
       "primary_metric": "tm_score",
       "msa_mode": "none",
