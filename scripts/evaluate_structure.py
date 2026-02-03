@@ -1094,7 +1094,15 @@ def main():
             result["metrics"]["ref_ca_count"] = len(ref_coords)
             if aligned_pairs:
                 result["metrics"]["lddt_aligned_count"] = len(aligned_pairs)
-            print(f"  bb-lDDT: {lddt_score:.4f} (model: {len(model_coords)} CA, ref: {len(ref_coords)} CA)")
+                # Coverage-weighted lDDT: penalize for unaligned residues
+                coverage = len(aligned_pairs) / len(ref_coords)
+                cov_lddt = lddt_score * coverage
+                result["metrics"]["bb_lddt_cov"] = round(cov_lddt, 4)
+                result["metrics"]["coverage"] = round(coverage, 4)
+                print(f"  bb-lDDT: {lddt_score:.4f} (model: {len(model_coords)} CA, ref: {len(ref_coords)} CA)")
+                print(f"  bb-lDDT (coverage-weighted): {cov_lddt:.4f} (coverage: {coverage:.2%})")
+            else:
+                print(f"  bb-lDDT: {lddt_score:.4f} (model: {len(model_coords)} CA, ref: {len(ref_coords)} CA)")
 
             # Compute global RMSD (all residues after superposition)
             print("Computing RMSD (all residues, Kabsch)...")
@@ -1284,13 +1292,13 @@ def main():
                 result["primary_score"] = af3.get("ranking_score")
                 result["primary_metric"] = "ranking_score"
     else:
-        # For monomers, use bb-lDDT as primary if available
-        if metrics.get("bb_lddt") is not None:
-            result["primary_score"] = metrics["bb_lddt"]
-            result["primary_metric"] = "bb_lddt"
-        elif metrics.get("tm_score") is not None:
+        # For monomers, use TM-score as primary (properly normalized by reference length)
+        if metrics.get("tm_score") is not None:
             result["primary_score"] = metrics["tm_score"]
             result["primary_metric"] = "tm_score"
+        elif metrics.get("bb_lddt") is not None:
+            result["primary_score"] = metrics["bb_lddt"]
+            result["primary_metric"] = "bb_lddt"
         else:
             result["primary_score"] = af3.get("ptm")
             result["primary_metric"] = "ptm"
