@@ -569,6 +569,7 @@ def generate_leaderboard(
             else:
                 # Monomer metrics
                 ranking_entry["bb_lddt"] = metrics.get("bb_lddt")
+                ranking_entry["bb_lddt_cov"] = metrics.get("bb_lddt_cov")
                 ranking_entry["tm_score"] = metrics.get("tm_score")
                 ranking_entry["rmsd"] = metrics.get("rmsd")
                 # AF3 metrics

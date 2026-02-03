@@ -487,15 +487,16 @@
                     <tr>
                         <th class="sortable" data-key="rank" data-type="number">Rank</th>
                         <th class="sortable" data-key="participant_id" data-type="string">Participant</th>
-                        <th colspan="3" class="section-header">Structure Metrics</th>
+                        <th colspan="4" class="section-header">Structure Metrics</th>
                         <th colspan="2" class="section-header">AlphaFold3</th>
                     </tr>
                     <tr>
                         <th></th>
                         <th></th>
-                        <th class="sortable" data-key="bb_lddt" data-type="number">BB-lDDT</th>
-                        <th class="sortable" data-key="rmsd" data-type="number" data-order="asc">RMSD</th>
                         <th class="sortable" data-key="tm_score" data-type="number">TM-score</th>
+                        <th class="sortable" data-key="bb_lddt" data-type="number">BB-lDDT</th>
+                        <th class="sortable" data-key="bb_lddt_cov" data-type="number">lDDT×Cov</th>
+                        <th class="sortable" data-key="rmsd" data-type="number" data-order="asc">RMSD</th>
                         <th class="sortable" data-key="ptm" data-type="number">pTM</th>
                         <th class="sortable" data-key="plddt" data-type="number">pLDDT</th>
                     </tr>
@@ -507,9 +508,10 @@
                         <tr>
                             <td class="rank-cell ${rankClass}">#${entry.rank}</td>
                             <td class="participant-id">${escapeHtml(entry.participant_id)}</td>
-                            <td class="score-cell primary">${formatScore(entry.bb_lddt)}</td>
+                            <td class="score-cell primary">${formatScore(entry.tm_score)}</td>
+                            <td class="score-cell secondary">${formatScore(entry.bb_lddt)}</td>
+                            <td class="score-cell secondary">${formatScore(entry.bb_lddt_cov)}</td>
                             <td class="score-cell secondary">${formatScore(entry.rmsd)}</td>
-                            <td class="score-cell secondary">${formatScore(entry.tm_score)}</td>
                             <td class="score-cell secondary">${formatScore(entry.ptm)}</td>
                             <td class="score-cell secondary">${formatScore(entry.plddt)}</td>
                         </tr>
@@ -585,7 +587,7 @@
             return `
                 <div class="panel-header">
                     <h2>Overall Rankings</h2>
-                    <p>Rankings by team, based on z-score of primary metric (bb-lDDT) across all problems. Shows best score per problem per team.</p>
+                    <p>Rankings by team, based on z-score of primary metric (TM-score for monomers, iPTM for binders) across all problems. Shows best score per problem per team.</p>
                 </div>
                 <div class="table-container">
                     <table class="ranking-table" data-table-id="overall">
@@ -696,6 +698,8 @@
         function formatMetricName(metric) {
             const names = {
                 'bb_lddt': 'bb-lDDT',
+                'bb_lddt_cov': 'bb-lDDT (cov)',
+                'coverage': 'Coverage',
                 'lddt': 'lDDT',
                 'tm_score': 'TM-score',
                 'ptm': 'pTM',
