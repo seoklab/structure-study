@@ -294,6 +294,7 @@ def get_metric_value(entry: dict, metric_name: str, problem_type: str) -> float 
 
     Supported metrics:
       - bb_lddt: backbone lDDT (from metrics or binder_metrics for binders)
+      - bb_lddt_cov: coverage-weighted lDDT (lDDT × coverage, already computed)
       - binder_lddt: binder-only lDDT (binder problems)
       - interface_lddt: interface lDDT (binder problems)
       - tm_score: TM-score
@@ -314,6 +315,10 @@ def get_metric_value(entry: dict, metric_name: str, problem_type: str) -> float 
         if problem_type == "binder":
             return binder_metrics.get("binder_lddt") or metrics.get("bb_lddt")
         return metrics.get("bb_lddt")
+
+    elif metric_name == "bb_lddt_cov":
+        # Coverage-weighted lDDT (already computed as lDDT × coverage)
+        return metrics.get("bb_lddt_cov")
 
     elif metric_name == "binder_lddt":
         return binder_metrics.get("binder_lddt")

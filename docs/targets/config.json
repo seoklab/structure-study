@@ -1,5 +1,5 @@
 {
-  "_comment_primary_metric": "primary_metric: bb_lddt (monomer), binder_lddt (binder), interface_lddt, iptm, tm_score, etc. Used for z-score ranking.",
+  "_comment_primary_metric": "primary_metric: bb_lddt, bb_lddt_cov (lDDT×Coverage), binder_lddt (binder), interface_lddt, iptm, tm_score, etc. Used for z-score ranking.",
   "problems": [
     {
       "id": "problem_1",
@@ -8,7 +8,7 @@
       "target_file": "3H-scaffold.pdb",
       "residue_count": 73,
       "type": "monomer",
-      "primary_metric": "tm_score",
+      "primary_metric": "bb_lddt_cov",
       "msa_mode": "none",
       "day": 1
     },
@@ -19,7 +19,7 @@
       "target_file": "4B1H-scaffold.pdb",
       "residue_count": 76,
       "type": "monomer",
-      "primary_metric": "tm_score",
+      "primary_metric": "bb_lddt_cov",
       "msa_mode": "none",
       "day": 1
     },
@@ -30,7 +30,7 @@
       "target_file": "top7-scaffold.pdb",
       "residue_count": 90,
       "type": "monomer",
-      "primary_metric": "tm_score",
+      "primary_metric": "bb_lddt_cov",
       "msa_mode": "none",
       "day": 1
     },
