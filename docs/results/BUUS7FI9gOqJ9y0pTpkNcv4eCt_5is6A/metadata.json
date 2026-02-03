@@ -177,6 +177,21 @@
             "team8_day1_round2_problem_3_seq2_summary_confidences.json",
             "team8_day1_round2_problem_3_seq2_ranking_scores.csv"
           ]
+        },
+        "3": {
+          "files": [
+            "team8_day1_round2_problem_3_seq3_model.cif"
+          ]
+        },
+        "4": {
+          "files": [
+            "team8_day1_round2_problem_3_seq4_model.cif"
+          ]
+        },
+        "5": {
+          "files": [
+            "team8_day1_round2_problem_3_seq5_model.cif"
+          ]
         }
       }
     }

@@ -211,6 +211,21 @@
             "team6_day1_round2_problem_3_seq2_summary_confidences.json",
             "team6_day1_round2_problem_3_seq2_ranking_scores.csv"
           ]
+        },
+        "3": {
+          "files": [
+            "team6_day1_round2_problem_3_seq3_model.cif"
+          ]
+        },
+        "4": {
+          "files": [
+            "team6_day1_round2_problem_3_seq4_model.cif"
+          ]
+        },
+        "5": {
+          "files": [
+            "team6_day1_round2_problem_3_seq5_model.cif"
+          ]
         }
       }
     }

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-03T13:29:24.800624Z",
+  "last_updated": "2026-02-03T14:24:38.400865Z",
   "problems": {
     "problem_1": {
       "name": "Problem 1 - 3-Helix Bundle",
@@ -876,6 +876,22 @@
         },
         {
           "rank": 11,
+          "participant_id": "team6_day1_round2",
+          "token": "FU2uWtIAKRULz5bIm0s4Dvrxi5zT60CY",
+          "submitted_at": "2026-02-03T11:51:26.362Z",
+          "primary_score": 0.3853,
+          "primary_metric": "bb_lddt_cov",
+          "best_seq": "5",
+          "bb_lddt": 0.7234,
+          "bb_lddt_cov": 0.3853,
+          "tm_score": 0.42812,
+          "rmsd": 1.9,
+          "ptm": 0.51,
+          "plddt": null,
+          "ranking_score": 0.59
+        },
+        {
+          "rank": 12,
           "participant_id": "team9_day1_round1",
           "token": "4ZUSQ0m_Bcuua7KwOTufKQ7nrTzMJKEX",
           "submitted_at": "2026-02-03T08:49:56.701Z",
@@ -891,7 +907,7 @@
           "ranking_score": 0.6
         },
         {
-          "rank": 12,
+          "rank": 13,
           "participant_id": "team3_day1_round1",
           "token": "2qduKZ2jfdZ4AqHfk2qel80qpFUkyBri",
           "submitted_at": "2026-02-03T08:49:52.491Z",
@@ -905,22 +921,6 @@
           "ptm": 0.59,
           "plddt": null,
           "ranking_score": 0.59
-        },
-        {
-          "rank": 13,
-          "participant_id": "team6_day1_round2",
-          "token": "FU2uWtIAKRULz5bIm0s4Dvrxi5zT60CY",
-          "submitted_at": "2026-02-03T11:51:26.362Z",
-          "primary_score": 0.3747,
-          "primary_metric": "bb_lddt_cov",
-          "best_seq": "1",
-          "bb_lddt": 0.6383,
-          "bb_lddt_cov": 0.3747,
-          "tm_score": 0.40539,
-          "rmsd": 3.22,
-          "ptm": 0.35,
-          "plddt": 56.41,
-          "ranking_score": 0.41
         },
         {
           "rank": 14,
@@ -1147,11 +1147,11 @@
         "problem_4": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
         "problem_5": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y"
       },
-      "overall_z_score": 1.0261747934865757,
+      "overall_z_score": 1.0259435764470057,
       "problem_z_scores": {
         "problem_1": 0.9413633112836093,
         "problem_2": 1.9236466403862758,
-        "problem_3": 2.265864015762994,
+        "problem_3": 2.2647079305651436,
         "problem_4": 0.0,
         "problem_5": 0.0
       },
@@ -1170,11 +1170,11 @@
         "problem_2": "Cu5IinL9gs5d-0_pqp9debMCeBcc1oy3",
         "problem_3": "Cu5IinL9gs5d-0_pqp9debMCeBcc1oy3"
       },
-      "overall_z_score": 1.979541131473538,
+      "overall_z_score": 1.9791687056695044,
       "problem_z_scores": {
         "problem_1": 1.6317102173063676,
         "problem_2": 2.004717145748211,
-        "problem_3": 2.3021960313660355
+        "problem_3": 2.3010787539539344
       },
       "rank": 2
     },
@@ -1191,11 +1191,11 @@
         "problem_2": "ZdhLYouKpMUpcDTWVXQo5WMPuiNrMAdu",
         "problem_3": "ZdhLYouKpMUpcDTWVXQo5WMPuiNrMAdu"
       },
-      "overall_z_score": 0.3312055193395818,
+      "overall_z_score": 0.3299983061442557,
       "problem_z_scores": {
         "problem_1": 0.4763441990342098,
         "problem_2": 0.5596709449109054,
-        "problem_3": -0.04239858592636976
+        "problem_3": -0.04602022551234823
       },
       "rank": 3
     },
@@ -1212,11 +1212,11 @@
         "problem_2": "9dhEmMrrY5GTKIPiQ-P-XjX_i7oQkpOq",
         "problem_3": "yapvGxrkkoyMsPu29jFoKXnIoM-KHr8G"
       },
-      "overall_z_score": 0.27469203254246305,
+      "overall_z_score": 0.2734402995929223,
       "problem_z_scores": {
         "problem_1": 0.6522973766420904,
         "problem_2": 0.33921606190915055,
-        "problem_3": -0.16743734092385176
+        "problem_3": -0.17119253977247412
       },
       "rank": 4
     },
@@ -1233,11 +1233,11 @@
         "problem_2": "2qduKZ2jfdZ4AqHfk2qel80qpFUkyBri",
         "problem_3": "2qduKZ2jfdZ4AqHfk2qel80qpFUkyBri"
       },
-      "overall_z_score": 0.09881889996900571,
+      "overall_z_score": 0.09751760729307506,
       "problem_z_scores": {
         "problem_1": 0.8740342892397777,
         "problem_2": -0.27094616265699506,
-        "problem_3": -0.30663142667576543
+        "problem_3": -0.3105353047035574
       },
       "rank": 5
     },
@@ -1254,11 +1254,11 @@
         "problem_2": "QbgAMxLF7c6kcpn9XYiIF5-AoC7_2ei3",
         "problem_3": "QbgAMxLF7c6kcpn9XYiIF5-AoC7_2ei3"
       },
-      "overall_z_score": -0.06365434019727982,
+      "overall_z_score": -0.06489700119690515,
       "problem_z_scores": {
         "problem_1": -0.13410560082986778,
         "problem_2": 0.0851003258039026,
-        "problem_3": -0.14195774556587426
+        "problem_3": -0.1456857285647503
       },
       "rank": 6
     },
@@ -1275,11 +1275,11 @@
         "problem_2": "KAuLc-QK9s1VtfmPOHXZQXr45hGzKZOQ",
         "problem_3": "KAuLc-QK9s1VtfmPOHXZQXr45hGzKZOQ"
       },
-      "overall_z_score": -0.06566392775176692,
+      "overall_z_score": -0.0668570290250024,
       "problem_z_scores": {
         "problem_1": 0.06249514353812202,
         "problem_2": -0.25672326697946246,
-        "problem_3": -0.002763659813960324
+        "problem_3": -0.006342963633666764
       },
       "rank": 7
     },
@@ -1296,11 +1296,11 @@
         "problem_2": "d-e2L3WPJ5E2kmO0bW3IImzun4hY0nfg",
         "problem_3": "d-e2L3WPJ5E2kmO0bW3IImzun4hY0nfg"
       },
-      "overall_z_score": -0.07907318488434421,
+      "overall_z_score": -0.08031534188675205,
       "problem_z_scores": {
         "problem_1": 0.35964056082490087,
         "problem_2": -0.4563179029875026,
-        "problem_3": -0.14054221249043095
+        "problem_3": -0.14426868349765443
       },
       "rank": 8
     },
@@ -1317,11 +1317,11 @@
         "problem_2": "Dcpa6J34DvOLasHqnwEYofwpo2wUzGIN",
         "problem_3": "BUUS7FI9gOqJ9y0pTpkNcv4eCt_5is6A"
       },
-      "overall_z_score": -0.116928582497334,
+      "overall_z_score": -0.11809194793473554,
       "problem_z_scores": {
         "problem_1": -0.43035329782272846,
         "problem_2": -0.0011852413064614407,
-        "problem_3": 0.08075279163718793
+        "problem_3": 0.07726269532498325
       },
       "rank": 9
     },
@@ -1338,11 +1338,11 @@
         "problem_2": "3mafZiUrMKNvjEJsTWM7KSuP_dxBE8fT",
         "problem_3": "3mafZiUrMKNvjEJsTWM7KSuP_dxBE8fT"
       },
-      "overall_z_score": -0.2144233228068516,
+      "overall_z_score": -0.21584960679272824,
       "problem_z_scores": {
         "problem_1": -0.15744632847172896,
         "problem_2": 0.17185998943685102,
-        "problem_3": -0.6576836293856769
+        "problem_3": -0.6619624813433068
       },
       "rank": 10
     },
@@ -1352,18 +1352,18 @@
       "problem_scores": {
         "problem_1": 0.491,
         "problem_2": 0.5165,
-        "problem_3": 0.3747
+        "problem_3": 0.3853
       },
       "problem_tokens": {
         "problem_1": "FU2uWtIAKRULz5bIm0s4Dvrxi5zT60CY",
         "problem_2": "M9hwQTaonQbbRIFfnl0TEcbMG6XSn1ak",
         "problem_3": "FU2uWtIAKRULz5bIm0s4Dvrxi5zT60CY"
       },
-      "overall_z_score": -0.2903080966408614,
+      "overall_z_score": -0.2749251233857622,
       "problem_z_scores": {
         "problem_1": -0.46267122840376773,
         "problem_2": -0.08652261537165676,
-        "problem_3": -0.3217304461471596
+        "problem_3": -0.27558152638186206
       },
       "rank": 11
     },
@@ -1380,11 +1380,11 @@
         "problem_2": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i",
         "problem_3": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i"
       },
-      "overall_z_score": -1.1680555380419586,
+      "overall_z_score": -1.169538605714343,
       "problem_z_scores": {
         "problem_1": -1.5991851205036522,
         "problem_2": -1.0878144710699473,
-        "problem_3": -0.8171670225522765
+        "problem_3": -0.8216162255694295
       },
       "rank": 12
     },
@@ -1401,11 +1401,11 @@
         "problem_2": "oG_YLxOeoq7iBbigwic4WeM1ZBTv1mef",
         "problem_3": "oG_YLxOeoq7iBbigwic4WeM1ZBTv1mef"
       },
-      "overall_z_score": -1.6418124708593644,
+      "overall_z_score": -1.643444889707208,
       "problem_z_scores": {
         "problem_1": -2.214123521837318,
         "problem_2": -1.4746772334988323,
-        "problem_3": -1.236636657241942
+        "problem_3": -1.241533913785474
       },
       "rank": 13
     },
@@ -1418,9 +1418,9 @@
       "problem_tokens": {
         "problem_3": "l8s9WWSIUeTF-KE0ClfynxOZhi8YMgMz"
       },
-      "overall_z_score": -0.8138641120429091,
+      "overall_z_score": -0.8183097870795395,
       "problem_z_scores": {
-        "problem_3": -0.8138641120429091
+        "problem_3": -0.8183097870795395
       },
       "rank": 14
     },
