@@ -15,7 +15,7 @@ jobs:
       SUBMISSIONS_BASE: /data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions
       PUBLIC_RESULTS: /data/galaxy4/user/j2ho/kidds2026/protein-competition/public_results
       SITE_URL: https://kidds2026.netlify.app
-      ADMIN_EMAILS: "oilbeen@snu.ac.kr,j2hosim@snu.ac.kr"
+      ADMIN_EMAILS: "oilbeen@snu.ac.kr,j2hosim@snu.ac.kr,hahnbeom@gmail.com"
       # Set to "true" for email after each problem (uses more Netlify deploys)
       # Set to "false" for single email when all problems complete (default)
       INCREMENTAL_NOTIFICATIONS: "false"

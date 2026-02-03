@@ -13,7 +13,7 @@ jobs:
 
     env:
       SUBMISSIONS_BASE: /data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions
-      ADMIN_EMAILS: "oilbeen@snu.ac.kr,j2hosim@snu.ac.kr"
+      ADMIN_EMAILS: "oilbeen@snu.ac.kr,j2hosim@snu.ac.kr,hahnbeom@gmail.com"
       SITE_URL: https://kidds2026.netlify.app
 
     steps:
