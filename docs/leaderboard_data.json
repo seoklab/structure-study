@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-03T02:53:56.761371Z",
+  "last_updated": "2026-02-03T02:55:45.241625Z",
   "problems": {
     "problem_1": {
       "name": "Problem 1 - 3-Helix Bundle",
@@ -22,6 +22,21 @@
           "ptm": 0.66,
           "plddt": null,
           "ranking_score": 0.66
+        },
+        {
+          "rank": 2,
+          "participant_id": "test_day1_round1",
+          "token": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j",
+          "submitted_at": "2026-02-03T02:02:36.556Z",
+          "primary_score": 0.6043,
+          "primary_metric": "bb_lddt",
+          "best_seq": "4",
+          "bb_lddt": 0.6043,
+          "tm_score": 0.33712,
+          "rmsd": 2.7,
+          "ptm": 0.27,
+          "plddt": 46.92,
+          "ranking_score": 0.77
         }
       ]
     },
@@ -34,6 +49,21 @@
       "rankings": [
         {
           "rank": 1,
+          "participant_id": "test_day1_round1",
+          "token": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j",
+          "submitted_at": "2026-02-03T02:02:36.556Z",
+          "primary_score": 0.9861,
+          "primary_metric": "bb_lddt",
+          "best_seq": "4",
+          "bb_lddt": 0.9861,
+          "tm_score": 0.41697,
+          "rmsd": 0.61,
+          "ptm": 0.29,
+          "plddt": null,
+          "ranking_score": 0.35
+        },
+        {
+          "rank": 2,
           "participant_id": "reference",
           "token": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
           "submitted_at": "2026-01-30T03:01:27.490Z",
@@ -70,6 +100,21 @@
           "ptm": 0.77,
           "plddt": null,
           "ranking_score": 0.77
+        },
+        {
+          "rank": 2,
+          "participant_id": "test_day1_round1",
+          "token": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j",
+          "submitted_at": "2026-02-03T02:02:36.556Z",
+          "primary_score": 0.7376,
+          "primary_metric": "bb_lddt",
+          "best_seq": "2",
+          "bb_lddt": 0.7376,
+          "tm_score": 0.40521,
+          "rmsd": 2.02,
+          "ptm": 0.31,
+          "plddt": null,
+          "ranking_score": 0.79
         }
       ]
     },
@@ -152,15 +197,36 @@
         "problem_4": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
         "problem_5": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y"
       },
-      "overall_z_score": 0.0,
+      "overall_z_score": 0.1999999999999999,
       "problem_z_scores": {
-        "problem_1": 0.0,
-        "problem_2": 0.0,
-        "problem_3": 0.0,
+        "problem_1": 1.0000000000000018,
+        "problem_2": -1.0000000000000022,
+        "problem_3": 1.0,
         "problem_4": 0.0,
         "problem_5": 0.0
       },
       "rank": 1
+    },
+    {
+      "team": "test",
+      "problems_completed": 3,
+      "problem_scores": {
+        "problem_1": 0.6043,
+        "problem_2": 0.9861,
+        "problem_3": 0.7376
+      },
+      "problem_tokens": {
+        "problem_1": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j",
+        "problem_2": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j",
+        "problem_3": "vX1hVg_KPsa3bChMtC8h2P_h1VDn1d-j"
+      },
+      "overall_z_score": -0.33333333333333365,
+      "problem_z_scores": {
+        "problem_1": -0.9999999999999982,
+        "problem_2": 0.9999999999999974,
+        "problem_3": -1.0
+      },
+      "rank": 2
     }
   ]
 }
