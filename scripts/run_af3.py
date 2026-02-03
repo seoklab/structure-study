@@ -27,7 +27,6 @@ SLURM_CONFIG = {
     "partition_gpu": "gpu-micro.q",
     "partition_cpu": "normal.q",
     "cpus": 6,
-    "nice": 1000,
 }
 
 
