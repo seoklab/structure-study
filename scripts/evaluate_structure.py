@@ -1177,6 +1177,15 @@ def main():
                     result["binder_metrics"]["binder_model_ca"] = len(model_a_coords)
                     result["binder_metrics"]["binder_ref_ca"] = len(ref_a_coords)
                     print(f"  Binder lDDT: {binder_lddt:.4f}")
+
+                    # Compute coverage-weighted lDDT for binder
+                    if binder_aligned_pairs:
+                        binder_coverage = len(binder_aligned_pairs) / len(ref_a_coords)
+                        binder_lddt_cov = binder_lddt * binder_coverage
+                        result["binder_metrics"]["binder_lddt_cov"] = round(binder_lddt_cov, 4)
+                        result["binder_metrics"]["binder_coverage"] = round(binder_coverage, 4)
+                        result["binder_metrics"]["binder_aligned_count"] = len(binder_aligned_pairs)
+                        print(f"  Binder lDDT (coverage-weighted): {binder_lddt_cov:.4f} (coverage: {binder_coverage:.2%})")
             else:
                 result["binder_metrics"]["error"] = "Could not extract chain A"
                 print("  Warning: Could not extract chain A for binder-only evaluation")

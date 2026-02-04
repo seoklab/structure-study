@@ -323,6 +323,9 @@ def get_metric_value(entry: dict, metric_name: str, problem_type: str) -> float 
     elif metric_name == "binder_lddt":
         return binder_metrics.get("binder_lddt")
 
+    elif metric_name == "binder_lddt_cov":
+        return binder_metrics.get("binder_lddt_cov")
+
     elif metric_name == "interface_lddt":
         return interface_metrics.get("interface_lddt")
 
@@ -570,6 +573,8 @@ def generate_leaderboard(
                 ranking_entry["binder_tm"] = binder_m.get("binder_tm_score")
                 ranking_entry["binder_rmsd"] = binder_m.get("binder_rmsd")
                 ranking_entry["binder_lddt"] = binder_m.get("binder_lddt")
+                ranking_entry["binder_lddt_cov"] = binder_m.get("binder_lddt_cov")
+                ranking_entry["binder_coverage"] = binder_m.get("binder_coverage")
                 # Interface metrics
                 interface_m = entry.get("interface_metrics", {})
                 ranking_entry["interface_lddt"] = interface_m.get("interface_lddt")

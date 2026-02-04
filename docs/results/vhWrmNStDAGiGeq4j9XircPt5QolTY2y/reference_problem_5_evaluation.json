@@ -5,7 +5,7 @@
   "token": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
   "model_file": "reference_problem_5_model.cif",
   "reference_file": "PepBinder2-scaffold.pdb",
-  "evaluated_at": "2026-02-03T05:37:09.235013Z",
+  "evaluated_at": "2026-02-04T01:07:40.768548Z",
   "metrics": {
     "tm_score": 0.02459,
     "tm_score_ref": null,
@@ -18,8 +18,8 @@
     "lddt_aligned_count": 7,
     "bb_lddt_cov": 0.0221,
     "coverage": 0.0243,
-    "global_rmsd": 0.882,
-    "kabsch_aligned_rmsd": 238.54,
+    "global_rmsd": 56.902,
+    "kabsch_aligned_rmsd": 0.882,
     "complex_tm_score": 0.84606,
     "complex_tm_score_ref": null,
     "complex_rmsd": 2.53,
@@ -48,7 +48,10 @@
     "binder_aligned_length": 7,
     "binder_lddt": 0.9107,
     "binder_model_ca": 12,
-    "binder_ref_ca": 12
+    "binder_ref_ca": 12,
+    "binder_lddt_cov": 0.5312,
+    "binder_coverage": 0.5833,
+    "binder_aligned_count": 7
   },
   "interface_metrics": {
     "interface_lddt": 0.5166,
@@ -58,6 +61,6 @@
     "interface_count_b": 17,
     "total_interface_contacts": 571
   },
-  "primary_score": 0.77,
-  "primary_metric": "iptm"
+  "primary_score": 0.30218,
+  "primary_metric": "tm_score"
 }
