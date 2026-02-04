@@ -1,0 +1,36 @@
+{
+  "token": "SB946hgN_kKMknAcR4g8-hBVfZTIphG7",
+  "participant_id": "t2_p3_extra",
+  "total_problems": 1,
+  "completed_problems": 1,
+  "total_sequences": 1,
+  "all_complete": true,
+  "files": [
+    "t2_p3_extra_problem_3_seq1_summary_confidences.json",
+    "submission.json",
+    "t2_p3_extra_problem_3_seq1_ranking_scores.csv",
+    "t2_p3_extra_problem_3_seq1_model.cif",
+    "t2_p3_extra_problem_3_seq1_confidences.json"
+  ],
+  "problems": {
+    "problem_3": {
+      "files": [
+        "t2_p3_extra_problem_3_seq1_model.cif",
+        "t2_p3_extra_problem_3_seq1_confidences.json",
+        "t2_p3_extra_problem_3_seq1_summary_confidences.json",
+        "t2_p3_extra_problem_3_seq1_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "t2_p3_extra_problem_3_seq1_model.cif",
+            "t2_p3_extra_problem_3_seq1_confidences.json",
+            "t2_p3_extra_problem_3_seq1_summary_confidences.json",
+            "t2_p3_extra_problem_3_seq1_ranking_scores.csv"
+          ]
+        }
+      }
+    }
+  },
+  "source_dir": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions/t2p3extra_ml7jmxk2_zi41"
+}
