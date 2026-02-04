@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit - 1st KIDDS Human ProteinMPNN Competition</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pdbe-molstar@3.3.0/build/pdbe-molstar.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            color: #e94560;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+        .card {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .card h2 {
+            color: #65cbf3;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            color: #ccc;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        label .required {
+            color: #e94560;
+        }
+        .hint {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+        }
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #2a3f5f;
+            border-radius: 8px;
+            background: #0f0f23;
+            color: #eee;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
+            outline: none;
+            border-color: #65cbf3;
+        }
+        textarea {
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .char-count {
+            text-align: right;
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+        }
+        .char-count.warning { color: #ffa500; }
+        .char-count.error { color: #e94560; }
+        .error-msg {
+            color: #e94560;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #e94560;
+            color: white;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: #d63850;
+            transform: translateY(-1px);
+        }
+        .btn-primary:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-secondary {
+            background: #2a3f5f;
+            color: #ccc;
+        }
+        .btn-secondary:hover {
+            background: #3a5070;
+        }
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+        .actions {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .info-item {
+            background: #0f0f23;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .info-item h4 {
+            color: #65cbf3;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+        .info-item p {
+            color: #eee;
+            font-size: 1.1rem;
+        }
+        .valid-chars {
+            font-family: monospace;
+            background: #0f0f23;
+            padding: 0.75rem;
+            border-radius: 6px;
+            word-break: break-all;
+            color: #65cbf3;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: #65cbf3;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        /* Result messages */
+        .message {
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        .message.success {
+            background: rgba(46, 204, 113, 0.15);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            color: #2ecc71;
+        }
+        .message.error {
+            background: rgba(233, 69, 96, 0.15);
+            border: 1px solid rgba(233, 69, 96, 0.3);
+            color: #e94560;
+        }
+        .message h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        .message p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        /* Spinner */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Problem cards */
+        .problem-card {
+            background: #0f0f23;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #2a3f5f;
+        }
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+        .problem-title {
+            flex: 1;
+        }
+        .problem-title h3 {
+            color: #e94560;
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+        }
+        .problem-title p {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        .problem-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+        .problem-actions .btn {
+            white-space: nowrap;
+        }
+        .residue-info {
+            display: inline-block;
+            background: #2a3f5f;
+            color: #65cbf3;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        .sequence-input-wrapper {
+            position: relative;
+        }
+        .sequence-input-wrapper textarea {
+            padding-right: 80px;
+        }
+
+        /* Problem type badges */
+        .problem-type {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+        .problem-type.monomer {
+            background: #2a3f5f;
+            color: #65cbf3;
+        }
+        .problem-type.binder {
+            background: #4a2c5a;
+            color: #d4a5ff;
+        }
+
+        /* Read-only target sequence */
+        .target-sequence-readonly {
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 0.85rem;
+            word-break: break-all;
+        }
+
+        /* Multi-sequence support */
+        .sequences-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .sequence-entry {
+            background: #0a0a1a;
+            border: 1px solid #2a3f5f;
+            border-radius: 8px;
+            padding: 1rem;
+            position: relative;
+        }
+        .sequence-entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .sequence-entry-header label {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        .remove-sequence-btn {
+            background: transparent;
+            border: 1px solid #e94560;
+            color: #e94560;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .remove-sequence-btn:hover {
+            background: #e94560;
+            color: white;
+        }
+        .add-sequence-btn {
+            background: transparent;
+            border: 2px dashed #2a3f5f;
+            color: #65cbf3;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .add-sequence-btn:hover {
+            border-color: #65cbf3;
+            background: rgba(101, 203, 243, 0.1);
+        }
+        .add-sequence-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sequence-count-badge {
+            display: inline-block;
+            background: #2a3f5f;
+            color: #65cbf3;
+            padding: 0.15rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        /* Modal for structure viewer */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #16213e;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1000px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #2a3f5f;
+        }
+        .modal-header h3 {
+            color: #e94560;
+            font-size: 1.2rem;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            line-height: 1;
+        }
+        .modal-close:hover {
+            color: #fff;
+        }
+        .modal-body {
+            flex: 1;
+            position: relative;
+        }
+        #modal-viewer {
+            width: 100%;
+            height: 100%;
+        }
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #2a3f5f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-footer .hint {
+            margin: 0;
+        }
+
+        /* Loading indicator for problems */
+        .loading-problems {
+            text-align: center;
+            padding: 2rem;
+            color: #aaa;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            h1 { font-size: 1.8rem; }
+            .card { padding: 1.5rem; }
+            .actions { flex-direction: column; }
+            .btn { width: 100%; text-align: center; }
+            .problem-header { flex-direction: column; }
+            .problem-actions { width: 100%; }
+            .problem-actions .btn { flex: 1; }
+            .modal-content { width: 95%; height: 90vh; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <p style="margin-bottom: 0.5rem;"><a href="./" style="color: #65cbf3; text-decoration: none;">&larr; Home</a></p>
+            <h1>1st KIDDS Human ProteinMPNN Competition</h1>
+            <p class="subtitle">February 2026 - Gyeongju, Korea</p>
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="archive-kidds-2026.html" class="btn btn-primary" style="text-decoration: none; font-size: 1.1rem; padding: 0.75rem 1.5rem;">
+                    🏆 View Results
+                </a>
+            </div>
+        </header>
+
+        <!-- Competition Closed Banner (shown when submissions_open: false) -->
+        <div class="card" id="competition-closed" style="display: none; border: 2px solid #ffd700; background: linear-gradient(135deg, #1a4a7a 0%, #16213e 100%);">
+            <h2 style="color: #ffd700;">Competition Ended</h2>
+            <p style="color: #ccc; margin-top: 0.5rem;">
+                The 1st KIDDS Human ProteinMPNN Competition has concluded. Thank you to all participants!
+            </p>
+            <p style="color: #aaa; margin-top: 1rem;">
+                Submissions are now closed. View the final results and winning designs in the archive.
+            </p>
+            <div style="margin-top: 1.5rem;">
+                <a href="archive-kidds-2026.html" class="btn btn-primary" style="text-decoration: none;">
+                    View Competition Archive
+                </a>
+            </div>
+        </div>
+
+        <div id="success-message" class="message success">
+            <h3>Submission Received!</h3>
+            <p id="success-text">Your sequences have been submitted and will be processed shortly. <strong>Check your email for results!</strong></p>
+        </div>
+
+        <div id="error-message" class="message error">
+            <h3>Submission Failed</h3>
+            <p id="error-text">Please try again.</p>
+        </div>
+
+        <div class="card" id="form-card" style="display: none;">
+            <h2>Submit Your Sequences</h2>
+            <form id="submission-form">
+                <div class="form-group">
+                    <label for="participant_id">Participant ID <span class="required">*</span></label>
+                    <input type="text" id="participant_id" name="participant_id"
+                           placeholder="e.g., team1_day1_round2"
+                           pattern="[A-Za-z0-9_-]+" required>
+                    <p class="hint">Format: {team}_{day}_{round} (e.g., team1_day1_round2, alpha_day2_round1)</p>
+                    <p class="error-msg" id="participant_id_error"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" name="email"
+                           placeholder="your.email@example.com" required>
+                    <p class="hint">Results will be sent to this email when ready</p>
+                    <p class="error-msg" id="email_error"></p>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid #2a3f5f; margin: 2rem 0;">
+
+                <h3 style="color: #65cbf3; margin-bottom: 1rem;">Target Structures</h3>
+                <p class="hint" style="margin-bottom: 1.5rem;">
+                    Design sequences for the target backbone structures below. You can submit sequences for any subset of problems.
+                    <br>Valid amino acids: <span class="valid-chars" style="display: inline; padding: 0.2rem 0.5rem;">A C D E F G H I K L M N P Q R S T V W Y</span>
+                </p>
+
+                <div id="problems-container">
+                    <div class="loading-problems">Loading problems...</div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary" id="submit-btn">
+                        <span id="btn-text">Submit Sequences</span>
+                        <span id="btn-spinner" class="spinner" style="display: none;"></span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear All</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card" id="how-it-works" style="display: none;">
+            <h2>How It Works</h2>
+            <ol style="color: #ccc; line-height: 2; padding-left: 1.5rem;">
+                <li>View each target backbone structure and design a sequence for it</li>
+                <li>Enter your sequences for all problems above</li>
+                <li>Click submit - your jobs will be queued automatically</li>
+                <li>Our system will run AlphaFold3 on each of your sequences</li>
+                <li>Results will be sent to your email with private viewing links</li>
+                <li>All results will be published when the competition ends</li>
+            </ol>
+        </div>
+
+        <footer>
+            <p>Supported by <a href="https://seoklab.org" target="_blank">SeokLab</a></p>
+        </footer>
+    </div>
+
+    <!-- Structure Viewer Modal -->
+    <div class="modal-overlay" id="viewer-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Structure Viewer</h3>
+                <button class="modal-close" onclick="closeViewerModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-viewer"></div>
+            </div>
+            <div class="modal-footer">
+                <p class="hint">Backbone-only structure with all residues as UNK (unknown). Design a sequence that folds into this shape.</p>
+                <a id="modal-download" class="btn btn-secondary btn-small" href="#" download>Download PDB</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/pdbe-molstar@3.3.0/build/pdbe-molstar-plugin.js"></script>
+    <script>
+        // Netlify Function endpoint (use relative URL to avoid CORS issues)
+        const SUBMIT_URL = '/api/submit';
+        const CONFIG_URL = './targets/config.json';
+
+        let problemsConfig = null;
+        let viewerInstance = null;
+
+        const VALID_AMINO_ACIDS = new Set('ACDEFGHIKLMNPQRSTVWY');
+
+        // Competition day start dates (problems auto-show on their day)
+        // Format: day number -> Date object (local time, KST for this competition)
+        const COMPETITION_DAYS = {
+            1: new Date('2026-01-01T00:00:00'),  // Day 1: always visible
+            2: new Date('2026-02-04T09:20:00')   // Day 2: Wednesday, Feb 4, 9:20 AM KST
+        };
+
+        // Check if a problem should be visible
+        function isProblemVisible(problem) {
+            // Manual override: hidden = true -> always hide, hidden = false -> always show
+            if (problem.hidden === true) return false;
+            if (problem.hidden === false) return true;
+
+            // Auto-hide based on day (if no manual override)
+            const problemDay = problem.day || 1;
+            const dayStart = COMPETITION_DAYS[problemDay];
+            if (!dayStart) return true;  // No date config, show by default
+
+            const now = new Date();
+            return now >= dayStart;
+        }
+
+        const form = document.getElementById('submission-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnSpinner = document.getElementById('btn-spinner');
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
+        const successText = document.getElementById('success-text');
+        const errorText = document.getElementById('error-text');
+        const problemsContainer = document.getElementById('problems-container');
+
+        // Load problems configuration
+        async function loadProblems() {
+            try {
+                const response = await fetch(CONFIG_URL);
+                if (!response.ok) throw new Error('Failed to load problems');
+                problemsConfig = await response.json();
+
+                // Check if submissions are open
+                const submissionsOpen = problemsConfig.submissions_open !== false;
+
+                if (submissionsOpen) {
+                    // Show submission form, hide closed banner
+                    document.getElementById('form-card').style.display = 'block';
+                    document.getElementById('how-it-works').style.display = 'block';
+                    document.getElementById('competition-closed').style.display = 'none';
+                    renderProblems();
+                } else {
+                    // Hide submission form, show closed banner
+                    document.getElementById('form-card').style.display = 'none';
+                    document.getElementById('how-it-works').style.display = 'none';
+                    document.getElementById('competition-closed').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error loading problems:', error);
+                problemsContainer.innerHTML = '<p style="color: #e94560;">Failed to load problems. Please refresh the page.</p>';
+            }
+        }
+
+        const MAX_SEQUENCES_PER_PROBLEM = 5;
+
+        // Track sequence counts per problem
+        const problemSequenceCounts = {};
+
+        function renderProblems() {
+            if (!problemsConfig || !problemsConfig.problems) return;
+
+            // Filter out example problems and hidden problems
+            const problems = problemsConfig.problems.filter(p =>
+                !p.id.startsWith('_') && isProblemVisible(p)
+            );
+
+            // Initialize sequence counts
+            problems.forEach(p => {
+                if (!problemSequenceCounts[p.id]) {
+                    problemSequenceCounts[p.id] = 1;
+                }
+            });
+
+            const html = problems.map((problem, index) => {
+                const residueInfo = problem.residue_count
+                    ? `<span class="residue-info">${problem.residue_count} residues</span>`
+                    : '';
+
+                const isBinder = problem.type === 'binder';
+                const problemType = isBinder
+                    ? '<span class="problem-type binder">Binder Design</span>'
+                    : '<span class="problem-type monomer">Scaffold Design</span>';
+
+                // For binder problems, show the given target sequence (read-only)
+                let targetSequenceSection = '';
+                if (isBinder && problem.target_sequence) {
+                    targetSequenceSection = `
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label>Given Target Sequence (Chain B) - Read Only</label>
+                            <textarea
+                                readonly
+                                class="target-sequence-readonly"
+                                style="background: #1a1a2e; color: #888; cursor: not-allowed; min-height: 60px;"
+                            >${problem.target_sequence}</textarea>
+                            <div class="char-count" style="color: #666;">${problem.target_sequence.length} residues (given)</div>
+                        </div>
+                    `;
+                }
+
+                const sequenceLabel = isBinder
+                    ? 'Binder Sequence'
+                    : 'Sequence';
+
+                const sequencePlaceholder = isBinder
+                    ? 'Enter your designed binder sequence...'
+                    : 'Enter your designed amino acid sequence...';
+
+                // Show day badge
+                const dayBadge = problem.day
+                    ? `<span class="problem-type" style="background: #1a4a3a; color: #4ade80; margin-left: 0.5rem;">Day ${problem.day}</span>`
+                    : '';
+
+                return `
+                    <div class="problem-card" data-problem-id="${problem.id}" data-problem-type="${problem.type || 'monomer'}" data-day="${problem.day || 1}">
+                        <div class="problem-header">
+                            <div class="problem-title">
+                                <h3>${problem.name}${residueInfo}</h3>
+                                <p>${problem.description}</p>
+                                ${problemType}${dayBadge}
+                            </div>
+                            <div class="problem-actions">
+                                <button type="button" class="btn btn-secondary btn-small" onclick="openViewerModal('${problem.id}', '${problem.name}', '${problem.target_file}')">
+                                    View Structure
+                                </button>
+                                <a class="btn btn-secondary btn-small" href="./targets/${problem.target_file}" download>
+                                    Download
+                                </a>
+                            </div>
+                        </div>
+                        ${targetSequenceSection}
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>
+                                Your ${sequenceLabel}(s)
+                                <span style="color: #888; font-weight: normal;">(optional, max ${MAX_SEQUENCES_PER_PROBLEM})</span>
+                                <span class="sequence-count-badge" id="seq-count-${problem.id}">1/${MAX_SEQUENCES_PER_PROBLEM}</span>
+                            </label>
+                            <div class="sequences-container" id="sequences-container-${problem.id}">
+                                <div class="sequence-entry" data-seq-num="1">
+                                    <div class="sequence-entry-header">
+                                        <label for="sequence_${problem.id}_1">${sequenceLabel} #1</label>
+                                    </div>
+                                    <textarea
+                                        id="sequence_${problem.id}_1"
+                                        name="sequence_${problem.id}_1"
+                                        placeholder="${sequencePlaceholder}"
+                                        oninput="updateCharCountMulti('${problem.id}', 1)"
+                                    ></textarea>
+                                    <div class="char-count" id="char-count-${problem.id}-1">0 residues</div>
+                                    <p class="error-msg" id="error-${problem.id}-1"></p>
+                                </div>
+                            </div>
+                            <button type="button" class="add-sequence-btn" id="add-seq-btn-${problem.id}"
+                                onclick="addSequenceInput('${problem.id}', '${sequenceLabel}', '${sequencePlaceholder}')">
+                                + Add another sequence
+                            </button>
+                            <p class="error-msg" id="error-${problem.id}"></p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            problemsContainer.innerHTML = html;
+        }
+
+        function addSequenceInput(problemId, sequenceLabel, placeholder) {
+            const container = document.getElementById(`sequences-container-${problemId}`);
+            const currentCount = problemSequenceCounts[problemId] || 1;
+
+            if (currentCount >= MAX_SEQUENCES_PER_PROBLEM) {
+                return;
+            }
+
+            const newSeqNum = currentCount + 1;
+            problemSequenceCounts[problemId] = newSeqNum;
+
+            const entryHtml = `
+                <div class="sequence-entry" data-seq-num="${newSeqNum}">
+                    <div class="sequence-entry-header">
+                        <label for="sequence_${problemId}_${newSeqNum}">${sequenceLabel} #${newSeqNum}</label>
+                        <button type="button" class="remove-sequence-btn" onclick="removeSequenceInput('${problemId}', ${newSeqNum})">
+                            Remove
+                        </button>
+                    </div>
+                    <textarea
+                        id="sequence_${problemId}_${newSeqNum}"
+                        name="sequence_${problemId}_${newSeqNum}"
+                        placeholder="${placeholder}"
+                        oninput="updateCharCountMulti('${problemId}', ${newSeqNum})"
+                    ></textarea>
+                    <div class="char-count" id="char-count-${problemId}-${newSeqNum}">0 residues</div>
+                    <p class="error-msg" id="error-${problemId}-${newSeqNum}"></p>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', entryHtml);
+            updateSequenceCountBadge(problemId);
+
+            // Disable add button if at max
+            if (newSeqNum >= MAX_SEQUENCES_PER_PROBLEM) {
+                document.getElementById(`add-seq-btn-${problemId}`).disabled = true;
+            }
+        }
+
+        function removeSequenceInput(problemId, seqNum) {
+            const container = document.getElementById(`sequences-container-${problemId}`);
+            const entries = container.querySelectorAll('.sequence-entry');
+
+            // Don't remove if only one entry
+            if (entries.length <= 1) {
+                return;
+            }
+
+            // Find and remove the entry
+            const entry = container.querySelector(`.sequence-entry[data-seq-num="${seqNum}"]`);
+            if (entry) {
+                entry.remove();
+            }
+
+            // Renumber remaining entries
+            const remainingEntries = container.querySelectorAll('.sequence-entry');
+            remainingEntries.forEach((entry, idx) => {
+                const newNum = idx + 1;
+                entry.dataset.seqNum = newNum;
+
+                // Update label
+                const label = entry.querySelector('label');
+                const oldLabel = label.getAttribute('for');
+                const baseProblem = oldLabel.replace(/_\d+$/, '');
+                label.setAttribute('for', `${baseProblem}_${newNum}`);
+                label.textContent = `${label.textContent.replace(/#\d+/, `#${newNum}`)}`;
+
+                // Update textarea
+                const textarea = entry.querySelector('textarea');
+                textarea.id = `sequence_${problemId}_${newNum}`;
+                textarea.name = `sequence_${problemId}_${newNum}`;
+                textarea.setAttribute('oninput', `updateCharCountMulti('${problemId}', ${newNum})`);
+
+                // Update char count
+                const charCount = entry.querySelector('.char-count');
+                charCount.id = `char-count-${problemId}-${newNum}`;
+
+                // Update error
+                const error = entry.querySelector('.error-msg');
+                error.id = `error-${problemId}-${newNum}`;
+
+                // Update remove button
+                const removeBtn = entry.querySelector('.remove-sequence-btn');
+                if (removeBtn) {
+                    removeBtn.setAttribute('onclick', `removeSequenceInput('${problemId}', ${newNum})`);
+                }
+            });
+
+            problemSequenceCounts[problemId] = remainingEntries.length;
+            updateSequenceCountBadge(problemId);
+
+            // Re-enable add button
+            document.getElementById(`add-seq-btn-${problemId}`).disabled = false;
+        }
+
+        function updateSequenceCountBadge(problemId) {
+            const badge = document.getElementById(`seq-count-${problemId}`);
+            if (!badge) return;
+            const count = problemSequenceCounts[problemId] || 1;
+            badge.textContent = `${count}/${MAX_SEQUENCES_PER_PROBLEM}`;
+        }
+
+        function updateCharCountMulti(problemId, seqNum) {
+            const textarea = document.getElementById(`sequence_${problemId}_${seqNum}`);
+            const charCountEl = document.getElementById(`char-count-${problemId}-${seqNum}`);
+            const errorEl = document.getElementById(`error-${problemId}-${seqNum}`);
+
+            if (!textarea || !charCountEl) return;
+
+            const result = validateSequence(textarea.value, problemId);
+            charCountEl.textContent = `${result.length} residues`;
+            charCountEl.className = 'char-count';
+
+            if (result.tooLong) {
+                charCountEl.classList.add('error');
+                charCountEl.textContent += ` (max ${result.maxLen})`;
+            } else if (result.length > result.maxLen * 0.9) {
+                charCountEl.classList.add('warning');
+            }
+
+            if (errorEl) {
+                if (result.invalidChars.length > 0) {
+                    errorEl.textContent = `Invalid characters: ${result.invalidChars.join(', ')}`;
+                    errorEl.style.display = 'block';
+                } else if (result.tooShort) {
+                    errorEl.textContent = `Sequence too short (minimum ${result.minLen} residues)`;
+                    errorEl.style.display = 'block';
+                } else {
+                    errorEl.style.display = 'none';
+                }
+            }
+        }
+
+        function cleanSequence(seq) {
+            return seq.toUpperCase().replace(/[^A-Z]/g, '');
+        }
+
+        function validateSequence(seq, problemId) {
+            const cleaned = cleanSequence(seq);
+            const minLen = problemsConfig?.validation?.min_length || 10;
+            const maxLen = problemsConfig?.validation?.max_length || 5000;
+            const validAA = new Set(problemsConfig?.validation?.valid_amino_acids || 'ACDEFGHIKLMNPQRSTVWY');
+
+            const invalid = [...cleaned].filter(c => !validAA.has(c));
+            return {
+                cleaned,
+                length: cleaned.length,
+                valid: invalid.length === 0 && cleaned.length >= minLen && cleaned.length <= maxLen,
+                invalidChars: [...new Set(invalid)],
+                tooShort: cleaned.length < minLen && cleaned.length > 0,
+                tooLong: cleaned.length > maxLen,
+                minLen,
+                maxLen
+            };
+        }
+
+        function validateId(id) {
+            return /^[A-Za-z0-9_-]+$/.test(id) && id.length > 0;
+        }
+
+        // Legacy function for backward compatibility
+        function updateCharCount(problemId) {
+            updateCharCountMulti(problemId, 1);
+        }
+
+        function setLoading(loading) {
+            submitBtn.disabled = loading;
+            btnText.textContent = loading ? 'Submitting...' : 'Submit Sequences';
+            btnSpinner.style.display = loading ? 'block' : 'none';
+        }
+
+        function showSuccess(message) {
+            successText.innerHTML = message;
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.style.display = 'block';
+            successMessage.style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function hideMessages() {
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+        }
+
+        // Structure Viewer Modal
+        function openViewerModal(problemId, problemName, targetFile) {
+            const modal = document.getElementById('viewer-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDownload = document.getElementById('modal-download');
+            const viewerContainer = document.getElementById('modal-viewer');
+
+            modalTitle.textContent = `${problemName} - Target Structure`;
+            modalDownload.href = `./targets/${targetFile}`;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // Clear previous viewer
+            viewerContainer.innerHTML = '';
+
+            // Initialize viewer
+            viewerInstance = new PDBeMolstarPlugin();
+            const options = {
+                customData: {
+                    url: `./targets/${targetFile}`,
+                    format: 'pdb',
+                    binary: false
+                },
+                bgColor: { r: 22, g: 33, b: 62 },
+                hideControls: false,
+                sequencePanel: true,
+                landscape: true
+            };
+
+            viewerInstance.render(viewerContainer, options);
+        }
+
+        function closeViewerModal() {
+            const modal = document.getElementById('viewer-modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+
+            if (viewerInstance) {
+                viewerInstance = null;
+            }
+            document.getElementById('modal-viewer').innerHTML = '';
+        }
+
+        // Close modal on overlay click
+        document.getElementById('viewer-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeViewerModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeViewerModal();
+            }
+        });
+
+        // Form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideMessages();
+
+            const participantId = document.getElementById('participant_id').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            // Validate all fields
+            let valid = true;
+
+            if (!validateId(participantId)) {
+                document.getElementById('participant_id_error').textContent = 'Invalid participant ID';
+                document.getElementById('participant_id_error').style.display = 'block';
+                valid = false;
+            } else {
+                document.getElementById('participant_id_error').style.display = 'none';
+            }
+
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('email_error').textContent = 'Please enter a valid email address';
+                document.getElementById('email_error').style.display = 'block';
+                valid = false;
+            } else {
+                document.getElementById('email_error').style.display = 'none';
+            }
+
+            // Collect and validate provided sequences (skip example problems, allow partial submission)
+            // Now supports multiple sequences per problem
+            const sequences = {};
+            const activeProblems = problemsConfig.problems.filter(p => !p.id.startsWith('_'));
+
+            for (const problem of activeProblems) {
+                const problemId = problem.id;
+                const seqCount = problemSequenceCounts[problemId] || 1;
+                const problemSeqs = [];
+
+                for (let seqNum = 1; seqNum <= seqCount; seqNum++) {
+                    const textarea = document.getElementById(`sequence_${problemId}_${seqNum}`);
+                    const errorEl = document.getElementById(`error-${problemId}-${seqNum}`);
+
+                    if (!textarea) continue;
+
+                    // Skip empty sequences
+                    if (!textarea.value.trim()) {
+                        if (errorEl) errorEl.style.display = 'none';
+                        continue;
+                    }
+
+                    const result = validateSequence(textarea.value, problemId);
+                    if (!result.valid) {
+                        valid = false;
+                        // Error already shown by updateCharCountMulti
+                    } else {
+                        problemSeqs.push(result.cleaned);
+                    }
+                }
+
+                // Add to sequences if we have any valid ones
+                if (problemSeqs.length > 0) {
+                    sequences[problemId] = problemSeqs;
+                }
+            }
+
+            // Require at least one sequence total
+            const totalSeqs = Object.values(sequences).flat().length;
+            if (totalSeqs === 0) {
+                showError('Please provide at least one sequence.');
+                return;
+            }
+
+            if (!valid) return;
+
+            // Submit to Netlify Function
+            setLoading(true);
+
+            try {
+                const response = await fetch(SUBMIT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        participant_id: participantId,
+                        email: email,
+                        sequences: sequences
+                    })
+                });
+
+                // Check if response is ok before parsing JSON
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Server error:', response.status, errorText);
+                    try {
+                        const errorData = JSON.parse(errorText);
+                        showError(errorData.error || `Server error (${response.status}). Please try again.`);
+                    } catch {
+                        showError(`Server error (${response.status}). Please try again.`);
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const seqCount = Object.values(sequences).flat().length;
+                    const problemCount = Object.keys(sequences).length;
+                    showSuccess(`Your sequences have been submitted successfully!<br><strong>Submission ID:</strong> ${data.submission_id}<br><strong>Problems:</strong> ${problemCount}, <strong>Sequences:</strong> ${seqCount}<br><strong>Check your email for results!</strong>`);
+                    alert(`✅ Submission Successful!\n\nSubmission ID: ${data.submission_id}\nProblems: ${problemCount}, Sequences: ${seqCount}\n\nCheck your email for results!`);
+                    clearForm();
+                } else {
+                    showError(data.error || 'Submission failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                showError(`Error: ${error.message || 'Network error. Please check your connection.'}`);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        function clearForm() {
+            form.reset();
+            hideMessages();
+            if (problemsConfig) {
+                const activeProblems = problemsConfig.problems.filter(p => !p.id.startsWith('_'));
+                for (const problem of activeProblems) {
+                    // Reset to single sequence per problem
+                    problemSequenceCounts[problem.id] = 1;
+
+                    // Re-render sequences container to single entry
+                    const container = document.getElementById(`sequences-container-${problem.id}`);
+                    if (container) {
+                        // Keep only first entry, remove extras
+                        const entries = container.querySelectorAll('.sequence-entry');
+                        entries.forEach((entry, idx) => {
+                            if (idx > 0) entry.remove();
+                        });
+
+                        // Reset first entry
+                        const firstEntry = container.querySelector('.sequence-entry');
+                        if (firstEntry) {
+                            const textarea = firstEntry.querySelector('textarea');
+                            if (textarea) textarea.value = '';
+                            const charCount = firstEntry.querySelector('.char-count');
+                            if (charCount) {
+                                charCount.textContent = '0 residues';
+                                charCount.className = 'char-count';
+                            }
+                        }
+                    }
+
+                    // Update badge
+                    updateSequenceCountBadge(problem.id);
+
+                    // Re-enable add button
+                    const addBtn = document.getElementById(`add-seq-btn-${problem.id}`);
+                    if (addBtn) addBtn.disabled = false;
+
+                    // Clear general error
+                    const errorEl = document.getElementById(`error-${problem.id}`);
+                    if (errorEl) errorEl.style.display = 'none';
+                }
+            }
+            document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+        }
+
+        // Initialize
+        loadProblems();
+    </script>
+</body>
+</html>
+
