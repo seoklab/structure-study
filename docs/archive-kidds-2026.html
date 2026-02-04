@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard - KIDDS 2026 Protein Competition</title>
+    <title>1st KIDDS Human ProteinMPNN Competition - Archive</title>
     <style>
         * {
             margin: 0;
@@ -69,6 +69,55 @@
             margin: 0 auto;
             padding: 2rem;
         }
+
+        /* Winner Banner */
+        .winner-banner {
+            background: linear-gradient(135deg, #1a4a7a 0%, #0f3460 100%);
+            border: 2px solid #ffd700;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .winner-trophy {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        .winner-title {
+            color: #ffd700;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .winner-subtitle {
+            color: #aaa;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        .winner-team {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .winner-label {
+            color: #65cbf3;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        .winner-photo {
+            margin-top: 1.5rem;
+        }
+        .winner-photo img {
+            max-width: 400px;
+            width: 100%;
+            border-radius: 8px;
+            border: 2px solid #ffd700;
+        }
+        .winner-photo-caption {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
         .last-updated {
             color: #888;
             font-size: 0.9rem;
@@ -262,6 +311,29 @@
             display: none !important;
         }
 
+        /* View link styles */
+        .view-link {
+            color: #65cbf3;
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .view-link:hover {
+            background: rgba(101, 203, 243, 0.2);
+            text-decoration: none;
+        }
+        .ranking-table th.view-col {
+            cursor: default;
+        }
+        .ranking-table th.view-col:hover {
+            background: #0f3460;
+        }
+        .ranking-table th.view-col::after {
+            display: none;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .container {
@@ -282,6 +354,18 @@
             .tabs {
                 justify-content: center;
             }
+            .winner-banner {
+                padding: 1.5rem 1rem;
+            }
+            .winner-trophy {
+                font-size: 2rem;
+            }
+            .winner-title {
+                font-size: 1.2rem;
+            }
+            .winner-team {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -290,12 +374,11 @@
         <div class="header-content">
             <div class="header-left">
                 <nav class="nav-links">
-                    <a href="./">← Submit</a>
+                    <a href="leaderboard.html">&larr; Current Leaderboard</a>
                 </nav>
-                <h1>🏆 Leaderboard</h1>
+                <h1>Archive</h1>
             </div>
             <div class="header-links">
-                <a href="archive-kidds-2026.html">1st KIDDS Archive</a>
                 <a href="index.html">Submit Sequences</a>
                 <a href="downloads.html">Downloads</a>
             </div>
@@ -303,6 +386,19 @@
     </div>
 
     <div class="container">
+        <!-- Winner Banner -->
+        <div class="winner-banner">
+            <div class="winner-trophy">🏆</div>
+            <div class="winner-title">1st KIDDS Human ProteinMPNN Competition</div>
+            <div class="winner-subtitle">February 2026</div>
+            <div class="winner-label">Overall Winner</div>
+            <div class="winner-team">team3</div>
+            <div class="winner-photo">
+                <img src="1st-winners-team3.jpeg" alt="Team 3 - Competition Winners">
+                <div class="winner-photo-caption">The winning team</div>
+            </div>
+        </div>
+
         <p class="last-updated" id="last-updated">Loading...</p>
 
         <div class="tabs" id="tabs">
@@ -322,28 +418,6 @@
 
     <script>
         const LEADERBOARD_URL = './leaderboard_data.json';
-
-        // Competition day start dates (problems auto-show on their day)
-        // Local time (KST for this competition)
-        const COMPETITION_DAYS = {
-            1: new Date('2026-01-01T00:00:00'),  // Day 1: always visible
-            2: new Date('2026-02-04T09:20:00')   // Day 2: Wednesday, Feb 4, 9:20 AM KST
-        };
-
-        // Check if a problem should be visible
-        function isProblemVisible(problem) {
-            // Manual override: hidden = true -> always hide, hidden = false -> always show
-            if (problem.hidden === true) return false;
-            if (problem.hidden === false) return true;
-
-            // Auto-hide based on day (if no manual override)
-            const problemDay = problem.day || 1;
-            const dayStart = COMPETITION_DAYS[problemDay];
-            if (!dayStart) return true;  // No date config, show by default
-
-            const now = new Date();
-            return now >= dayStart;
-        }
 
         let leaderboardData = null;
         let currentSorts = {}; // Track current sort state per table
@@ -369,17 +443,15 @@
             // Update last updated
             const lastUpdated = new Date(leaderboardData.last_updated);
             document.getElementById('last-updated').textContent =
-                `Last updated: ${lastUpdated.toLocaleString()}`;
+                `Competition ended: ${lastUpdated.toLocaleString()}`;
 
             // Render tabs
             const tabsContainer = document.getElementById('tabs');
             const panelsContainer = document.getElementById('panels');
 
-            // Create problem tabs (filter by visibility)
+            // Create problem tabs (show all problems for archive)
             const problems = leaderboardData.problems || {};
-            const sortedProblems = Object.keys(problems).sort().filter(pid =>
-                isProblemVisible(problems[pid])
-            );
+            const sortedProblems = Object.keys(problems).sort();
 
             sortedProblems.forEach(problemId => {
                 const problem = problems[problemId];
@@ -432,7 +504,7 @@
                         <h2>${problem.name}</h2>
                         <p>Primary metric: ${formatMetricName(problem.primary_metric)}</p>
                     </div>
-                    <div class="no-data">No submissions yet for this problem.</div>
+                    <div class="no-data">No submissions for this problem.</div>
                 `;
             }
 
@@ -452,6 +524,7 @@
                         <th colspan="${binderColSpan}" class="section-header">Binder Only</th>
                         <th colspan="3" class="section-header">Complex</th>
                         <th colspan="3" class="section-header">AlphaFold3</th>
+                        <th class="view-col">View</th>
                     </tr>
                     <tr>
                         <th></th>
@@ -466,6 +539,7 @@
                         <th class="sortable" data-key="iptm" data-type="number">ipTM</th>
                         <th class="sortable" data-key="ptm" data-type="number">pTM</th>
                         <th class="sortable" data-key="plddt" data-type="number">pLDDT</th>
+                        <th></th>
                     </tr>
                 `;
 
@@ -485,6 +559,7 @@
                             <td class="score-cell highlight">${formatScore(entry.iptm)}</td>
                             <td class="score-cell secondary">${formatScore(entry.ptm)}</td>
                             <td class="score-cell secondary">${formatScore(entry.plddt)}</td>
+                            <td><a href="viewer.html?token=${encodeURIComponent(entry.token)}" target="_blank" class="view-link">View</a></td>
                         </tr>
                     `;
                 }).join('');
@@ -496,6 +571,7 @@
                         <th class="sortable" data-key="participant_id" data-type="string">Participant</th>
                         <th colspan="4" class="section-header">Structure Metrics</th>
                         <th colspan="2" class="section-header">AlphaFold3</th>
+                        <th class="view-col">View</th>
                     </tr>
                     <tr>
                         <th></th>
@@ -506,6 +582,7 @@
                         <th class="sortable" data-key="rmsd" data-type="number" data-order="asc">RMSD</th>
                         <th class="sortable" data-key="ptm" data-type="number">pTM</th>
                         <th class="sortable" data-key="plddt" data-type="number">pLDDT</th>
+                        <th></th>
                     </tr>
                 `;
 
@@ -521,6 +598,7 @@
                             <td class="score-cell secondary">${formatScore(entry.rmsd)}</td>
                             <td class="score-cell secondary">${formatScore(entry.ptm)}</td>
                             <td class="score-cell secondary">${formatScore(entry.plddt)}</td>
+                            <td><a href="viewer.html?token=${encodeURIComponent(entry.token)}" target="_blank" class="view-link">View</a></td>
                         </tr>
                     `;
                 }).join('');
@@ -549,15 +627,13 @@
                         <h2>Overall Rankings</h2>
                         <p>Aggregate rankings across all problems by team.</p>
                     </div>
-                    <div class="no-data">No submissions yet. Rankings will appear once results are evaluated.</div>
+                    <div class="no-data">No submissions. Rankings will appear once results are evaluated.</div>
                 `;
             }
 
-            // Get sorted problem IDs (filtered by visibility)
+            // Get sorted problem IDs (show all for archive)
             const problems = leaderboardData.problems || {};
-            const problemIds = Object.keys(problems).sort().filter(pid =>
-                isProblemVisible(problems[pid])
-            );
+            const problemIds = Object.keys(problems).sort();
 
             // Build problem column headers
             const problemHeaders = problemIds.map(pid => {
@@ -581,12 +657,19 @@
                     return `<td class="score-cell secondary">-</td>`;
                 }).join('');
 
+                // Get first available token for view link
+                const firstToken = entry.problem_tokens ? Object.values(entry.problem_tokens)[0] : null;
+                const viewLink = firstToken
+                    ? `<a href="viewer.html?token=${encodeURIComponent(firstToken)}" target="_blank" class="view-link">View</a>`
+                    : '-';
+
                 return `
                     <tr>
                         <td class="rank-cell ${rankClass}">#${entry.rank}</td>
                         <td class="participant-id">${escapeHtml(entry.team)}</td>
                         <td class="score-cell primary">${zScore}</td>
                         ${problemCells}
+                        <td>${viewLink}</td>
                     </tr>
                 `;
             }).join('');
@@ -604,6 +687,7 @@
                                 <th class="sortable" data-key="team" data-type="string">Team</th>
                                 <th class="sortable" data-key="z_score" data-type="number">Z-Score</th>
                                 ${problemHeaders}
+                                <th class="view-col">View</th>
                             </tr>
                         </thead>
                         <tbody>${tableRows}</tbody>
