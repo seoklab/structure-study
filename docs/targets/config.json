@@ -1,4 +1,5 @@
 {
+  "submissions_open": false,
   "_comment_primary_metric": "primary_metric: bb_lddt, bb_lddt_cov (lDDT×Coverage), binder_lddt (binder), interface_lddt, iptm, tm_score, etc. Used for z-score ranking.",
   "problems": [
     {

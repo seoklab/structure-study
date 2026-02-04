@@ -507,6 +507,22 @@
             </div>
         </div>
 
+        <!-- Competition Closed Banner (shown when submissions_open: false) -->
+        <div class="card" id="competition-closed" style="display: none; border: 2px solid #ffd700; background: linear-gradient(135deg, #1a4a7a 0%, #16213e 100%);">
+            <h2 style="color: #ffd700;">Competition Ended</h2>
+            <p style="color: #ccc; margin-top: 0.5rem;">
+                The 1st KIDDS Human ProteinMPNN Competition has concluded. Thank you to all participants!
+            </p>
+            <p style="color: #aaa; margin-top: 1rem;">
+                Submissions are now closed. View the final results and winning designs in the archive.
+            </p>
+            <div style="margin-top: 1.5rem;">
+                <a href="archive-kidds-2026.html" class="btn btn-primary" style="text-decoration: none;">
+                    View Competition Archive
+                </a>
+            </div>
+        </div>
+
         <div id="success-message" class="message success">
             <h3>Submission Received!</h3>
             <p id="success-text">Your sequences have been submitted and will be processed shortly. <strong>Check your email for results!</strong></p>
@@ -517,7 +533,7 @@
             <p id="error-text">Please try again.</p>
         </div>
 
-        <div class="card" id="form-card">
+        <div class="card" id="form-card" style="display: none;">
             <h2>Submit Your Sequences</h2>
             <form id="submission-form">
                 <div class="form-group">
@@ -559,7 +575,7 @@
             </form>
         </div>
 
-        <div class="card">
+        <div class="card" id="how-it-works" style="display: none;">
             <h2>How It Works</h2>
             <ol style="color: #ccc; line-height: 2; padding-left: 1.5rem;">
                 <li>View each target backbone structure and design a sequence for it</li>
@@ -569,6 +585,17 @@
                 <li>Results will be sent to your email with private viewing links</li>
                 <li>All results will be published when the competition ends</li>
             </ol>
+        </div>
+
+        <!-- Archive Section -->
+        <div class="card" id="archive-section">
+            <h2 style="color: #ffd700;">Past Competitions</h2>
+            <div style="margin-top: 1rem;">
+                <a href="archive-kidds-2026.html" style="display: block; background: #0f0f23; padding: 1.25rem; border-radius: 10px; text-decoration: none; border: 1px solid #2a3f5f; transition: border-color 0.2s;">
+                    <h3 style="color: #65cbf3; margin-bottom: 0.5rem;">1st KIDDS Human ProteinMPNN Competition</h3>
+                    <p style="color: #aaa; font-size: 0.9rem;">February 2026 | Winner: team3</p>
+                </a>
+            </div>
         </div>
 
         <footer>
@@ -642,7 +669,22 @@
                 const response = await fetch(CONFIG_URL);
                 if (!response.ok) throw new Error('Failed to load problems');
                 problemsConfig = await response.json();
-                renderProblems();
+
+                // Check if submissions are open
+                const submissionsOpen = problemsConfig.submissions_open !== false;
+
+                if (submissionsOpen) {
+                    // Show submission form, hide closed banner
+                    document.getElementById('form-card').style.display = 'block';
+                    document.getElementById('how-it-works').style.display = 'block';
+                    document.getElementById('competition-closed').style.display = 'none';
+                    renderProblems();
+                } else {
+                    // Hide submission form, show closed banner
+                    document.getElementById('form-card').style.display = 'none';
+                    document.getElementById('how-it-works').style.display = 'none';
+                    document.getElementById('competition-closed').style.display = 'block';
+                }
             } catch (error) {
                 console.error('Error loading problems:', error);
                 problemsContainer.innerHTML = '<p style="color: #e94560;">Failed to load problems. Please refresh the page.</p>';
