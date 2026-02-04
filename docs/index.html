@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KIDDS Human ProteinMPNN Competition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #1a1a2e;
-            color: #eee;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e8e8e8;
             min-height: 100vh;
             padding: 2rem;
         }
@@ -20,112 +23,158 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
-        }
-        h1 {
-            color: #e94560;
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+            padding: 2rem 0;
         }
         .subtitle {
-            color: #aaa;
-            font-size: 1.1rem;
+            color: #7eb8da;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+        h1 {
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #fff 0%, #a8d4f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         .competitions-section {
             margin-bottom: 2rem;
         }
         .competitions-section h2 {
-            color: #65cbf3;
-            font-size: 1.3rem;
+            color: #7eb8da;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
             margin-bottom: 1rem;
         }
         .competition-card {
             display: block;
-            background: #16213e;
-            border-radius: 12px;
-            padding: 1.5rem;
+            background: rgba(22, 33, 62, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.75rem;
             margin-bottom: 1rem;
             text-decoration: none;
-            border: 2px solid #2a3f5f;
-            transition: all 0.2s;
+            border: 1px solid rgba(126, 184, 218, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
         .competition-card:hover {
-            border-color: #65cbf3;
-            transform: translateY(-2px);
+            border-color: rgba(126, 184, 218, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
         }
         .competition-card.featured {
-            border-color: #ffd700;
-            background: linear-gradient(135deg, #1a4a7a 0%, #16213e 100%);
+            border-color: rgba(255, 215, 0, 0.4);
+            background: linear-gradient(135deg, rgba(26, 74, 122, 0.9) 0%, rgba(22, 33, 62, 0.9) 100%);
+        }
+        .competition-card.featured:hover {
+            border-color: rgba(255, 215, 0, 0.7);
         }
         .competition-card h3 {
             color: #fff;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
+            font-weight: 600;
             margin-bottom: 0.5rem;
         }
         .competition-card.featured h3 {
             color: #ffd700;
         }
-        .competition-card p {
-            color: #aaa;
-            font-size: 0.95rem;
-            margin-bottom: 0.5rem;
+        .competition-card .info {
+            color: #9ab;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
         }
         .competition-card .status {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
+            padding: 0.3rem 0.9rem;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
-            margin-top: 0.5rem;
+            letter-spacing: 0.03em;
         }
         .status.completed {
-            background: rgba(46, 204, 113, 0.2);
-            color: #2ecc71;
+            background: rgba(46, 204, 113, 0.15);
+            color: #5ddb9a;
+            border: 1px solid rgba(46, 204, 113, 0.3);
         }
         .status.upcoming {
-            background: rgba(101, 203, 243, 0.2);
-            color: #65cbf3;
+            background: rgba(126, 184, 218, 0.15);
+            color: #7eb8da;
+            border: 1px solid rgba(126, 184, 218, 0.3);
         }
-        .status.active {
-            background: rgba(233, 69, 96, 0.2);
-            color: #e94560;
+        .winners-display {
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .competition-links {
+        .winners-label {
+            font-size: 0.75rem;
+            color: #789;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+        .winners-list {
             display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 1.5rem;
             flex-wrap: wrap;
         }
-        .competition-links a {
-            color: #65cbf3;
-            text-decoration: none;
-            font-size: 0.9rem;
+        .winner-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .competition-links a:hover {
-            text-decoration: underline;
+        .winner-medal {
+            font-size: 1.25rem;
+        }
+        .winner-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .winner-team {
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .winner-place {
+            color: #789;
+            font-size: 0.75rem;
         }
         footer {
             text-align: center;
-            margin-top: 3rem;
-            color: #666;
-            font-size: 0.9rem;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: #567;
+            font-size: 0.85rem;
         }
         footer a {
-            color: #65cbf3;
+            color: #7eb8da;
             text-decoration: none;
+            transition: color 0.2s;
         }
         footer a:hover {
-            text-decoration: underline;
+            color: #a8d4f0;
         }
         @media (max-width: 600px) {
             body { padding: 1rem; }
             h1 { font-size: 1.8rem; }
+            .winners-list { gap: 1rem; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <p class="subtitle" style="margin-bottom: 0.5rem;">Winter KIDDS Cafe</p>
+            <p class="subtitle">Winter KIDDS Cafe</p>
             <h1>Human ProteinMPNN Competition</h1>
         </header>
 
@@ -134,11 +183,33 @@
 
             <a href="archive-kidds-2026.html" class="competition-card featured">
                 <h3>1st KIDDS Human ProteinMPNN Competition</h3>
-                <p>February 3-4, 2026 | Gyeongju, Korea</p>
-                <p>Scaffold design & peptide binder design challenges</p>
+                <p class="info">February 3-4, 2026 | Gyeongju, Korea</p>
                 <span class="status completed">Completed</span>
-                <div class="competition-links">
-                    <span style="color: #aaa;">Winner: team3</span>
+                <div class="winners-display">
+                    <div class="winners-label">Top Teams</div>
+                    <div class="winners-list">
+                        <div class="winner-item">
+                            <span class="winner-medal">🥇</span>
+                            <div class="winner-info">
+                                <span class="winner-team">team3</span>
+                                <span class="winner-place">1st Place</span>
+                            </div>
+                        </div>
+                        <div class="winner-item">
+                            <span class="winner-medal">🥈</span>
+                            <div class="winner-info">
+                                <span class="winner-team">team1</span>
+                                <span class="winner-place">2nd (Tied)</span>
+                            </div>
+                        </div>
+                        <div class="winner-item">
+                            <span class="winner-medal">🥈</span>
+                            <div class="winner-info">
+                                <span class="winner-team">team5</span>
+                                <span class="winner-place">2nd (Tied)</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </a>
 
@@ -146,7 +217,7 @@
             <!--
             <a href="#" class="competition-card">
                 <h3>2nd KIDDS Competition</h3>
-                <p>Coming Soon</p>
+                <p class="info">Coming Soon</p>
                 <span class="status upcoming">Upcoming</span>
             </a>
             -->
