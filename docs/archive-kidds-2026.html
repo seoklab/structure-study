@@ -126,6 +126,53 @@
             margin-top: 0.5rem;
         }
 
+        /* Podium styles */
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .podium-place {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .podium-place:hover {
+            transform: translateY(-4px);
+        }
+        .podium-place.first {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.1) 100%);
+            border: 2px solid #ffd700;
+            order: 2;
+        }
+        .podium-place.second {
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.15) 0%, rgba(192, 192, 192, 0.05) 100%);
+            border: 2px solid #c0c0c0;
+        }
+        .podium-place.second:first-child { order: 1; }
+        .podium-place.second:last-child { order: 3; }
+        .medal {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .place-label {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 0.25rem;
+        }
+        .place-team {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+        }
+        .podium-place.first .place-team {
+            color: #ffd700;
+            font-size: 1.4rem;
+        }
+
         .last-updated {
             color: #888;
             font-size: 0.9rem;
@@ -262,6 +309,10 @@
         .rank-1 { color: #ffd700; }
         .rank-2 { color: #c0c0c0; }
         .rank-3 { color: #cd7f32; }
+        .rank-medal {
+            font-size: 1.2rem;
+            margin-right: 0.25rem;
+        }
         .score-cell {
             font-family: 'Monaco', 'Menlo', monospace;
             font-size: 0.9rem;
@@ -399,8 +450,23 @@
             <div class="winner-trophy">🏆</div>
             <div class="winner-title">1st KIDDS Human ProteinMPNN Competition</div>
             <div class="winner-subtitle">February 2026</div>
-            <div class="winner-label">Overall Winner</div>
-            <div class="winner-team">team3</div>
+            <div class="podium">
+                <div class="podium-place second">
+                    <div class="medal">🥈</div>
+                    <div class="place-label">2nd Place (Tied)</div>
+                    <div class="place-team">team1</div>
+                </div>
+                <div class="podium-place first">
+                    <div class="medal">🥇</div>
+                    <div class="place-label">1st Place</div>
+                    <div class="place-team">team3</div>
+                </div>
+                <div class="podium-place second">
+                    <div class="medal">🥈</div>
+                    <div class="place-label">2nd Place (Tied)</div>
+                    <div class="place-team">team5</div>
+                </div>
+            </div>
             <div class="winner-photos">
                 <div class="winner-photo">
                     <img src="1st-winners-team3.jpeg" alt="Team 3 - Competition Winners">
@@ -576,7 +642,7 @@
                     const rankClass = entry.rank <= 3 ? `rank-${entry.rank}` : '';
                     return `
                         <tr>
-                            <td class="rank-cell ${rankClass}">#${entry.rank}</td>
+                            <td class="rank-cell ${rankClass}">${formatRank(entry.rank)}</td>
                             <td class="participant-id">${escapeHtml(entry.participant_id)}</td>
                             <td class="score-cell primary">${formatScore(entry.binder_lddt)}</td>
                             ${showBinderCov ? `<td class="score-cell secondary">${formatScore(entry.binder_lddt_cov)}</td>` : ''}
@@ -619,7 +685,7 @@
                     const rankClass = entry.rank <= 3 ? `rank-${entry.rank}` : '';
                     return `
                         <tr>
-                            <td class="rank-cell ${rankClass}">#${entry.rank}</td>
+                            <td class="rank-cell ${rankClass}">${formatRank(entry.rank)}</td>
                             <td class="participant-id">${escapeHtml(entry.participant_id)}</td>
                             <td class="score-cell primary">${formatScore(entry.tm_score)}</td>
                             <td class="score-cell secondary">${formatScore(entry.bb_lddt)}</td>
@@ -694,7 +760,7 @@
 
                 return `
                     <tr>
-                        <td class="rank-cell ${rankClass}">#${entry.rank}</td>
+                        <td class="rank-cell ${rankClass}">${formatRank(entry.rank)}</td>
                         <td class="participant-id">${escapeHtml(entry.team)}</td>
                         <td class="score-cell primary">${zScore}</td>
                         ${problemCells}
@@ -813,6 +879,17 @@
                 return value.toFixed(3);
             }
             return String(value);
+        }
+
+        function getMedalIcon(rank) {
+            if (rank === 1) return '<span class="rank-medal">🥇</span>';
+            if (rank === 2) return '<span class="rank-medal">🥈</span>';
+            if (rank === 3) return '<span class="rank-medal">🥉</span>';
+            return '';
+        }
+
+        function formatRank(rank) {
+            return `${getMedalIcon(rank)}#${rank}`;
         }
 
         function formatMetricName(metric) {
