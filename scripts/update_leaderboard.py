@@ -255,6 +255,37 @@ def process_sequence_entry(
             if entry.get("af3_metrics"):
                 break
 
+    # Try to get mean_plddt from full confidences.json if not in evaluation
+    af3 = entry.get("af3_metrics", {})
+    if af3.get("mean_plddt") is None:
+        # Look for full confidences.json (not summary)
+        if seq_num:
+            plddt_patterns = [
+                f"{participant_id}_{problem_id}_seq{seq_num}_confidences.json",
+                f"*_{problem_id}_seq{seq_num}_confidences.json",
+            ]
+        else:
+            plddt_patterns = [
+                f"{participant_id}_{problem_id}_confidences.json",
+                f"*_{problem_id}_confidences.json",
+            ]
+        for pattern in plddt_patterns:
+            for conf_file in token_dir.glob(pattern):
+                if "summary" in conf_file.name:
+                    continue
+                try:
+                    with open(conf_file) as f:
+                        conf_data = json.load(f)
+                    atom_plddts = conf_data.get("atom_plddts")
+                    if atom_plddts and len(atom_plddts) > 0:
+                        af3["mean_plddt"] = round(sum(atom_plddts) / len(atom_plddts), 2)
+                        entry["af3_metrics"] = af3
+                        break
+                except Exception:
+                    continue
+            if af3.get("mean_plddt") is not None:
+                break
+
     # Determine primary score if not set
     if entry.get("primary_score") is None:
         af3 = entry.get("af3_metrics", {})

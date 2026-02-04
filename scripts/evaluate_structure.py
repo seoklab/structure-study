@@ -982,7 +982,7 @@ def get_af3_metrics(result_dir: str, problem_id: str, participant_id: str,
         if result:
             break
 
-    # Try to get mean pLDDT from full confidences.json
+    # Try to get mean pLDDT from full confidences.json (not summary_confidences.json)
     plddt_patterns = [
         f"{base_pattern}_confidences.json",
         f"*_{problem_id}_{seq_id}_confidences.json" if seq_id else f"*_{problem_id}_confidences.json",
@@ -991,6 +991,9 @@ def get_af3_metrics(result_dir: str, problem_id: str, participant_id: str,
 
     for pattern in plddt_patterns:
         for f in Path(result_dir).glob(pattern):
+            # Skip summary_confidences.json files - they don't have atom_plddts
+            if "summary" in f.name:
+                continue
             try:
                 with open(f) as fp:
                     data = json.load(fp)

@@ -32,9 +32,12 @@ def find_af3_outputs(seq_dir: Path) -> dict:
         outputs["model_cif"] = f
         break
 
+    # Note: *_confidences.json matches both _confidences.json and _summary_confidences.json
+    # So we need to filter out summary files when looking for the full confidences
     for f in seq_dir.glob("*_confidences.json"):
-        outputs["confidences"] = f
-        break
+        if "summary" not in f.name:
+            outputs["confidences"] = f
+            break
 
     for f in seq_dir.glob("*_summary_confidences.json"):
         outputs["summary"] = f
@@ -51,8 +54,9 @@ def find_af3_outputs(seq_dir: Path) -> dict:
             # Also get other files from same dir
             parent = f.parent
             for conf in parent.glob("*_confidences.json"):
-                outputs["confidences"] = conf
-                break
+                if "summary" not in conf.name:
+                    outputs["confidences"] = conf
+                    break
             for summ in parent.glob("*_summary_confidences.json"):
                 outputs["summary"] = summ
                 break

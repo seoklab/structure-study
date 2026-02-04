@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-04T01:14:19.210301Z",
+  "last_updated": "2026-02-04T01:58:48.114514Z",
   "problems": {
     "problem_1": {
       "name": "Problem 1 - 3-Helix Bundle",
@@ -53,7 +53,7 @@
           "tm_score": 0.66988,
           "rmsd": 2.51,
           "ptm": 0.66,
-          "plddt": null,
+          "plddt": 81.79,
           "ranking_score": 0.66
         },
         {
@@ -85,7 +85,7 @@
           "tm_score": 0.66231,
           "rmsd": 2.56,
           "ptm": 0.48,
-          "plddt": null,
+          "plddt": 70.02,
           "ranking_score": 0.6
         },
         {
@@ -101,7 +101,7 @@
           "tm_score": 0.64072,
           "rmsd": 2.44,
           "ptm": 0.37,
-          "plddt": null,
+          "plddt": 65.49,
           "ranking_score": 0.67
         },
         {
@@ -117,7 +117,7 @@
           "tm_score": 0.63446,
           "rmsd": 2.4,
           "ptm": 0.44,
-          "plddt": null,
+          "plddt": 70.94,
           "ranking_score": 0.55
         },
         {
@@ -213,7 +213,7 @@
           "tm_score": 0.54677,
           "rmsd": 3.36,
           "ptm": 0.35,
-          "plddt": null,
+          "plddt": 62.11,
           "ranking_score": 0.59
         },
         {
@@ -229,7 +229,7 @@
           "tm_score": 0.58415,
           "rmsd": 2.69,
           "ptm": 0.33,
-          "plddt": null,
+          "plddt": 59.17,
           "ranking_score": 0.54
         },
         {
@@ -245,7 +245,7 @@
           "tm_score": 0.55768,
           "rmsd": 3.24,
           "ptm": 0.33,
-          "plddt": null,
+          "plddt": 55.27,
           "ranking_score": 0.83
         },
         {
@@ -261,7 +261,7 @@
           "tm_score": 0.55764,
           "rmsd": 3.24,
           "ptm": 0.33,
-          "plddt": null,
+          "plddt": 55.32,
           "ranking_score": 0.83
         },
         {
@@ -389,7 +389,7 @@
           "tm_score": 0.28882,
           "rmsd": 2.89,
           "ptm": 0.61,
-          "plddt": null,
+          "plddt": 89.22,
           "ranking_score": 0.85
         }
       ]
@@ -446,7 +446,7 @@
           "tm_score": 0.63779,
           "rmsd": 2.58,
           "ptm": 0.43,
-          "plddt": null,
+          "plddt": 60.02,
           "ranking_score": 0.51
         },
         {
@@ -462,7 +462,7 @@
           "tm_score": 0.67444,
           "rmsd": 2.75,
           "ptm": 0.32,
-          "plddt": null,
+          "plddt": 57.06,
           "ranking_score": 0.36
         },
         {
@@ -494,7 +494,7 @@
           "tm_score": 0.52792,
           "rmsd": 3.7,
           "ptm": 0.47,
-          "plddt": null,
+          "plddt": 72.8,
           "ranking_score": 0.53
         },
         {
@@ -590,7 +590,7 @@
           "tm_score": 0.48281,
           "rmsd": 3.85,
           "ptm": 0.53,
-          "plddt": null,
+          "plddt": 72.28,
           "ranking_score": 0.77
         },
         {
@@ -606,7 +606,7 @@
           "tm_score": 0.52442,
           "rmsd": 3.48,
           "ptm": 0.38,
-          "plddt": null,
+          "plddt": 58.07,
           "ranking_score": 0.47
         },
         {
@@ -638,7 +638,7 @@
           "tm_score": 0.57024,
           "rmsd": 2.91,
           "ptm": 0.27,
-          "plddt": null,
+          "plddt": 52.3,
           "ranking_score": 0.53
         },
         {
@@ -654,7 +654,7 @@
           "tm_score": 0.56962,
           "rmsd": 2.92,
           "ptm": 0.27,
-          "plddt": null,
+          "plddt": 52.3,
           "ranking_score": 0.53
         },
         {
@@ -734,7 +734,7 @@
           "tm_score": 0.39295,
           "rmsd": 4.01,
           "ptm": 0.29,
-          "plddt": null,
+          "plddt": 53.67,
           "ranking_score": 0.61
         },
         {
@@ -782,7 +782,7 @@
           "tm_score": 0.26223,
           "rmsd": 4.0,
           "ptm": 0.23,
-          "plddt": null,
+          "plddt": 36.54,
           "ranking_score": 0.73
         },
         {
@@ -839,7 +839,7 @@
           "tm_score": 0.94617,
           "rmsd": 0.92,
           "ptm": 0.77,
-          "plddt": null,
+          "plddt": 85.82,
           "ranking_score": 0.77
         },
         {
@@ -951,7 +951,7 @@
           "tm_score": 0.47733,
           "rmsd": 1.68,
           "ptm": 0.55,
-          "plddt": null,
+          "plddt": 73.54,
           "ranking_score": 0.55
         },
         {
@@ -967,7 +967,7 @@
           "tm_score": 0.44493,
           "rmsd": 2.29,
           "ptm": 0.53,
-          "plddt": null,
+          "plddt": 69.13,
           "ranking_score": 0.58
         },
         {
@@ -983,7 +983,7 @@
           "tm_score": 0.46204,
           "rmsd": 2.66,
           "ptm": 0.41,
-          "plddt": null,
+          "plddt": 59.13,
           "ranking_score": 0.46
         },
         {
@@ -1031,7 +1031,7 @@
           "tm_score": 0.40283,
           "rmsd": 3.83,
           "ptm": 0.59,
-          "plddt": null,
+          "plddt": 69.02,
           "ranking_score": 0.59
         },
         {
@@ -1047,7 +1047,7 @@
           "tm_score": 0.44791,
           "rmsd": 3.24,
           "ptm": 0.61,
-          "plddt": null,
+          "plddt": 74.03,
           "ranking_score": 0.67
         },
         {
@@ -1063,7 +1063,7 @@
           "tm_score": 0.40213,
           "rmsd": 2.53,
           "ptm": 0.51,
-          "plddt": null,
+          "plddt": 64.55,
           "ranking_score": 0.58
         },
         {
@@ -1127,7 +1127,7 @@
           "tm_score": 0.46371,
           "rmsd": 3.04,
           "ptm": 0.27,
-          "plddt": null,
+          "plddt": 44.01,
           "ranking_score": 0.49
         },
         {
@@ -1191,7 +1191,7 @@
           "tm_score": 0.23077,
           "rmsd": 2.22,
           "ptm": 0.28,
-          "plddt": null,
+          "plddt": 54.42,
           "ranking_score": 0.75
         },
         {
@@ -1229,7 +1229,7 @@
           "best_seq": "1",
           "iptm": 0.51,
           "ptm": 0.83,
-          "plddt": null,
+          "plddt": 83.76,
           "ranking_score": 0.92,
           "complex_tm": 0.83453,
           "complex_rmsd": 2.77,
@@ -1295,10 +1295,10 @@
         "problem_4": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
         "problem_5": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y"
       },
-      "overall_z_score": 1.0330264373525573,
+      "overall_z_score": 1.0330264373525577,
       "problem_z_scores": {
-        "problem_1": 0.8836558899927391,
-        "problem_2": 1.9995946860078715,
+        "problem_1": 0.8836558899927401,
+        "problem_2": 1.9995946860078722,
         "problem_3": 2.281881610762176,
         "problem_4": 0.0,
         "problem_5": 0.0
@@ -1318,10 +1318,10 @@
         "problem_2": "Cu5IinL9gs5d-0_pqp9debMCeBcc1oy3",
         "problem_3": "Cu5IinL9gs5d-0_pqp9debMCeBcc1oy3"
       },
-      "overall_z_score": 1.9884596688979483,
+      "overall_z_score": 1.9884596688979486,
       "problem_z_scores": {
-        "problem_1": 1.5581544722831442,
-        "problem_2": 2.088148270644796,
+        "problem_1": 1.558154472283145,
+        "problem_2": 2.0881482706447962,
         "problem_3": 2.319076263765905
       },
       "rank": 2
@@ -1339,10 +1339,10 @@
         "problem_2": "ZdhLYouKpMUpcDTWVXQo5WMPuiNrMAdu",
         "problem_3": "ZdhLYouKpMUpcDTWVXQo5WMPuiNrMAdu"
       },
-      "overall_z_score": 0.28594841059611625,
+      "overall_z_score": 0.2859484105961168,
       "problem_z_scores": {
-        "problem_1": 0.42931224158385856,
-        "problem_2": 0.5097194637831306,
+        "problem_1": 0.42931224158385956,
+        "problem_2": 0.5097194637831312,
         "problem_3": -0.08118647357864037
       },
       "rank": 3
@@ -1360,10 +1360,10 @@
         "problem_2": "2qduKZ2jfdZ4AqHfk2qel80qpFUkyBri",
         "problem_3": "pAi6Lfl0lS0-b8yt9TJZ8EMHuf87ZviP"
       },
-      "overall_z_score": 0.24203880341469805,
+      "overall_z_score": 0.24203880341469863,
       "problem_z_scores": {
-        "problem_1": 1.2266064045253116,
-        "problem_2": -0.39756638583026777,
+        "problem_1": 1.2266064045253127,
+        "problem_2": -0.39756638583026715,
         "problem_3": -0.10292360845094961
       },
       "rank": 4
@@ -1381,10 +1381,10 @@
         "problem_2": "9dhEmMrrY5GTKIPiQ-P-XjX_i7oQkpOq",
         "problem_3": "yapvGxrkkoyMsPu29jFoKXnIoM-KHr8G"
       },
-      "overall_z_score": 0.22031595510932447,
+      "overall_z_score": 0.220315955109325,
       "problem_z_scores": {
-        "problem_1": 0.6012260544953266,
-        "problem_2": 0.26891585643710825,
+        "problem_1": 0.6012260544953276,
+        "problem_2": 0.26891585643710886,
         "problem_3": -0.20919404560446148
       },
       "rank": 5
@@ -1402,10 +1402,10 @@
         "problem_2": "QbgAMxLF7c6kcpn9XYiIF5-AoC7_2ei3",
         "problem_3": "QbgAMxLF7c6kcpn9XYiIF5-AoC7_2ei3"
       },
-      "overall_z_score": -0.11962951105257481,
+      "overall_z_score": -0.1196295110525743,
       "problem_z_scores": {
-        "problem_1": -0.16712343586409376,
-        "problem_2": -0.008655613535940396,
+        "problem_1": -0.16712343586409276,
+        "problem_2": -0.008655613535939822,
         "problem_3": -0.18310948375769032
       },
       "rank": 6
@@ -1423,10 +1423,10 @@
         "problem_2": "KAuLc-QK9s1VtfmPOHXZQXr45hGzKZOQ",
         "problem_3": "KAuLc-QK9s1VtfmPOHXZQXr45hGzKZOQ"
       },
-      "overall_z_score": -0.13255907366173336,
+      "overall_z_score": -0.13255907366173283,
       "problem_z_scores": {
-        "problem_1": 0.024963936725761585,
-        "problem_2": -0.3820306692272986,
+        "problem_1": 0.02496393672576256,
+        "problem_2": -0.382030669227298,
         "problem_3": -0.040610488483663054
       },
       "rank": 7
@@ -1444,10 +1444,10 @@
         "problem_2": "d-e2L3WPJ5E2kmO0bW3IImzun4hY0nfg",
         "problem_3": "d-e2L3WPJ5E2kmO0bW3IImzun4hY0nfg"
       },
-      "overall_z_score": -0.15547370882845982,
+      "overall_z_score": -0.15547370882845926,
       "problem_z_scores": {
-        "problem_1": 0.3152877738364559,
-        "problem_2": -0.6000485588889658,
+        "problem_1": 0.3152877738364569,
+        "problem_2": -0.6000485588889651,
         "problem_3": -0.1816603414328696
       },
       "rank": 8
@@ -1465,10 +1465,10 @@
         "problem_2": "Dcpa6J34DvOLasHqnwEYofwpo2wUzGIN",
         "problem_3": "BUUS7FI9gOqJ9y0pTpkNcv4eCt_5is6A"
       },
-      "overall_z_score": -0.1715289601992077,
+      "overall_z_score": -0.17152896019920716,
       "problem_z_scores": {
-        "problem_1": -0.45657016168442305,
-        "problem_2": -0.10290562759395319,
+        "problem_1": -0.4565701616844221,
+        "problem_2": -0.10290562759395261,
         "problem_3": 0.0448889086807532
       },
       "rank": 9
@@ -1486,10 +1486,10 @@
         "problem_2": "3mafZiUrMKNvjEJsTWM7KSuP_dxBE8fT",
         "problem_3": "3mafZiUrMKNvjEJsTWM7KSuP_dxBE8fT"
       },
-      "overall_z_score": -0.27163213636846784,
+      "overall_z_score": -0.27163213636846734,
       "problem_z_scores": {
-        "problem_1": -0.18992832941357368,
-        "problem_2": 0.08611225774217131,
+        "problem_1": -0.1899283294135727,
+        "problem_2": 0.08611225774217189,
         "problem_3": -0.7110803374340011
       },
       "rank": 10
@@ -1507,10 +1507,10 @@
         "problem_2": "M9hwQTaonQbbRIFfnl0TEcbMG6XSn1ak",
         "problem_3": "FU2uWtIAKRULz5bIm0s4Dvrxi5zT60CY"
       },
-      "overall_z_score": -0.33340454184963275,
+      "overall_z_score": -0.33340454184963225,
       "problem_z_scores": {
-        "problem_1": -0.48814616813754985,
-        "problem_2": -0.19611992721176816,
+        "problem_1": -0.48814616813754885,
+        "problem_2": -0.19611992721176758,
         "problem_3": -0.31594753019958016
       },
       "rank": 11
@@ -1528,10 +1528,10 @@
         "problem_2": "-9pfOxF18OB-54ZZVReDl1tIXaJ25Y7A",
         "problem_3": "-9pfOxF18OB-54ZZVReDl1tIXaJ25Y7A"
       },
-      "overall_z_score": -1.1678455872058164,
+      "overall_z_score": -1.1678455872058162,
       "problem_z_scores": {
-        "problem_1": -2.1388696166037926,
-        "problem_2": -0.28985208404968177,
+        "problem_1": -2.1388696166037917,
+        "problem_2": -0.28985208404968116,
         "problem_3": -1.0748150609639755
       },
       "rank": 12
@@ -1549,10 +1549,10 @@
         "problem_2": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i",
         "problem_3": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i"
       },
-      "overall_z_score": -1.254251270165699,
+      "overall_z_score": -1.2542512701656985,
       "problem_z_scores": {
-        "problem_1": -1.5985690617391777,
-        "problem_2": -1.2898343760607958,
+        "problem_1": -1.5985690617391766,
+        "problem_2": -1.2898343760607953,
         "problem_3": -0.8743503726971238
       },
       "rank": 13
@@ -1581,9 +1581,9 @@
       "problem_tokens": {
         "problem_2": "wSaDlaLVRd529TWWMmMXLLY_vG6Y83Xb"
       },
-      "overall_z_score": -1.6854772922164103,
+      "overall_z_score": -1.6854772922164096,
       "problem_z_scores": {
-        "problem_2": -1.6854772922164103
+        "problem_2": -1.6854772922164096
       },
       "rank": 15
     }

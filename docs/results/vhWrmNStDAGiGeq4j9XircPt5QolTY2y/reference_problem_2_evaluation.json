@@ -5,7 +5,7 @@
   "token": "vhWrmNStDAGiGeq4j9XircPt5QolTY2y",
   "model_file": "reference_problem_2_model.cif",
   "reference_file": "4B1H-scaffold.pdb",
-  "evaluated_at": "2026-02-03T05:37:07.640299Z",
+  "evaluated_at": "2026-02-04T01:42:20.077179Z",
   "metrics": {
     "tm_score": 0.93593,
     "tm_score_ref": null,
@@ -19,7 +19,7 @@
     "bb_lddt_cov": 0.9405,
     "coverage": 1.0,
     "global_rmsd": 1.137,
-    "kabsch_aligned_rmsd": 60.791
+    "kabsch_aligned_rmsd": 1.137
   },
   "af3_metrics": {
     "ptm": 0.81,
