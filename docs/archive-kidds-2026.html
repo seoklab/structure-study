@@ -103,11 +103,19 @@
             font-size: 0.9rem;
             margin-bottom: 0.25rem;
         }
-        .winner-photo {
+        .winner-photos {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
             margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .winner-photo {
+            flex: 1;
+            max-width: 450px;
+            min-width: 280px;
         }
         .winner-photo img {
-            max-width: 400px;
             width: 100%;
             border-radius: 8px;
             border: 2px solid #ffd700;
@@ -393,9 +401,15 @@
             <div class="winner-subtitle">February 2026</div>
             <div class="winner-label">Overall Winner</div>
             <div class="winner-team">team3</div>
-            <div class="winner-photo">
-                <img src="1st-winners-team3.jpeg" alt="Team 3 - Competition Winners">
-                <div class="winner-photo-caption">The winning team</div>
+            <div class="winner-photos">
+                <div class="winner-photo">
+                    <img src="1st-winners-team3.jpeg" alt="Team 3 - Competition Winners">
+                    <div class="winner-photo-caption">The winning team</div>
+                </div>
+                <div class="winner-photo">
+                    <img src="winners-organizers.jpg" alt="Winners and Organizers">
+                    <div class="winner-photo-caption">Winners and Organizers</div>
+                </div>
             </div>
         </div>
 
@@ -413,16 +427,6 @@
                 </div>
                 <div class="loading">Loading leaderboard data...</div>
             </div>
-        </div>
-
-        <!-- Winners and Organizers Section -->
-        <div style="margin-top: 3rem; text-align: center;">
-            <h2 style="color: #ffd700; margin-bottom: 1.5rem;">The Winners and Organizers</h2>
-            <img src="winners-organizers.jpg" alt="Winners and Organizers at KIDDS 2026 Winter Workshop"
-                 style="max-width: 100%; border-radius: 12px; border: 2px solid #2a3f5f;">
-            <p style="color: #aaa; font-size: 0.9rem; margin-top: 1rem;">
-                2026 Winter KIDDS Cafe, Gyeongju, Korea
-            </p>
         </div>
     </div>
 
