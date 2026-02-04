@@ -679,13 +679,6 @@
                     ? '<span class="problem-type binder">Binder Design</span>'
                     : '<span class="problem-type monomer">Scaffold Design</span>';
 
-                // For binder problems, show expected binder length if specified
-                let binderLengthHint = '';
-                if (isBinder && problem.expected_binder_length) {
-                    const [minLen, maxLen] = problem.expected_binder_length;
-                    binderLengthHint = `Suggested binder length: ${minLen}-${maxLen} residues`;
-                }
-
                 // For binder problems, show the given target sequence (read-only)
                 let targetSequenceSection = '';
                 if (isBinder && problem.target_sequence) {
@@ -739,7 +732,6 @@
                                 <span style="color: #888; font-weight: normal;">(optional, max ${MAX_SEQUENCES_PER_PROBLEM})</span>
                                 <span class="sequence-count-badge" id="seq-count-${problem.id}">1/${MAX_SEQUENCES_PER_PROBLEM}</span>
                             </label>
-                            ${binderLengthHint ? `<p class="hint" style="margin-bottom: 0.5rem;">${binderLengthHint}</p>` : ''}
                             <div class="sequences-container" id="sequences-container-${problem.id}">
                                 <div class="sequence-entry" data-seq-num="1">
                                     <div class="sequence-entry-header">
