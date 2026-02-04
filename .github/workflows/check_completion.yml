@@ -352,7 +352,7 @@ jobs:
                   --problem-id "$problem_id" \
                   --problem-type "$PROBLEM_TYPE" \
                   --participant-id "$PARTICIPANT_ID" \
-                  --token "$TOKEN" \
+                  --token="$TOKEN" \
                   --result-dir "$token_dir" \
                   --output "$EVAL_FILE" \
                   $SEQ_ARG || echo "Warning: Evaluation failed for $TOKEN/$problem_id$SEQ_SUFFIX"
