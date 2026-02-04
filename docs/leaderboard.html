@@ -440,11 +440,15 @@
             let tableHeaders, tableRows;
 
             if (isBinder) {
+                // Show lDDT×Cov column for problem_4 only (problem_5 has unreliable coverage due to short peptide)
+                const showBinderCov = problemId === 'problem_4';
+                const binderColSpan = showBinderCov ? 4 : 3;
+
                 tableHeaders = `
                     <tr>
                         <th class="sortable" data-key="rank" data-type="number">Rank</th>
                         <th class="sortable" data-key="participant_id" data-type="string">Participant</th>
-                        <th colspan="3" class="section-header">Binder Only</th>
+                        <th colspan="${binderColSpan}" class="section-header">Binder Only</th>
                         <th colspan="3" class="section-header">Complex</th>
                         <th colspan="3" class="section-header">AlphaFold3</th>
                     </tr>
@@ -452,6 +456,7 @@
                         <th></th>
                         <th></th>
                         <th class="sortable" data-key="binder_lddt" data-type="number">BB-lDDT</th>
+                        ${showBinderCov ? '<th class="sortable" data-key="binder_lddt_cov" data-type="number">lDDT×Cov</th>' : ''}
                         <th class="sortable" data-key="binder_rmsd" data-type="number" data-order="asc">RMSD</th>
                         <th class="sortable" data-key="binder_tm" data-type="number">TM-score</th>
                         <th class="sortable" data-key="interface_lddt" data-type="number">iLDDT</th>
@@ -470,6 +475,7 @@
                             <td class="rank-cell ${rankClass}">#${entry.rank}</td>
                             <td class="participant-id">${escapeHtml(entry.participant_id)}</td>
                             <td class="score-cell primary">${formatScore(entry.binder_lddt)}</td>
+                            ${showBinderCov ? `<td class="score-cell secondary">${formatScore(entry.binder_lddt_cov)}</td>` : ''}
                             <td class="score-cell secondary">${formatScore(entry.binder_rmsd)}</td>
                             <td class="score-cell secondary">${formatScore(entry.binder_tm)}</td>
                             <td class="score-cell ${entry.interface_lddt ? 'highlight' : 'secondary'}">${formatScore(entry.interface_lddt)}</td>
