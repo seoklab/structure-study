@@ -1,0 +1,22 @@
+{
+  "email": "bradshim0502@naver.com",
+  "participant_id": "team5_day2_round1",
+  "sequences": {
+    "problem_4": [
+      "IACGNAASQLARNQANKAANELARQLQGWL",
+      "VACGNVASQLAENQANKAANELARQLQGWL",
+      "APQLNYCNKCNQINIISRINQSNVLMCLCM",
+      "APQQNYCNNQINNMAICMNAQSNVLMCLCM",
+      "VGCGSCCGEIAEDWSQDSAKQAADAWKKGH"
+    ],
+    "problem_5": [
+      "GQNSMIRAENQD",
+      "GQNSMIRNELQD",
+      "GQNSMIRAELQD",
+      "GQNSMIRNENQD",
+      "GQNSMIRNENQQ"
+    ]
+  },
+  "submission_id": "team5day2round1_ml7e2oqo_y2df",
+  "submitted_at": "2026-02-04T02:09:02.400Z"
+}

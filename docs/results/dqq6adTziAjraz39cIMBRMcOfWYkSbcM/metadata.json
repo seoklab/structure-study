@@ -1,0 +1,186 @@
+{
+  "token": "dqq6adTziAjraz39cIMBRMcOfWYkSbcM",
+  "participant_id": "team2_day2_round1",
+  "total_problems": 2,
+  "completed_problems": 2,
+  "total_sequences": 10,
+  "all_complete": true,
+  "files": [
+    "team2_day2_round1_problem_5_seq4_ranking_scores.csv",
+    "team2_day2_round1_problem_4_seq5_model.cif",
+    "team2_day2_round1_problem_5_seq1_confidences.json",
+    "team2_day2_round1_problem_5_seq3_summary_confidences.json",
+    "team2_day2_round1_problem_4_seq1_confidences.json",
+    "team2_day2_round1_problem_5_seq1_summary_confidences.json",
+    "team2_day2_round1_problem_5_seq2_confidences.json",
+    "team2_day2_round1_problem_5_seq3_ranking_scores.csv",
+    "submission.json",
+    "team2_day2_round1_problem_4_seq5_summary_confidences.json",
+    "team2_day2_round1_problem_5_seq5_confidences.json",
+    "team2_day2_round1_problem_4_seq1_summary_confidences.json",
+    "team2_day2_round1_problem_4_seq5_ranking_scores.csv",
+    "team2_day2_round1_problem_5_seq3_confidences.json",
+    "team2_day2_round1_problem_4_seq1_model.cif",
+    "team2_day2_round1_problem_4_seq4_ranking_scores.csv",
+    "team2_day2_round1_problem_5_seq5_model.cif",
+    "team2_day2_round1_problem_4_seq4_summary_confidences.json",
+    "team2_day2_round1_problem_4_seq2_ranking_scores.csv",
+    "team2_day2_round1_problem_4_seq1_ranking_scores.csv",
+    "team2_day2_round1_problem_5_seq5_summary_confidences.json",
+    "team2_day2_round1_problem_4_seq2_summary_confidences.json",
+    "team2_day2_round1_problem_5_seq4_confidences.json",
+    "team2_day2_round1_problem_4_seq2_model.cif",
+    "team2_day2_round1_problem_5_seq4_summary_confidences.json",
+    "team2_day2_round1_problem_5_seq3_model.cif",
+    "team2_day2_round1_problem_5_seq2_model.cif",
+    "team2_day2_round1_problem_5_seq1_ranking_scores.csv",
+    "team2_day2_round1_problem_4_seq5_confidences.json",
+    "team2_day2_round1_problem_4_seq4_confidences.json",
+    "team2_day2_round1_problem_4_seq3_summary_confidences.json",
+    "team2_day2_round1_problem_5_seq1_model.cif",
+    "team2_day2_round1_problem_4_seq3_ranking_scores.csv",
+    "team2_day2_round1_problem_4_seq3_model.cif",
+    "team2_day2_round1_problem_4_seq2_confidences.json",
+    "team2_day2_round1_problem_5_seq4_model.cif",
+    "team2_day2_round1_problem_5_seq5_ranking_scores.csv",
+    "team2_day2_round1_problem_5_seq2_ranking_scores.csv",
+    "team2_day2_round1_problem_4_seq3_confidences.json",
+    "team2_day2_round1_problem_4_seq4_model.cif",
+    "team2_day2_round1_problem_5_seq2_summary_confidences.json"
+  ],
+  "problems": {
+    "problem_4": {
+      "files": [
+        "team2_day2_round1_problem_4_seq1_model.cif",
+        "team2_day2_round1_problem_4_seq1_confidences.json",
+        "team2_day2_round1_problem_4_seq1_summary_confidences.json",
+        "team2_day2_round1_problem_4_seq1_ranking_scores.csv",
+        "team2_day2_round1_problem_4_seq2_model.cif",
+        "team2_day2_round1_problem_4_seq2_confidences.json",
+        "team2_day2_round1_problem_4_seq2_summary_confidences.json",
+        "team2_day2_round1_problem_4_seq2_ranking_scores.csv",
+        "team2_day2_round1_problem_4_seq3_model.cif",
+        "team2_day2_round1_problem_4_seq3_confidences.json",
+        "team2_day2_round1_problem_4_seq3_summary_confidences.json",
+        "team2_day2_round1_problem_4_seq3_ranking_scores.csv",
+        "team2_day2_round1_problem_4_seq4_model.cif",
+        "team2_day2_round1_problem_4_seq4_confidences.json",
+        "team2_day2_round1_problem_4_seq4_summary_confidences.json",
+        "team2_day2_round1_problem_4_seq4_ranking_scores.csv",
+        "team2_day2_round1_problem_4_seq5_model.cif",
+        "team2_day2_round1_problem_4_seq5_confidences.json",
+        "team2_day2_round1_problem_4_seq5_summary_confidences.json",
+        "team2_day2_round1_problem_4_seq5_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "team2_day2_round1_problem_4_seq1_model.cif",
+            "team2_day2_round1_problem_4_seq1_confidences.json",
+            "team2_day2_round1_problem_4_seq1_summary_confidences.json",
+            "team2_day2_round1_problem_4_seq1_ranking_scores.csv"
+          ]
+        },
+        "2": {
+          "files": [
+            "team2_day2_round1_problem_4_seq2_model.cif",
+            "team2_day2_round1_problem_4_seq2_confidences.json",
+            "team2_day2_round1_problem_4_seq2_summary_confidences.json",
+            "team2_day2_round1_problem_4_seq2_ranking_scores.csv"
+          ]
+        },
+        "3": {
+          "files": [
+            "team2_day2_round1_problem_4_seq3_model.cif",
+            "team2_day2_round1_problem_4_seq3_confidences.json",
+            "team2_day2_round1_problem_4_seq3_summary_confidences.json",
+            "team2_day2_round1_problem_4_seq3_ranking_scores.csv"
+          ]
+        },
+        "4": {
+          "files": [
+            "team2_day2_round1_problem_4_seq4_model.cif",
+            "team2_day2_round1_problem_4_seq4_confidences.json",
+            "team2_day2_round1_problem_4_seq4_summary_confidences.json",
+            "team2_day2_round1_problem_4_seq4_ranking_scores.csv"
+          ]
+        },
+        "5": {
+          "files": [
+            "team2_day2_round1_problem_4_seq5_model.cif",
+            "team2_day2_round1_problem_4_seq5_confidences.json",
+            "team2_day2_round1_problem_4_seq5_summary_confidences.json",
+            "team2_day2_round1_problem_4_seq5_ranking_scores.csv"
+          ]
+        }
+      }
+    },
+    "problem_5": {
+      "files": [
+        "team2_day2_round1_problem_5_seq1_model.cif",
+        "team2_day2_round1_problem_5_seq1_confidences.json",
+        "team2_day2_round1_problem_5_seq1_summary_confidences.json",
+        "team2_day2_round1_problem_5_seq1_ranking_scores.csv",
+        "team2_day2_round1_problem_5_seq2_model.cif",
+        "team2_day2_round1_problem_5_seq2_confidences.json",
+        "team2_day2_round1_problem_5_seq2_summary_confidences.json",
+        "team2_day2_round1_problem_5_seq2_ranking_scores.csv",
+        "team2_day2_round1_problem_5_seq3_model.cif",
+        "team2_day2_round1_problem_5_seq3_confidences.json",
+        "team2_day2_round1_problem_5_seq3_summary_confidences.json",
+        "team2_day2_round1_problem_5_seq3_ranking_scores.csv",
+        "team2_day2_round1_problem_5_seq4_model.cif",
+        "team2_day2_round1_problem_5_seq4_confidences.json",
+        "team2_day2_round1_problem_5_seq4_summary_confidences.json",
+        "team2_day2_round1_problem_5_seq4_ranking_scores.csv",
+        "team2_day2_round1_problem_5_seq5_model.cif",
+        "team2_day2_round1_problem_5_seq5_confidences.json",
+        "team2_day2_round1_problem_5_seq5_summary_confidences.json",
+        "team2_day2_round1_problem_5_seq5_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "team2_day2_round1_problem_5_seq1_model.cif",
+            "team2_day2_round1_problem_5_seq1_confidences.json",
+            "team2_day2_round1_problem_5_seq1_summary_confidences.json",
+            "team2_day2_round1_problem_5_seq1_ranking_scores.csv"
+          ]
+        },
+        "2": {
+          "files": [
+            "team2_day2_round1_problem_5_seq2_model.cif",
+            "team2_day2_round1_problem_5_seq2_confidences.json",
+            "team2_day2_round1_problem_5_seq2_summary_confidences.json",
+            "team2_day2_round1_problem_5_seq2_ranking_scores.csv"
+          ]
+        },
+        "3": {
+          "files": [
+            "team2_day2_round1_problem_5_seq3_model.cif",
+            "team2_day2_round1_problem_5_seq3_confidences.json",
+            "team2_day2_round1_problem_5_seq3_summary_confidences.json",
+            "team2_day2_round1_problem_5_seq3_ranking_scores.csv"
+          ]
+        },
+        "4": {
+          "files": [
+            "team2_day2_round1_problem_5_seq4_model.cif",
+            "team2_day2_round1_problem_5_seq4_confidences.json",
+            "team2_day2_round1_problem_5_seq4_summary_confidences.json",
+            "team2_day2_round1_problem_5_seq4_ranking_scores.csv"
+          ]
+        },
+        "5": {
+          "files": [
+            "team2_day2_round1_problem_5_seq5_model.cif",
+            "team2_day2_round1_problem_5_seq5_confidences.json",
+            "team2_day2_round1_problem_5_seq5_summary_confidences.json",
+            "team2_day2_round1_problem_5_seq5_ranking_scores.csv"
+          ]
+        }
+      }
+    }
+  },
+  "source_dir": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions/team2day2round1_ml7ep526_t8b0"
+}

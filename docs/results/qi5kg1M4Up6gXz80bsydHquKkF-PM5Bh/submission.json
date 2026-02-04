@@ -1,0 +1,22 @@
+{
+  "email": "jb051@snu.ac.kr",
+  "participant_id": "team10_day2_round1",
+  "sequences": {
+    "problem_4": [
+      "AQDGEAASEIAEMADAEAAADAAKAMKQGM",
+      "AGQAEKASFEATAKSFKASRNAAKEKKQGR",
+      "AKEGEMANELAEQEAEQAAQEGAQAAKGSN",
+      "ARAGEMAAEAAEQEAEQAAQEGAQAAKEAN",
+      "TSLADLVSEKADQQDDQSVQQLVQANEEAR"
+    ],
+    "problem_5": [
+      "PNNSESKSGRSA",
+      "NENSGFASKREG",
+      "SNNDNNLNRRVN",
+      "NENSNSLNGNNS",
+      "GEGSNIKSYSEN"
+    ]
+  },
+  "submission_id": "team10day2round1_ml7eiz65_9z7k",
+  "submitted_at": "2026-02-04T02:21:42.413Z"
+}

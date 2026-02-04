@@ -1,0 +1,66 @@
+{
+  "problem_id": "problem_5",
+  "problem_type": "binder",
+  "participant_id": "ProteinMPNN_day2",
+  "token": "LdpTKh5-be-X_oZFUP05LPaMJEourUui",
+  "model_file": "ProteinMPNN_day2_problem_5_seq4_model.cif",
+  "reference_file": "PepBinder2-scaffold.pdb",
+  "evaluated_at": "2026-02-04T03:23:52.378493Z",
+  "metrics": {
+    "tm_score": 0.02318,
+    "tm_score_ref": null,
+    "rmsd": 1.9,
+    "aligned_length": 7,
+    "seq_identity": 0.0,
+    "bb_lddt": 0.6,
+    "model_ca_count": 288,
+    "ref_ca_count": 288,
+    "lddt_aligned_count": 7,
+    "bb_lddt_cov": 0.0146,
+    "coverage": 0.0243,
+    "global_rmsd": 43.586,
+    "kabsch_aligned_rmsd": 1.896,
+    "complex_tm_score": 0.83424,
+    "complex_tm_score_ref": null,
+    "complex_rmsd": 2.76,
+    "complex_aligned_length": 262
+  },
+  "af3_metrics": {
+    "ptm": 0.84,
+    "iptm": 0.57,
+    "ranking_score": 0.64,
+    "chain_pair_iptm": [
+      [
+        0.01,
+        0.57
+      ],
+      [
+        0.57,
+        0.85
+      ]
+    ],
+    "fraction_disordered": 0.04,
+    "mean_plddt": 83.99
+  },
+  "binder_metrics": {
+    "binder_tm_score": 0.15503,
+    "binder_rmsd": 2.0,
+    "binder_aligned_length": 8,
+    "binder_lddt": 0.6,
+    "binder_model_ca": 12,
+    "binder_ref_ca": 12,
+    "binder_lddt_cov": 0.4,
+    "binder_coverage": 0.6667,
+    "binder_aligned_count": 8
+  },
+  "interface_metrics": {
+    "interface_lddt": 0.472,
+    "interface_lddt_a": null,
+    "interface_lddt_b": null,
+    "interface_count_a": 11,
+    "interface_count_b": 17,
+    "total_interface_contacts": 571
+  },
+  "primary_score": 0.15503,
+  "primary_metric": "tm_score"
+}

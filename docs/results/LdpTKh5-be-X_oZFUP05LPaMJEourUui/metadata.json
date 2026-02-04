@@ -1,0 +1,186 @@
+{
+  "token": "LdpTKh5-be-X_oZFUP05LPaMJEourUui",
+  "participant_id": "ProteinMPNN_day2",
+  "total_problems": 2,
+  "completed_problems": 2,
+  "total_sequences": 10,
+  "all_complete": true,
+  "files": [
+    "ProteinMPNN_day2_problem_5_seq3_model.cif",
+    "ProteinMPNN_day2_problem_4_seq3_ranking_scores.csv",
+    "ProteinMPNN_day2_problem_5_seq1_confidences.json",
+    "ProteinMPNN_day2_problem_5_seq2_confidences.json",
+    "ProteinMPNN_day2_problem_4_seq1_model.cif",
+    "ProteinMPNN_day2_problem_5_seq4_confidences.json",
+    "ProteinMPNN_day2_problem_5_seq3_summary_confidences.json",
+    "ProteinMPNN_day2_problem_4_seq4_summary_confidences.json",
+    "ProteinMPNN_day2_problem_4_seq2_confidences.json",
+    "ProteinMPNN_day2_problem_5_seq4_summary_confidences.json",
+    "ProteinMPNN_day2_problem_4_seq4_ranking_scores.csv",
+    "ProteinMPNN_day2_problem_5_seq4_model.cif",
+    "ProteinMPNN_day2_problem_5_seq5_model.cif",
+    "ProteinMPNN_day2_problem_5_seq4_ranking_scores.csv",
+    "ProteinMPNN_day2_problem_4_seq2_model.cif",
+    "ProteinMPNN_day2_problem_5_seq5_confidences.json",
+    "ProteinMPNN_day2_problem_5_seq2_ranking_scores.csv",
+    "ProteinMPNN_day2_problem_4_seq5_ranking_scores.csv",
+    "ProteinMPNN_day2_problem_4_seq5_model.cif",
+    "ProteinMPNN_day2_problem_5_seq1_ranking_scores.csv",
+    "ProteinMPNN_day2_problem_5_seq2_summary_confidences.json",
+    "ProteinMPNN_day2_problem_5_seq1_model.cif",
+    "ProteinMPNN_day2_problem_4_seq2_ranking_scores.csv",
+    "ProteinMPNN_day2_problem_4_seq5_summary_confidences.json",
+    "ProteinMPNN_day2_problem_5_seq5_summary_confidences.json",
+    "ProteinMPNN_day2_problem_5_seq1_summary_confidences.json",
+    "ProteinMPNN_day2_problem_4_seq5_confidences.json",
+    "ProteinMPNN_day2_problem_5_seq2_model.cif",
+    "ProteinMPNN_day2_problem_5_seq3_confidences.json",
+    "ProteinMPNN_day2_problem_4_seq1_ranking_scores.csv",
+    "ProteinMPNN_day2_problem_4_seq2_summary_confidences.json",
+    "submission.json",
+    "ProteinMPNN_day2_problem_5_seq5_ranking_scores.csv",
+    "ProteinMPNN_day2_problem_4_seq3_summary_confidences.json",
+    "ProteinMPNN_day2_problem_4_seq4_confidences.json",
+    "ProteinMPNN_day2_problem_4_seq3_model.cif",
+    "ProteinMPNN_day2_problem_4_seq1_confidences.json",
+    "ProteinMPNN_day2_problem_4_seq3_confidences.json",
+    "ProteinMPNN_day2_problem_4_seq4_model.cif",
+    "ProteinMPNN_day2_problem_5_seq3_ranking_scores.csv",
+    "ProteinMPNN_day2_problem_4_seq1_summary_confidences.json"
+  ],
+  "problems": {
+    "problem_4": {
+      "files": [
+        "ProteinMPNN_day2_problem_4_seq1_model.cif",
+        "ProteinMPNN_day2_problem_4_seq1_confidences.json",
+        "ProteinMPNN_day2_problem_4_seq1_summary_confidences.json",
+        "ProteinMPNN_day2_problem_4_seq1_ranking_scores.csv",
+        "ProteinMPNN_day2_problem_4_seq2_model.cif",
+        "ProteinMPNN_day2_problem_4_seq2_confidences.json",
+        "ProteinMPNN_day2_problem_4_seq2_summary_confidences.json",
+        "ProteinMPNN_day2_problem_4_seq2_ranking_scores.csv",
+        "ProteinMPNN_day2_problem_4_seq3_model.cif",
+        "ProteinMPNN_day2_problem_4_seq3_confidences.json",
+        "ProteinMPNN_day2_problem_4_seq3_summary_confidences.json",
+        "ProteinMPNN_day2_problem_4_seq3_ranking_scores.csv",
+        "ProteinMPNN_day2_problem_4_seq4_model.cif",
+        "ProteinMPNN_day2_problem_4_seq4_confidences.json",
+        "ProteinMPNN_day2_problem_4_seq4_summary_confidences.json",
+        "ProteinMPNN_day2_problem_4_seq4_ranking_scores.csv",
+        "ProteinMPNN_day2_problem_4_seq5_model.cif",
+        "ProteinMPNN_day2_problem_4_seq5_confidences.json",
+        "ProteinMPNN_day2_problem_4_seq5_summary_confidences.json",
+        "ProteinMPNN_day2_problem_4_seq5_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "ProteinMPNN_day2_problem_4_seq1_model.cif",
+            "ProteinMPNN_day2_problem_4_seq1_confidences.json",
+            "ProteinMPNN_day2_problem_4_seq1_summary_confidences.json",
+            "ProteinMPNN_day2_problem_4_seq1_ranking_scores.csv"
+          ]
+        },
+        "2": {
+          "files": [
+            "ProteinMPNN_day2_problem_4_seq2_model.cif",
+            "ProteinMPNN_day2_problem_4_seq2_confidences.json",
+            "ProteinMPNN_day2_problem_4_seq2_summary_confidences.json",
+            "ProteinMPNN_day2_problem_4_seq2_ranking_scores.csv"
+          ]
+        },
+        "3": {
+          "files": [
+            "ProteinMPNN_day2_problem_4_seq3_model.cif",
+            "ProteinMPNN_day2_problem_4_seq3_confidences.json",
+            "ProteinMPNN_day2_problem_4_seq3_summary_confidences.json",
+            "ProteinMPNN_day2_problem_4_seq3_ranking_scores.csv"
+          ]
+        },
+        "4": {
+          "files": [
+            "ProteinMPNN_day2_problem_4_seq4_model.cif",
+            "ProteinMPNN_day2_problem_4_seq4_confidences.json",
+            "ProteinMPNN_day2_problem_4_seq4_summary_confidences.json",
+            "ProteinMPNN_day2_problem_4_seq4_ranking_scores.csv"
+          ]
+        },
+        "5": {
+          "files": [
+            "ProteinMPNN_day2_problem_4_seq5_model.cif",
+            "ProteinMPNN_day2_problem_4_seq5_confidences.json",
+            "ProteinMPNN_day2_problem_4_seq5_summary_confidences.json",
+            "ProteinMPNN_day2_problem_4_seq5_ranking_scores.csv"
+          ]
+        }
+      }
+    },
+    "problem_5": {
+      "files": [
+        "ProteinMPNN_day2_problem_5_seq1_model.cif",
+        "ProteinMPNN_day2_problem_5_seq1_confidences.json",
+        "ProteinMPNN_day2_problem_5_seq1_summary_confidences.json",
+        "ProteinMPNN_day2_problem_5_seq1_ranking_scores.csv",
+        "ProteinMPNN_day2_problem_5_seq2_model.cif",
+        "ProteinMPNN_day2_problem_5_seq2_confidences.json",
+        "ProteinMPNN_day2_problem_5_seq2_summary_confidences.json",
+        "ProteinMPNN_day2_problem_5_seq2_ranking_scores.csv",
+        "ProteinMPNN_day2_problem_5_seq3_model.cif",
+        "ProteinMPNN_day2_problem_5_seq3_confidences.json",
+        "ProteinMPNN_day2_problem_5_seq3_summary_confidences.json",
+        "ProteinMPNN_day2_problem_5_seq3_ranking_scores.csv",
+        "ProteinMPNN_day2_problem_5_seq4_model.cif",
+        "ProteinMPNN_day2_problem_5_seq4_confidences.json",
+        "ProteinMPNN_day2_problem_5_seq4_summary_confidences.json",
+        "ProteinMPNN_day2_problem_5_seq4_ranking_scores.csv",
+        "ProteinMPNN_day2_problem_5_seq5_model.cif",
+        "ProteinMPNN_day2_problem_5_seq5_confidences.json",
+        "ProteinMPNN_day2_problem_5_seq5_summary_confidences.json",
+        "ProteinMPNN_day2_problem_5_seq5_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "ProteinMPNN_day2_problem_5_seq1_model.cif",
+            "ProteinMPNN_day2_problem_5_seq1_confidences.json",
+            "ProteinMPNN_day2_problem_5_seq1_summary_confidences.json",
+            "ProteinMPNN_day2_problem_5_seq1_ranking_scores.csv"
+          ]
+        },
+        "2": {
+          "files": [
+            "ProteinMPNN_day2_problem_5_seq2_model.cif",
+            "ProteinMPNN_day2_problem_5_seq2_confidences.json",
+            "ProteinMPNN_day2_problem_5_seq2_summary_confidences.json",
+            "ProteinMPNN_day2_problem_5_seq2_ranking_scores.csv"
+          ]
+        },
+        "3": {
+          "files": [
+            "ProteinMPNN_day2_problem_5_seq3_model.cif",
+            "ProteinMPNN_day2_problem_5_seq3_confidences.json",
+            "ProteinMPNN_day2_problem_5_seq3_summary_confidences.json",
+            "ProteinMPNN_day2_problem_5_seq3_ranking_scores.csv"
+          ]
+        },
+        "4": {
+          "files": [
+            "ProteinMPNN_day2_problem_5_seq4_model.cif",
+            "ProteinMPNN_day2_problem_5_seq4_confidences.json",
+            "ProteinMPNN_day2_problem_5_seq4_summary_confidences.json",
+            "ProteinMPNN_day2_problem_5_seq4_ranking_scores.csv"
+          ]
+        },
+        "5": {
+          "files": [
+            "ProteinMPNN_day2_problem_5_seq5_model.cif",
+            "ProteinMPNN_day2_problem_5_seq5_confidences.json",
+            "ProteinMPNN_day2_problem_5_seq5_summary_confidences.json",
+            "ProteinMPNN_day2_problem_5_seq5_ranking_scores.csv"
+          ]
+        }
+      }
+    }
+  },
+  "source_dir": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions/proteinmpnnday2_ml7evlv4_050d"
+}

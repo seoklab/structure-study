@@ -1,0 +1,22 @@
+{
+  "email": "dy.kim@snu.ac.kr",
+  "participant_id": "team4_day2_round1",
+  "sequences": {
+    "problem_4": [
+      "LQDNNQLSDKAKHKEHHSARYWHHHANDGG",
+      "LQDNNQLSDKAKKKEKKSARYWKKKANDGG",
+      "GALADAATELAREEDQESNKEFLEELRGGG",
+      "GALADAATELARHHDQESNKEFLHHLRGGG",
+      "SQAASHASYHADHSDHHASNEHAKAAVEGW"
+    ],
+    "problem_5": [
+      "DEASAHLADAPG",
+      "RRQSAQLDKQNR",
+      "RRQSAQLDKHNR",
+      "RRYSAQLDKQNR",
+      "RRYSAQLDKQER"
+    ]
+  },
+  "submission_id": "team4day2round1_ml7eof1p_k1kl",
+  "submitted_at": "2026-02-04T02:25:56.269Z"
+}

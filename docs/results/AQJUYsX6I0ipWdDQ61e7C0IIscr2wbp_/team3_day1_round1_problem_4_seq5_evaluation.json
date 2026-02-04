@@ -1,0 +1,66 @@
+{
+  "problem_id": "problem_4",
+  "problem_type": "binder",
+  "participant_id": "team3_day1_round1",
+  "token": "AQJUYsX6I0ipWdDQ61e7C0IIscr2wbp_",
+  "model_file": "team3_day1_round1_problem_4_seq5_model.cif",
+  "reference_file": "PepBinder1-scaffold.pdb",
+  "evaluated_at": "2026-02-04T03:23:00.194540Z",
+  "metrics": {
+    "tm_score": 0.07307,
+    "tm_score_ref": null,
+    "rmsd": 1.23,
+    "aligned_length": 30,
+    "seq_identity": 0.0,
+    "bb_lddt": 0.7437,
+    "model_ca_count": 425,
+    "ref_ca_count": 414,
+    "lddt_aligned_count": 30,
+    "bb_lddt_cov": 0.0539,
+    "coverage": 0.0725,
+    "global_rmsd": 55.728,
+    "kabsch_aligned_rmsd": 7.626,
+    "complex_tm_score": 0.87553,
+    "complex_tm_score_ref": null,
+    "complex_rmsd": 2.01,
+    "complex_aligned_length": 370
+  },
+  "af3_metrics": {
+    "ptm": 0.81,
+    "iptm": 0.86,
+    "ranking_score": 0.89,
+    "chain_pair_iptm": [
+      [
+        0.47,
+        0.86
+      ],
+      [
+        0.86,
+        0.8
+      ]
+    ],
+    "fraction_disordered": 0.09,
+    "mean_plddt": 81.51
+  },
+  "binder_metrics": {
+    "binder_tm_score": 0.83834,
+    "binder_rmsd": 1.09,
+    "binder_aligned_length": 30,
+    "binder_lddt": 0.94,
+    "binder_model_ca": 30,
+    "binder_ref_ca": 30,
+    "binder_lddt_cov": 0.94,
+    "binder_coverage": 1.0,
+    "binder_aligned_count": 30
+  },
+  "interface_metrics": {
+    "interface_lddt": 0.7869,
+    "interface_lddt_a": null,
+    "interface_lddt_b": null,
+    "interface_count_a": 24,
+    "interface_count_b": 28,
+    "total_interface_contacts": 1255
+  },
+  "primary_score": 0.83834,
+  "primary_metric": "tm_score"
+}

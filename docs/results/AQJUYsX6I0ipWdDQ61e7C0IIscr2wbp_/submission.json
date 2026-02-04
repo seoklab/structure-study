@@ -1,0 +1,22 @@
+{
+  "email": "seungwoo.ham@snu.ac.kr",
+  "participant_id": "team3_day1_round1",
+  "sequences": {
+    "problem_4": [
+      "VSDSEFAAEFSDAKDKESARDLIDRAKRGG",
+      "VSDSEFAAEFADAKDRESARDAIDRAKRGG",
+      "VSDSSFASEYADAKDRESARDAIDRAKRGG",
+      "VSDSSFASEYADAKDRESARQAIQRAKSGG",
+      "VSDSSFASEYADAKDRESIRQAIQRAKSPG"
+    ],
+    "problem_5": [
+      "SKSQYWKWTQES",
+      "SRSQYNLFKQES",
+      "DRSQYNLFKQEN",
+      "GRSQYNLFKQEN",
+      "GKSQFNLFKQRN"
+    ]
+  },
+  "submission_id": "team3day1round1_ml7elz20_bz8g",
+  "submitted_at": "2026-02-04T02:24:02.232Z"
+}

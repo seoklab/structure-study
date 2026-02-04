@@ -1,0 +1,22 @@
+{
+  "email": "desung@postech.ac.kr",
+  "participant_id": "team2_day2_round1",
+  "sequences": {
+    "problem_4": [
+      "PSAASAASSASDLADDDAAYEAADYAVSGG",
+      "PQAASVASSASDLADDDAAQEAADVAVSGG",
+      "PAAAAVASSASDAADDDAAQAAADAAVSGG",
+      "PQAAEVASERSETNRDDAAHEAADHATSGG",
+      "GQAGEVASERSEQNDDDAAHEAADHATSGG"
+    ],
+    "problem_5": [
+      "GEGTGPEAGKNG",
+      "GEGTAGEAGKNP",
+      "SYVSAADGQMVP",
+      "NYVQAGDGQMVN",
+      "NYNQAAKGQMVN"
+    ]
+  },
+  "submission_id": "team2day2round1_ml7ep526_t8b0",
+  "submitted_at": "2026-02-04T02:26:29.982Z"
+}

@@ -1,0 +1,22 @@
+{
+  "email": "oilbeen@snu.ac.kr",
+  "participant_id": "ProteinMPNN_day2",
+  "sequences": {
+    "problem_4": [
+      "HAEGTFTSDVSSYLEGQAAKEFIAWLVKGR",
+      "NAFESFTSLRAELLEQQQVRRFVERLRAGR",
+      "PAEESFTSLRAELLEQKQVRAFVARLKAGR",
+      "PAEESFTSLRAALLEEKQVAQFIQRLKAGR",
+      "DAFESFTSLVSEYLEQKQVAAFIARLKAGR"
+    ],
+    "problem_5": [
+      "CKNFFWKTFTSC",
+      "GPRWGFLAPVPP",
+      "GVSWGFLSPVPP",
+      "PRRWGLLAPVPP",
+      "GPSLGFLAPVPP"
+    ]
+  },
+  "submission_id": "proteinmpnnday2_ml7evlv4_050d",
+  "submitted_at": "2026-02-04T02:31:31.696Z"
+}
