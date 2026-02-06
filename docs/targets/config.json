@@ -27,7 +27,9 @@
       "name": "test1 - lab test",
       "status": "active",
       "description": "test1",
-      "problems": []
+      "problems": [
+        "problem_6"
+      ]
     }
   },
   "problems": [
@@ -97,6 +99,17 @@
         30
       ],
       "session": "week2"
+    },
+    {
+      "id": "problem_6",
+      "name": "Problem 6 - testproblem",
+      "description": "aa",
+      "target_file": "Top7-scaffold.pdb",
+      "residue_count": 92,
+      "type": "monomer",
+      "primary_metric": "tm_score",
+      "msa_mode": "none",
+      "session": "test1"
     }
   ],
   "problem_types": {
