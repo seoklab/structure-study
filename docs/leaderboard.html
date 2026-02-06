@@ -12,14 +12,14 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #1a1a2e;
-            color: #eee;
+            background: #f8fafc;
+            color: #1e293b;
             min-height: 100vh;
         }
         .header {
-            background: #16213e;
+            background: #ffffff;
             padding: 1.5rem 2rem;
-            border-bottom: 1px solid #0f3460;
+            border-bottom: 1px solid #e2e8f0;
         }
         .header-content {
             max-width: 1400px;
@@ -30,7 +30,7 @@
         }
         .header h1 {
             font-size: 1.8rem;
-            color: #e94560;
+            color: #1e293b;
         }
         .header-left {
             display: flex;
@@ -42,7 +42,7 @@
             gap: 0.5rem;
         }
         .nav-links a {
-            color: #65cbf3;
+            color: #3b82f6;
             text-decoration: none;
             font-size: 0.9rem;
             padding: 0.4rem 0.8rem;
@@ -50,14 +50,14 @@
             transition: background 0.2s;
         }
         .nav-links a:hover {
-            background: rgba(101, 203, 243, 0.1);
+            background: rgba(37, 99, 235, 0.06);
         }
         .header-links {
             display: flex;
             gap: 1rem;
         }
         .header-links a {
-            color: #65cbf3;
+            color: #3b82f6;
             text-decoration: none;
             font-size: 0.9rem;
         }
@@ -70,7 +70,7 @@
             padding: 2rem;
         }
         .last-updated {
-            color: #888;
+            color: #94a3b8;
             font-size: 0.9rem;
             margin-bottom: 1.5rem;
         }
@@ -84,28 +84,28 @@
             align-items: center;
         }
         .session-selector label {
-            color: #888;
+            color: #94a3b8;
             font-size: 0.9rem;
             margin-right: 0.5rem;
         }
         .session-btn {
             padding: 0.5rem 1rem;
-            background: #0f0f23;
-            border: 2px solid #2a3f5f;
+            background: #ffffff;
+            border: 2px solid #d1d5db;
             border-radius: 8px;
-            color: #ccc;
+            color: #475569;
             cursor: pointer;
             font-size: 0.85rem;
             transition: all 0.2s;
         }
         .session-btn:hover {
-            border-color: #65cbf3;
-            color: #fff;
+            border-color: #3b82f6;
+            color: #1e293b;
         }
         .session-btn.active {
-            background: #0f3460;
-            border-color: #65cbf3;
-            color: #65cbf3;
+            background: #eff6ff;
+            border-color: #3b82f6;
+            color: #2563eb;
             font-weight: 600;
         }
         .session-status {
@@ -115,45 +115,45 @@
             margin-left: 0.3rem;
             vertical-align: middle;
         }
-        .session-status.active { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
-        .session-status.archived { background: rgba(136, 136, 136, 0.2); color: #888; }
-        .session-status.upcoming { background: rgba(101, 203, 243, 0.2); color: #65cbf3; }
+        .session-status.active { background: rgba(22, 163, 74, 0.1); color: #16a34a; }
+        .session-status.archived { background: rgba(100, 116, 139, 0.1); color: #64748b; }
+        .session-status.upcoming { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
 
         .tabs {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
             margin-bottom: 1.5rem;
-            border-bottom: 1px solid #0f3460;
+            border-bottom: 1px solid #e2e8f0;
             padding-bottom: 1rem;
         }
         .tab {
             padding: 0.75rem 1.25rem;
-            background: #0f0f23;
-            border: 2px solid #2a3f5f;
+            background: #ffffff;
+            border: 2px solid #d1d5db;
             border-radius: 8px;
-            color: #ccc;
+            color: #475569;
             cursor: pointer;
             font-size: 0.9rem;
             transition: all 0.2s;
         }
         .tab:hover {
-            border-color: #65cbf3;
-            color: #fff;
+            border-color: #3b82f6;
+            color: #1e293b;
         }
         .tab.active {
-            background: #e94560;
-            border-color: #e94560;
-            color: #fff;
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
         }
         .tab.overall {
-            background: #0f3460;
-            border-color: #0f3460;
+            background: #f1f5f9;
+            border-color: #e2e8f0;
         }
         .tab.overall.active {
-            background: #65cbf3;
-            border-color: #65cbf3;
-            color: #16213e;
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
         }
         .problem-type-badge {
             display: inline-block;
@@ -166,12 +166,12 @@
             vertical-align: middle;
         }
         .problem-type-badge.monomer {
-            background: #2a3f5f;
-            color: #65cbf3;
+            background: #eff6ff;
+            color: #2563eb;
         }
         .problem-type-badge.binder {
-            background: #4a2c5a;
-            color: #d4a5ff;
+            background: #f5f3ff;
+            color: #7c3aed;
         }
         .panel {
             display: none;
@@ -183,12 +183,12 @@
             margin-bottom: 1rem;
         }
         .panel-header h2 {
-            color: #e94560;
+            color: #1e293b;
             font-size: 1.3rem;
             margin-bottom: 0.5rem;
         }
         .panel-header p {
-            color: #888;
+            color: #64748b;
             font-size: 0.9rem;
         }
 
@@ -199,7 +199,7 @@
         .ranking-table {
             width: 100%;
             border-collapse: collapse;
-            background: #16213e;
+            background: #ffffff;
             border-radius: 8px;
             overflow: hidden;
             min-width: 800px;
@@ -208,12 +208,12 @@
         .ranking-table td {
             padding: 0.75rem 0.6rem;
             text-align: left;
-            border-bottom: 1px solid #0f3460;
+            border-bottom: 1px solid #e2e8f0;
             white-space: nowrap;
         }
         .ranking-table th {
-            background: #0f3460;
-            color: #65cbf3;
+            background: #f1f5f9;
+            color: #475569;
             font-weight: 600;
             font-size: 0.8rem;
             text-transform: uppercase;
@@ -222,7 +222,7 @@
             position: relative;
         }
         .ranking-table th:hover {
-            background: #1a4a7a;
+            background: #e2e8f0;
         }
         .ranking-table th.sortable::after {
             content: ' \2195';
@@ -241,28 +241,28 @@
             border-bottom: none;
         }
         .ranking-table tr:hover {
-            background: #1f2f4f;
+            background: #f8fafc;
         }
         .rank-cell {
             font-weight: 700;
             font-size: 1.1rem;
         }
-        .rank-1 { color: #ffd700; }
-        .rank-2 { color: #c0c0c0; }
-        .rank-3 { color: #cd7f32; }
+        .rank-1 { color: #b45309; }
+        .rank-2 { color: #6b7280; }
+        .rank-3 { color: #92400e; }
         .score-cell {
             font-family: 'Monaco', 'Menlo', monospace;
             font-size: 0.9rem;
         }
         .score-cell.primary {
-            color: #65cbf3;
+            color: #2563eb;
             font-weight: 600;
         }
         .score-cell.secondary {
-            color: #aaa;
+            color: #64748b;
         }
         .score-cell.highlight {
-            color: #2ecc71;
+            color: #16a34a;
         }
         .participant-id {
             font-weight: 500;
@@ -270,32 +270,32 @@
         .no-data {
             text-align: center;
             padding: 3rem;
-            color: #888;
+            color: #94a3b8;
         }
         .loading {
             text-align: center;
             padding: 3rem;
-            color: #888;
+            color: #94a3b8;
         }
         .error {
             text-align: center;
             padding: 2rem;
-            color: #e94560;
-            background: rgba(233, 69, 96, 0.1);
+            color: #dc2626;
+            background: rgba(220, 38, 38, 0.06);
             border-radius: 8px;
         }
 
         /* Section headers in table */
         .section-header {
-            background: #0a1628 !important;
-            color: #888 !important;
+            background: #f8fafc !important;
+            color: #94a3b8 !important;
             font-size: 0.7rem !important;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             cursor: default !important;
         }
         .section-header:hover {
-            background: #0a1628 !important;
+            background: #f8fafc !important;
         }
         .section-header::after {
             display: none !important;
@@ -303,7 +303,7 @@
 
         /* View links */
         .view-link {
-            color: #65cbf3;
+            color: #3b82f6;
             text-decoration: none;
             font-size: 0.85rem;
             font-weight: 500;
@@ -315,7 +315,7 @@
             cursor: default;
         }
         .ranking-table th.view-col:hover {
-            background: #0f3460;
+            background: #f1f5f9;
         }
         .ranking-table th.view-col::after {
             display: none !important;

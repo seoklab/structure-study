@@ -15,16 +15,15 @@
         }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
-            background-attachment: fixed;
-            color: #e8e8e8;
+            background: #f8fafc;
+            color: #1e293b;
             min-height: 100vh;
         }
         .header {
-            background: rgba(22, 33, 62, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             padding: 1.5rem 2rem;
-            border-bottom: 1px solid rgba(126, 184, 218, 0.2);
+            border-bottom: 1px solid #e2e8f0;
         }
         .header-content {
             max-width: 1400px;
@@ -36,7 +35,7 @@
         .header h1 {
             font-size: 1.6rem;
             font-weight: 600;
-            color: #fff;
+            color: #1e293b;
         }
         .header-left {
             display: flex;
@@ -48,7 +47,7 @@
             gap: 0.5rem;
         }
         .nav-links a {
-            color: #7eb8da;
+            color: #3b82f6;
             text-decoration: none;
             font-size: 0.9rem;
             padding: 0.4rem 0.8rem;
@@ -56,21 +55,21 @@
             transition: all 0.2s;
         }
         .nav-links a:hover {
-            background: rgba(126, 184, 218, 0.15);
-            color: #a8d4f0;
+            background: rgba(37, 99, 235, 0.06);
+            color: #2563eb;
         }
         .header-links {
             display: flex;
             gap: 1.25rem;
         }
         .header-links a {
-            color: #7eb8da;
+            color: #3b82f6;
             text-decoration: none;
             font-size: 0.9rem;
             transition: color 0.2s;
         }
         .header-links a:hover {
-            color: #a8d4f0;
+            color: #2563eb;
         }
         .container {
             max-width: 1400px;
@@ -80,21 +79,21 @@
 
         /* Winner Banner */
         .winner-banner {
-            background: linear-gradient(135deg, rgba(26, 74, 122, 0.8) 0%, rgba(15, 52, 96, 0.8) 100%);
+            background: linear-gradient(135deg, rgba(255, 251, 235, 1) 0%, rgba(255, 255, 255, 1) 100%);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 215, 0, 0.4);
+            border: 1px solid rgba(217, 119, 6, 0.3);
             border-radius: 16px;
             padding: 2.5rem;
             text-align: center;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
         .winner-trophy {
             font-size: 3rem;
             margin-bottom: 0.75rem;
         }
         .winner-title {
-            color: #7eb8da;
+            color: #64748b;
             font-size: 1rem;
             font-weight: 500;
             letter-spacing: 0.1em;
@@ -102,17 +101,17 @@
             margin-bottom: 0.75rem;
         }
         .winner-subtitle {
-            color: #9ab;
+            color: #64748b;
             font-size: 1rem;
             margin-bottom: 1.25rem;
         }
         .winner-team {
-            color: #fff;
+            color: #1e293b;
             font-size: 2rem;
             font-weight: 700;
         }
         .winner-label {
-            color: #7eb8da;
+            color: #64748b;
             font-size: 0.85rem;
             font-weight: 500;
             text-transform: uppercase;
@@ -134,10 +133,10 @@
         .winner-photo img {
             width: 100%;
             border-radius: 8px;
-            border: 2px solid #ffd700;
+            border: 2px solid #d97706;
         }
         .winner-photo-caption {
-            color: #aaa;
+            color: #64748b;
             font-size: 0.85rem;
             margin-top: 0.5rem;
         }
@@ -160,13 +159,13 @@
             transform: translateY(-4px);
         }
         .podium-place.first {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);
-            border: 1px solid rgba(255, 215, 0, 0.4);
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.12) 0%, rgba(251, 191, 36, 0.04) 100%);
+            border: 1px solid rgba(217, 119, 6, 0.3);
             order: 2;
         }
         .podium-place.second {
-            background: linear-gradient(135deg, rgba(192, 192, 192, 0.1) 0%, rgba(192, 192, 192, 0.03) 100%);
-            border: 1px solid rgba(192, 192, 192, 0.3);
+            background: linear-gradient(135deg, rgba(107, 114, 128, 0.08) 0%, rgba(107, 114, 128, 0.02) 100%);
+            border: 1px solid rgba(107, 114, 128, 0.2);
         }
         .podium-place.second:first-child { order: 1; }
         .podium-place.second:last-child { order: 3; }
@@ -176,7 +175,7 @@
         }
         .place-label {
             font-size: 0.75rem;
-            color: #789;
+            color: #94a3b8;
             text-transform: uppercase;
             letter-spacing: 0.03em;
             margin-bottom: 0.25rem;
@@ -184,15 +183,15 @@
         .place-team {
             font-size: 1.2rem;
             font-weight: 600;
-            color: #fff;
+            color: #1e293b;
         }
         .podium-place.first .place-team {
-            color: #ffd700;
+            color: #b45309;
             font-size: 1.4rem;
         }
 
         .last-updated {
-            color: #888;
+            color: #94a3b8;
             font-size: 0.9rem;
             margin-bottom: 1.5rem;
         }
@@ -201,36 +200,36 @@
             flex-wrap: wrap;
             gap: 0.5rem;
             margin-bottom: 1.5rem;
-            border-bottom: 1px solid #0f3460;
+            border-bottom: 1px solid #e2e8f0;
             padding-bottom: 1rem;
         }
         .tab {
             padding: 0.75rem 1.25rem;
-            background: #0f0f23;
-            border: 2px solid #2a3f5f;
+            background: #ffffff;
+            border: 2px solid #d1d5db;
             border-radius: 8px;
-            color: #ccc;
+            color: #475569;
             cursor: pointer;
             font-size: 0.9rem;
             transition: all 0.2s;
         }
         .tab:hover {
-            border-color: #7eb8da;
-            color: #fff;
+            border-color: #3b82f6;
+            color: #1e293b;
         }
         .tab.active {
-            background: #7eb8da;
-            border-color: #7eb8da;
-            color: #16213e;
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
         }
         .tab.overall {
-            background: #0f3460;
-            border-color: #0f3460;
+            background: #f1f5f9;
+            border-color: #e2e8f0;
         }
         .tab.overall.active {
-            background: #7eb8da;
-            border-color: #7eb8da;
-            color: #16213e;
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
         }
         .problem-type-badge {
             display: inline-block;
@@ -243,12 +242,12 @@
             vertical-align: middle;
         }
         .problem-type-badge.monomer {
-            background: #2a3f5f;
-            color: #7eb8da;
+            background: #eff6ff;
+            color: #2563eb;
         }
         .problem-type-badge.binder {
-            background: #4a2c5a;
-            color: #d4a5ff;
+            background: #f5f3ff;
+            color: #7c3aed;
         }
         .panel {
             display: none;
@@ -260,12 +259,12 @@
             margin-bottom: 1rem;
         }
         .panel-header h2 {
-            color: #7eb8da;
+            color: #1e293b;
             font-size: 1.3rem;
             margin-bottom: 0.5rem;
         }
         .panel-header p {
-            color: #888;
+            color: #64748b;
             font-size: 0.9rem;
         }
 
@@ -276,7 +275,7 @@
         .ranking-table {
             width: 100%;
             border-collapse: collapse;
-            background: #16213e;
+            background: #ffffff;
             border-radius: 8px;
             overflow: hidden;
             min-width: 800px;
@@ -285,12 +284,12 @@
         .ranking-table td {
             padding: 0.75rem 0.6rem;
             text-align: left;
-            border-bottom: 1px solid #0f3460;
+            border-bottom: 1px solid #e2e8f0;
             white-space: nowrap;
         }
         .ranking-table th {
-            background: #0f3460;
-            color: #7eb8da;
+            background: #f1f5f9;
+            color: #475569;
             font-weight: 600;
             font-size: 0.8rem;
             text-transform: uppercase;
@@ -299,7 +298,7 @@
             position: relative;
         }
         .ranking-table th:hover {
-            background: #1a4a7a;
+            background: #e2e8f0;
         }
         .ranking-table th.sortable::after {
             content: ' \2195';
@@ -318,15 +317,15 @@
             border-bottom: none;
         }
         .ranking-table tr:hover {
-            background: #1f2f4f;
+            background: #f8fafc;
         }
         .rank-cell {
             font-weight: 700;
             font-size: 1.1rem;
         }
-        .rank-1 { color: #ffd700; }
-        .rank-2 { color: #c0c0c0; }
-        .rank-3 { color: #cd7f32; }
+        .rank-1 { color: #b45309; }
+        .rank-2 { color: #6b7280; }
+        .rank-3 { color: #92400e; }
         .rank-medal {
             font-size: 1.2rem;
             margin-right: 0.25rem;
@@ -336,14 +335,14 @@
             font-size: 0.9rem;
         }
         .score-cell.primary {
-            color: #7eb8da;
+            color: #2563eb;
             font-weight: 600;
         }
         .score-cell.secondary {
-            color: #aaa;
+            color: #64748b;
         }
         .score-cell.highlight {
-            color: #2ecc71;
+            color: #16a34a;
         }
         .participant-id {
             font-weight: 500;
@@ -351,38 +350,38 @@
         .no-data {
             text-align: center;
             padding: 3rem;
-            color: #888;
+            color: #94a3b8;
         }
         .metric-label {
             font-size: 0.7rem;
-            color: #666;
+            color: #94a3b8;
             display: block;
             margin-top: 0.1rem;
         }
         .loading {
             text-align: center;
             padding: 3rem;
-            color: #888;
+            color: #94a3b8;
         }
         .error {
             text-align: center;
             padding: 2rem;
-            color: #e94560;
-            background: rgba(233, 69, 96, 0.1);
+            color: #dc2626;
+            background: rgba(220, 38, 38, 0.06);
             border-radius: 8px;
         }
 
         /* Section headers in table */
         .section-header {
-            background: #0a1628 !important;
-            color: #888 !important;
+            background: #f8fafc !important;
+            color: #94a3b8 !important;
             font-size: 0.7rem !important;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             cursor: default !important;
         }
         .section-header:hover {
-            background: #0a1628 !important;
+            background: #f8fafc !important;
         }
         .section-header::after {
             display: none !important;
@@ -390,7 +389,7 @@
 
         /* View link styles */
         .view-link {
-            color: #7eb8da;
+            color: #3b82f6;
             text-decoration: none;
             font-size: 0.85rem;
             padding: 0.25rem 0.5rem;
@@ -398,14 +397,14 @@
             transition: background 0.2s;
         }
         .view-link:hover {
-            background: rgba(126, 184, 218, 0.2);
+            background: rgba(37, 99, 235, 0.08);
             text-decoration: none;
         }
         .ranking-table th.view-col {
             cursor: default;
         }
         .ranking-table th.view-col:hover {
-            background: #0f3460;
+            background: #f1f5f9;
         }
         .ranking-table th.view-col::after {
             display: none;
@@ -498,16 +497,16 @@
         </div>
 
         <!-- Competition Schedule -->
-        <div style="background: #16213e; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
-            <h2 style="color: #7eb8da; margin-bottom: 1rem; font-size: 1.2rem;">Competition Schedule</h2>
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+            <h2 style="color: #1e293b; margin-bottom: 1rem; font-size: 1.2rem;">Competition Schedule</h2>
             <div style="display: grid; gap: 1rem;">
-                <div style="background: #0f0f23; border-radius: 8px; padding: 1rem; border-left: 3px solid #7eb8da;">
-                    <h3 style="color: #7eb8da; font-size: 1rem; margin-bottom: 0.5rem;">Day 1 - Tuesday, February 3</h3>
-                    <p style="color: #aaa; font-size: 0.9rem;">Problems 1-3 (Scaffold Design) | Round 1: 15:30-18:00, Round 2: 19:30-21:00</p>
+                <div style="background: #f8fafc; border-radius: 8px; padding: 1rem; border-left: 3px solid #3b82f6;">
+                    <h3 style="color: #3b82f6; font-size: 1rem; margin-bottom: 0.5rem;">Day 1 - Tuesday, February 3</h3>
+                    <p style="color: #64748b; font-size: 0.9rem;">Problems 1-3 (Scaffold Design) | Round 1: 15:30-18:00, Round 2: 19:30-21:00</p>
                 </div>
-                <div style="background: #0f0f23; border-radius: 8px; padding: 1rem; border-left: 3px solid #d4a5ff;">
-                    <h3 style="color: #d4a5ff; font-size: 1rem; margin-bottom: 0.5rem;">Day 2 - Wednesday, February 4</h3>
-                    <p style="color: #aaa; font-size: 0.9rem;">Problems 4-5 (Binder Design) | Round 1: 09:30-12:00, Awards: 13:00-14:30</p>
+                <div style="background: #f8fafc; border-radius: 8px; padding: 1rem; border-left: 3px solid #7c3aed;">
+                    <h3 style="color: #7c3aed; font-size: 1rem; margin-bottom: 0.5rem;">Day 2 - Wednesday, February 4</h3>
+                    <p style="color: #64748b; font-size: 0.9rem;">Problems 4-5 (Binder Design) | Round 1: 09:30-12:00, Awards: 13:00-14:30</p>
                 </div>
             </div>
         </div>

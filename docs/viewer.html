@@ -13,17 +13,17 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #1a1a2e;
-            color: #eee;
+            background: #f8fafc;
+            color: #1e293b;
             min-height: 100vh;
         }
         .header {
-            background: #16213e;
+            background: #ffffff;
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #0f3460;
+            border-bottom: 1px solid #e2e8f0;
         }
         .header-left {
             display: flex;
@@ -35,7 +35,7 @@
             gap: 1rem;
         }
         .nav-links a {
-            color: #65cbf3;
+            color: #3b82f6;
             text-decoration: none;
             font-size: 0.9rem;
             padding: 0.4rem 0.8rem;
@@ -43,16 +43,16 @@
             transition: background 0.2s;
         }
         .nav-links a:hover {
-            background: rgba(101, 203, 243, 0.1);
+            background: rgba(37, 99, 235, 0.06);
             text-decoration: none;
         }
         .header h1 {
             font-size: 1.5rem;
-            color: #e94560;
+            color: #1e293b;
         }
         .submission-info {
             font-size: 0.9rem;
-            color: #aaa;
+            color: #64748b;
         }
         .container {
             display: flex;
@@ -69,25 +69,25 @@
         }
         .sidebar {
             width: 320px;
-            background: #16213e;
+            background: #ffffff;
             padding: 1.5rem;
             overflow-y: auto;
-            border-left: 1px solid #0f3460;
+            border-left: 1px solid #e2e8f0;
         }
         .sidebar h2 {
             font-size: 1.1rem;
             margin-bottom: 1rem;
-            color: #e94560;
+            color: #1e293b;
         }
         .info-card {
-            background: #1a1a2e;
+            background: #f8fafc;
             border-radius: 8px;
             padding: 1rem;
             margin-bottom: 1rem;
         }
         .info-card h3 {
             font-size: 0.9rem;
-            color: #aaa;
+            color: #64748b;
             margin-bottom: 0.5rem;
         }
         .info-card p {
@@ -113,7 +113,7 @@
             display: block;
             width: 100%;
             padding: 0.75rem;
-            background: #e94560;
+            background: #2563eb;
             color: white;
             border: none;
             border-radius: 6px;
@@ -124,13 +124,13 @@
             margin-top: 0.5rem;
         }
         .download-btn:hover {
-            background: #ff6b6b;
+            background: #1d4ed8;
         }
         .download-btn.secondary {
-            background: #0f3460;
+            background: #f1f5f9;
         }
         .download-btn.secondary:hover {
-            background: #1a4a7a;
+            background: #e2e8f0;
         }
         .loading {
             display: flex;
@@ -138,9 +138,10 @@
             align-items: center;
             height: 100%;
             font-size: 1.2rem;
+            color: #94a3b8;
         }
         .error {
-            color: #e94560;
+            color: #dc2626;
             padding: 2rem;
             text-align: center;
         }
@@ -157,22 +158,22 @@
         }
         .problem-tab {
             padding: 0.5rem 1rem;
-            background: #0f0f23;
-            border: 2px solid #2a3f5f;
+            background: #ffffff;
+            border: 2px solid #d1d5db;
             border-radius: 6px;
-            color: #ccc;
+            color: #475569;
             cursor: pointer;
             font-size: 0.85rem;
             transition: all 0.2s;
         }
         .problem-tab:hover {
-            border-color: #65cbf3;
-            color: #fff;
+            border-color: #3b82f6;
+            color: #1e293b;
         }
         .problem-tab.active {
-            background: #e94560;
-            border-color: #e94560;
-            color: #fff;
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
         }
 
         /* Files list */
@@ -181,7 +182,7 @@
         }
         .files-list h3 {
             font-size: 0.9rem;
-            color: #aaa;
+            color: #64748b;
             margin-bottom: 0.5rem;
         }
         .file-item {
@@ -189,13 +190,13 @@
             justify-content: space-between;
             align-items: center;
             padding: 0.5rem;
-            background: #0f0f23;
+            background: #f8fafc;
             border-radius: 4px;
             margin-bottom: 0.25rem;
             font-size: 0.8rem;
         }
         .file-item a {
-            color: #65cbf3;
+            color: #3b82f6;
             text-decoration: none;
         }
         .file-item a:hover {
@@ -204,35 +205,35 @@
 
         /* Metrics display */
         .metrics-card {
-            background: #1a1a2e;
+            background: #f8fafc;
             border-radius: 8px;
             padding: 1rem;
             margin-bottom: 1rem;
         }
         .metrics-card h3 {
             font-size: 0.9rem;
-            color: #aaa;
+            color: #64748b;
             margin-bottom: 0.75rem;
         }
         .metric-row {
             display: flex;
             justify-content: space-between;
             padding: 0.4rem 0;
-            border-bottom: 1px solid #2a3f5f;
+            border-bottom: 1px solid #e2e8f0;
             font-size: 0.9rem;
         }
         .metric-row:last-child {
             border-bottom: none;
         }
         .metric-name {
-            color: #aaa;
+            color: #64748b;
         }
         .metric-value {
             font-weight: 600;
-            color: #65cbf3;
+            color: #2563eb;
         }
         .metric-value.primary {
-            color: #e94560;
+            color: #2563eb;
             font-size: 1.1rem;
         }
         .metrics-comparison {
@@ -246,21 +247,21 @@
         .metrics-comparison th, .metrics-comparison td {
             padding: 0.4rem;
             text-align: center;
-            border-bottom: 1px solid #2a3f5f;
+            border-bottom: 1px solid #e2e8f0;
         }
         .metrics-comparison th {
-            color: #aaa;
+            color: #64748b;
             font-weight: normal;
         }
         .metrics-comparison tr.best-seq {
-            background: rgba(233, 69, 96, 0.15);
+            background: rgba(37, 99, 235, 0.08);
         }
         .metrics-comparison tr.best-seq td {
-            color: #e94560;
+            color: #2563eb;
             font-weight: 600;
         }
         .best-badge {
-            background: #e94560;
+            background: #2563eb;
             color: white;
             font-size: 0.65rem;
             padding: 0.1rem 0.3rem;
@@ -277,7 +278,7 @@
                 height: auto;
                 max-height: 40vh;
                 border-left: none;
-                border-top: 1px solid #0f3460;
+                border-top: 1px solid #e2e8f0;
             }
             .viewer-panel {
                 height: 60vh;
@@ -490,7 +491,7 @@
             if (seqNums.length > 1) {
                 seqSelectorHtml = `
                     <div style="margin-top: 0.5rem;">
-                        <span style="color: #888; font-size: 0.85rem;">Sequences: </span>
+                        <span style="color: #94a3b8; font-size: 0.85rem;">Sequences: </span>
                         ${seqNums.map(seqNum =>
                             `<button class="problem-tab seq-tab" data-seq="${seqNum}" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Seq ${seqNum}</button>`
                         ).join(' ')}
@@ -592,7 +593,7 @@
                     binary: false
                 },
                 alphafoldView: true,
-                bgColor: { r: 26, g: 26, b: 46 },
+                bgColor: { r: 248, g: 250, b: 252 },
                 hideControls: false,
                 sequencePanel: true,
                 landscape: true
@@ -803,7 +804,7 @@
             const firstEval = evaluations[seqNums[0]];
             const isBinder = firstEval?.binder_metrics && Object.keys(firstEval.binder_metrics).length > 0;
 
-            let html = '<h4 style="color: #aaa; font-size: 0.85rem; margin-bottom: 0.5rem;">All Sequences</h4>';
+            let html = '<h4 style="color: #64748b; font-size: 0.85rem; margin-bottom: 0.5rem;">All Sequences</h4>';
 
             if (isBinder) {
                 html += '<table><thead><tr><th>Seq</th><th>ipTM</th><th>Binder TM</th><th>Binder RMSD</th></tr></thead><tbody>';
@@ -840,7 +841,7 @@
             }
 
             html += '</tbody></table>';
-            html += '<p style="font-size: 0.7rem; color: #666; margin-top: 0.5rem;">★ = best, ◀ = current</p>';
+            html += '<p style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.5rem;">★ = best, ◀ = current</p>';
 
             compDiv.innerHTML = html;
         }
@@ -866,7 +867,7 @@
                 html += `<div class="file-item"><span>${file}</span><a href="${url}" download>Download</a></div>`;
             });
 
-            container.innerHTML = html || '<p style="color: #888; font-size: 0.85rem;">No additional files.</p>';
+            container.innerHTML = html || '<p style="color: #94a3b8; font-size: 0.85rem;">No additional files.</p>';
         }
 
         // Load on page ready
