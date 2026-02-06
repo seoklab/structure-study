@@ -1,4 +1,4 @@
-# KIDDS 2026 Protein Design Competition - System Overview
+# SEOKLAB STRUCTURE STUDY - System Overview
 
 ## Architecture
 
