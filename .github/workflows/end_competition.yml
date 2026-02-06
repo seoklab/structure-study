@@ -19,8 +19,8 @@ jobs:
       issues: write
 
     env:
-      SUBMISSIONS_BASE: /data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions
-      PUBLIC_RESULTS: /data/galaxy4/user/j2ho/kidds2026/protein-competition/public_results
+      SUBMISSIONS_BASE: /home/j2ho/seoklab/structure-study/submissions
+      PUBLIC_RESULTS: /home/j2ho/seoklab/structure-study/public_results
 
     steps:
       - name: Checkout repository

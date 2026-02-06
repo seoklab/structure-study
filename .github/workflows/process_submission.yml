@@ -14,7 +14,7 @@ jobs:
       issues: write
 
     env:
-      SUBMISSIONS_BASE: /data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions
+      SUBMISSIONS_BASE: /home/j2ho/seoklab/structure-study/submissions
       SITE_URL: https://seoklab.github.io/structure-study
 
     steps:

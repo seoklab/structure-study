@@ -1003,7 +1003,7 @@
             // Construct issue body
             const issueBody = constructIssueBody(participantId, activeSession, sequences);
             const issueTitle = `Submission: ${participantId} (${activeSession})`;
-            const issueLabels = `submission,${activeSession}`;
+            const issueLabels = 'submission';
 
             // Build GitHub issue URL
             const baseUrl = `https://github.com/${githubRepo}/issues/new`;
@@ -1022,7 +1022,7 @@
                     showSuccess(
                         'Your submission body has been <strong>copied to clipboard</strong> (too large for URL).<br>' +
                         'A new GitHub Issue will open - <strong>paste the body</strong> into the issue description.<br>' +
-                        'Don\'t forget to add labels: <code>submission</code>, <code>' + activeSession + '</code>'
+                        'Don\'t forget to add the <code>submission</code> label.'
                     );
                 } catch (err) {
                     showError('Submission too large for URL and clipboard copy failed. Please copy the text below manually and create a GitHub Issue.');
