@@ -1,20 +1,33 @@
 {
   "submissions_open": true,
-  "active_session": "week2",
+  "active_session": "test1",
   "github_repo": "seoklab/structure-study",
-  "_comment_primary_metric": "primary_metric: bb_lddt, bb_lddt_cov (lDDT×Coverage), binder_lddt (binder), interface_lddt, iptm, tm_score, etc. Used for z-score ranking.",
+  "_comment_primary_metric": "primary_metric: bb_lddt, bb_lddt_cov (lDDT\u00d7Coverage), binder_lddt (binder), interface_lddt, iptm, tm_score, etc. Used for z-score ranking.",
   "sessions": {
     "week1": {
       "name": "Week 1 - Scaffold Design",
       "status": "archived",
       "description": "Introductory scaffold design problems",
-      "problems": ["problem_1", "problem_2", "problem_3"]
+      "problems": [
+        "problem_1",
+        "problem_2",
+        "problem_3"
+      ]
     },
     "week2": {
       "name": "Week 2 - Binder Design",
-      "status": "active",
+      "status": "archived",
       "description": "Binder design challenges",
-      "problems": ["problem_4", "problem_5"]
+      "problems": [
+        "problem_4",
+        "problem_5"
+      ]
+    },
+    "test1": {
+      "name": "test1 - lab test",
+      "status": "active",
+      "description": "test1",
+      "problems": []
     }
   },
   "problems": [
@@ -62,7 +75,10 @@
       "target_sequence": "TVSLWETVQKWREYRRQCQRSLTEDPPPATDLFCNRTFDEYACWPDGEPGSFVNVSCPWYLPWASSVPQGHVYRFCTAEGLWLQKDNSSLPWRDLSECEESKRGERSSPEEQLLFLYIIYTVGYALSFSALVIASAILLGFRHLHCTRNYIHLNLFASFILRALSVFIKDAALKWMYSTAAQQHQWDGLLSYQDSLSCRLVFLLMQYCVAANYYWLLVEGVYLYTLLAFSVFSEQWIFRLYVSIGWGVPLLFVVPWGIVKYLYEDEGCWTRNSNMNYWLIIRLPILFAIGVNFLIFVRVICIVVSKLKANLMCKTDIKCRLAKSTLTLIPLLGTHEVIFAFVMDEHARGTLRFIKLFTELSFTSFQGLMVAILYCFVNNEVQLEFRKSWERWRLE",
       "target_msa_file": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/docs/targets/PepBinder1_target.a3m",
       "participant_msa_mode": "none",
-      "expected_binder_length": [20, 50],
+      "expected_binder_length": [
+        20,
+        50
+      ],
       "session": "week2"
     },
     {
@@ -76,18 +92,26 @@
       "target_sequence": "MVAIQCIYALVCLVGLVGNALVIFVILRYAKMKTATNIYLLNLAVADELFMLSVPFVASSAALRHWPFGSVLCRAVLSVDGLNMFTSVFCLTVLSVDRYVAVVHPLRAATYRRPSVAKLINLGVWLASLLVTLPIAIFADTRPARGGQAVACNLQWPHPAWSAVFVVYTFLLGFLLPVLAIGLCYLLIVGKMRAVALRAGWQQRRRSEKKITRLVLMFVVVFVLCWMPFYVVQLLNLFVTSLDATVNHVSLILSYANSCANPILYGFLSDNFRRFF",
       "target_msa_file": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/docs/targets/PepBinder2_target.a3m",
       "participant_msa_mode": "none",
-      "expected_binder_length": [10, 30],
+      "expected_binder_length": [
+        10,
+        30
+      ],
       "session": "week2"
     }
   ],
   "problem_types": {
     "monomer": {
       "description": "Scaffold design - design a sequence for the given backbone",
-      "chains": ["participant"]
+      "chains": [
+        "participant"
+      ]
     },
     "binder": {
       "description": "Binder design - design a peptide that binds to the given target",
-      "chains": ["participant_binder", "given_target"]
+      "chains": [
+        "participant_binder",
+        "given_target"
+      ]
     }
   },
   "msa_modes": {
