@@ -32,7 +32,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/targets/config.json
 
-          git commit -m "Open session ${SESSION_KEY}: ${SESSION_NAME} [skip ci]"
+          git commit -m "Open session ${SESSION_KEY}: ${SESSION_NAME}"
 
           for i in 1 2 3; do
             if git push; then
