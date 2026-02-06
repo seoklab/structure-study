@@ -1,8 +1,16 @@
 # Protein Design Competition Platform
 
-A platform for running protein design competitions using AlphaFold3 structure prediction. Hosted on GitHub Pages, with all admin actions (new sessions, new problems, sequence submissions) handled via GitHub Issues.
+A platform for running protein design competitions using AlphaFold3 structure prediction, hosted on GitHub Pages.
 
-**Site:** https://seoklab.github.io/structure-study
+Everything is done through the website — forms for creating sessions, adding problems, and submitting sequences. Behind the scenes, each form creates a GitHub Issue that triggers an automated workflow.
+
+| Page | URL | Purpose |
+|------|-----|---------|
+| **Home** | https://seoklab.github.io/structure-study | Main page with links |
+| **Submit Sequences** | https://seoklab.github.io/structure-study/submit.html | Participants submit designed sequences |
+| **Add Problem** | https://seoklab.github.io/structure-study/new-problem.html | Admins add a new target structure |
+| **Leaderboard** | https://seoklab.github.io/structure-study/leaderboard.html | Rankings per session |
+| **3D Viewer** | https://seoklab.github.io/structure-study/viewer.html | View predicted structures |
 
 ---
 
@@ -12,10 +20,10 @@ The typical flow for running a competition round:
 
 1. **Create a session** — groups problems into a round (e.g. "Week 3")
 2. **Add problems** — define target structures for participants to design sequences for
-3. Participants **submit sequences** — via the web form or GitHub Issue
+3. Participants **submit sequences** — via the web form
 4. AlphaFold3 runs automatically, results appear on the leaderboard
 
-All three steps are done through GitHub Issues. Each action has its own issue template with a dedicated label.
+Each action can be done through the website or directly via GitHub Issues. Both methods trigger the same automated workflows.
 
 ---
 
@@ -23,7 +31,7 @@ All three steps are done through GitHub Issues. Each action has its own issue te
 
 A session is a competition round (e.g. `week3`). Creating a new session automatically archives the previous active session.
 
-### Via GitHub Issue (recommended)
+### Via GitHub Issue
 
 1. Go to [Issues → New issue](https://github.com/seoklab/structure-study/issues/new/choose)
 2. Select **"New Session"**
@@ -60,40 +68,23 @@ Set `"active_session": "week3"` and change the old session's status to `"archive
 
 A problem defines a target structure that participants will design sequences for.
 
-### Via GitHub Issue (recommended)
+### Via the website (recommended)
 
-1. Go to [Issues → New issue](https://github.com/seoklab/structure-study/issues/new/choose)
-2. Select **"New Competition Problem"**
-3. Fill in the required fields:
-   - **Problem Name** — e.g. "3-Helix Bundle"
-   - **Problem Type** — `monomer` (scaffold design) or `binder` (binder design)
-   - **Session** — which session this belongs to (e.g. `week3`)
-   - **Description** — shown to participants
-   - **Primary Metric** — metric used for ranking (see [Metrics Reference](#metrics-reference))
-   - **MSA Mode** — `none`, `search`, or `precomputed`
-4. Provide the PDB structure using **one** of three methods:
+1. Go to https://seoklab.github.io/structure-study/new-problem.html
+2. Fill in the required fields: problem name, type, session, description, metric, MSA mode
+3. Provide the PDB structure using **one** of two methods:
+   - **Server Path** — absolute path to a `.pdb` file already on the server
+   - **Paste Content** — enter a filename and paste the raw PDB text
+4. For **binder** problems, also fill in: target sequence, expected binder length, and optionally a target MSA path
+5. Click **Submit via GitHub Issue** — this opens a pre-filled GitHub Issue
 
-   | Method | When to use | What to fill in |
-   |--------|-------------|-----------------|
-   | **Server Path** | PDB already exists on the server | Absolute path, e.g. `/data/galaxy4/user/.../scaffold.pdb` |
-   | **File Upload** | You have the PDB file locally | Drag-and-drop the `.pdb` file into the upload field |
-   | **Paste Content** | Copy-paste from another source | Enter a filename + paste the raw PDB text |
+You can also go directly to [Issues → New issue → New Competition Problem](https://github.com/seoklab/structure-study/issues/new/choose), which additionally supports **file upload** (drag-and-drop `.pdb`).
 
-5. For **binder** problems, also fill in:
-   - **Target Sequence** — full amino acid sequence of the target protein
-   - **Expected Binder Length** — min,max residue count (e.g. `20,50`)
-   - **Target MSA Path** — absolute server path to precomputed `.a3m` file (optional)
-6. Submit the issue
-
-The `new-problem` workflow will:
+The workflow will automatically:
 - Write the PDB file to `docs/targets/`
 - Assign a problem ID (`problem_6`, `problem_7`, ...)
-- Update `config.json` with the problem entry and add it to the session
+- Update `config.json` and add the problem to the session
 - Comment on the issue with the new problem ID
-
-### Via the web form
-
-Go to https://seoklab.github.io/structure-study/new-problem.html — this is a GUI that builds the same GitHub Issue for you.
 
 ### Via manual edit
 
@@ -108,21 +99,22 @@ Go to https://seoklab.github.io/structure-study/new-problem.html — this is a G
 
 Participants design amino acid sequences and submit them for AlphaFold3 structure prediction.
 
-### Via the web form (recommended for participants)
+### Via the website
 
 1. Go to https://seoklab.github.io/structure-study/submit.html
 2. Enter a **Participant ID** (e.g. `team1_week3`)
-3. Select the **Session**
-4. For each problem, enter 1-5 amino acid sequences
-5. Click **Submit** — this creates a GitHub Issue automatically
+3. Select the **Session** — problems for that session appear automatically
+4. For each problem, enter 1-5 amino acid sequences (one per line)
+5. Click **Submit** — this creates a GitHub Issue which triggers the pipeline
 
 ### What happens after submission
 
-1. The `process_submission` workflow parses the sequences and queues AlphaFold3 SLURM jobs
-2. A confirmation comment is posted on the issue with the submission ID
-3. The `check_completion` workflow runs every 5 minutes to monitor SLURM jobs
-4. When predictions finish, results are evaluated (TMalign, lDDT) and the leaderboard updates
-5. A final comment is posted on the issue with a link to view results in the 3D viewer
+1. A GitHub Issue is created with the `submission` label
+2. The workflow parses the sequences and queues AlphaFold3 SLURM jobs on the server
+3. A confirmation comment is posted on the issue with the submission ID
+4. The `check_completion` workflow runs every 5 minutes to monitor SLURM jobs
+5. When predictions finish, structures are evaluated (TMalign, lDDT) and the leaderboard updates
+6. A final comment is posted on the issue with a link to view results in the [3D viewer](https://seoklab.github.io/structure-study/viewer.html)
 
 ---
 
