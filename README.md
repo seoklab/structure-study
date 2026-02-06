@@ -7,9 +7,13 @@ A platform for running protein design competitions using AlphaFold3 structure pr
 ### Method 1: GitHub Issue (Recommended)
 
 1. Go to **Issues** → **New issue** → **New Competition Problem**
-2. Fill in the form fields (name, type, session, server path to PDB, etc.)
-3. Submit — the workflow automatically:
-   - Copies the PDB file to `docs/targets/`
+2. Fill in the form fields (name, type, session, metric, etc.)
+3. Provide the PDB structure using one of three methods:
+   - **Server path** — absolute path to a `.pdb` file on the server
+   - **File upload** — drag-and-drop a `.pdb` file into the upload field
+   - **Paste content** — paste raw PDB text and provide a filename
+4. Submit — the workflow automatically:
+   - Writes the PDB file to `docs/targets/`
    - Updates `docs/targets/config.json`
    - Comments the new problem ID on the issue
 

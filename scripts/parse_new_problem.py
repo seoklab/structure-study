@@ -26,6 +26,11 @@ Issue body format (GitHub issue form):
 
     ### PDB File Path
     /data/galaxy4/user/.../my-scaffold.pdb
+
+Supports three PDB input methods:
+  1. Server path  — copies from absolute path on the server
+  2. File upload   — downloads from GitHub attachment URL (drag-and-drop)
+  3. Paste content — writes pasted PDB text with a given filename
 """
 
 import argparse
@@ -34,6 +39,7 @@ import os
 import re
 import shutil
 import sys
+import urllib.request
 
 
 def parse_issue_body(body: str) -> dict:
@@ -59,6 +65,42 @@ def parse_issue_body(body: str) -> dict:
         fields[current_field] = "\n".join(current_value).strip()
 
     return fields
+
+
+def is_empty_field(val: str) -> bool:
+    """Check if an issue form field is empty or the default no-response."""
+    return not val or val.strip() == "" or val.strip() == "_No response_"
+
+
+def extract_attachment_url(text: str) -> str | None:
+    """Extract a GitHub attachment URL from an issue form upload field.
+
+    GitHub renders drag-and-drop uploads as markdown links like:
+      [filename.pdb](https://github.com/user-attachments/assets/...)
+    or plain URLs.
+    """
+    # Markdown link: [name](url)
+    m = re.search(r'\[.*?\]\((https://github\.com/user-attachments/assets/[^\)]+)\)', text)
+    if m:
+        return m.group(1)
+    # Plain URL
+    m = re.search(r'(https://github\.com/user-attachments/assets/\S+)', text)
+    if m:
+        return m.group(1)
+    return None
+
+
+def extract_filename_from_upload(text: str) -> str | None:
+    """Extract the original filename from a GitHub upload markdown link."""
+    m = re.search(r'\[([^\]]+\.pdb)\]', text, re.IGNORECASE)
+    if m:
+        return m.group(1)
+    return None
+
+
+def download_file(url: str, dest: str) -> None:
+    """Download a file from a URL."""
+    urllib.request.urlretrieve(url, dest)
 
 
 def count_residues_from_pdb(pdb_path: str) -> int:
@@ -96,9 +138,8 @@ def validate_problem(fields: dict, config: dict) -> list:
 
     # Required fields
     for field in ["problem_name", "problem_type", "session", "description",
-                  "primary_metric", "msa_mode", "pdb_file_path"]:
-        val = fields.get(field, "").strip()
-        if not val or val == "_No response_":
+                  "primary_metric", "msa_mode"]:
+        if is_empty_field(fields.get(field, "")):
             errors.append(f"Missing required field: {field}")
 
     if errors:
@@ -115,17 +156,59 @@ def validate_problem(fields: dict, config: dict) -> list:
     if ptype not in ("monomer", "binder"):
         errors.append(f"Invalid problem type: '{ptype}' (must be monomer or binder)")
 
-    # PDB path must exist and be a file
-    pdb_path = fields["pdb_file_path"].strip()
-    if not os.path.isabs(pdb_path):
-        errors.append(f"PDB path must be absolute: '{pdb_path}'")
-    elif not os.path.isfile(pdb_path):
-        errors.append(f"PDB file not found: '{pdb_path}'")
-    else:
-        if not pdb_has_atoms(pdb_path):
-            errors.append(f"PDB file has no ATOM lines: '{pdb_path}'")
-        elif count_residues_from_pdb(pdb_path) == 0:
-            errors.append(f"PDB file has no CA atoms: '{pdb_path}'")
+    # PDB input: exactly one method must be provided
+    has_server_path = not is_empty_field(fields.get("method_1:_server_path", ""))
+    has_upload = not is_empty_field(fields.get("method_2:_file_upload", ""))
+    has_paste = not is_empty_field(fields.get("method_3:_pasted_pdb_content", ""))
+
+    method_count = sum([has_server_path, has_upload, has_paste])
+    if method_count == 0:
+        errors.append("No PDB provided. Use one of: server path, file upload, or paste content")
+    elif method_count > 1:
+        errors.append("Multiple PDB methods provided. Use only one of: server path, file upload, or paste content")
+
+    # Validate server path if provided
+    if has_server_path:
+        pdb_path = fields["method_1:_server_path"].strip()
+        if not os.path.isabs(pdb_path):
+            errors.append(f"PDB server path must be absolute: '{pdb_path}'")
+        elif not os.path.isfile(pdb_path):
+            errors.append(f"PDB file not found: '{pdb_path}'")
+        else:
+            if not pdb_has_atoms(pdb_path):
+                errors.append(f"PDB file has no ATOM lines: '{pdb_path}'")
+            elif count_residues_from_pdb(pdb_path) == 0:
+                errors.append(f"PDB file has no CA atoms: '{pdb_path}'")
+
+    # Validate upload field if provided
+    if has_upload:
+        upload_text = fields["method_2:_file_upload"].strip()
+        url = extract_attachment_url(upload_text)
+        if not url:
+            errors.append("File upload field does not contain a valid GitHub attachment URL")
+
+    # Validate paste: need both filename and content
+    if has_paste:
+        pdb_content = fields["method_3:_pasted_pdb_content"].strip()
+        pdb_filename = fields.get("method_3:_filename", "").strip()
+        if is_empty_field(pdb_filename):
+            errors.append("PDB filename is required when pasting content")
+        elif not pdb_filename.endswith(".pdb"):
+            errors.append(f"PDB filename must end with .pdb: '{pdb_filename}'")
+        if not any(line.startswith("ATOM") for line in pdb_content.split("\n")):
+            errors.append("Pasted PDB content has no ATOM lines")
+
+    # Validate filename safety (for all methods that produce a filename)
+    pdb_filename = None
+    if has_server_path:
+        pdb_filename = os.path.basename(fields["method_1:_server_path"].strip())
+    elif has_upload:
+        pdb_filename = extract_filename_from_upload(fields["method_2:_file_upload"].strip())
+    elif has_paste:
+        pdb_filename = fields.get("method_3:_filename", "").strip()
+
+    if pdb_filename and not re.match(r'^[\w\-\.]+\.pdb$', pdb_filename, re.IGNORECASE):
+        errors.append(f"Unsafe PDB filename: '{pdb_filename}' (use letters, numbers, hyphens, underscores)")
 
     # Binder-specific fields
     if ptype == "binder":
@@ -185,19 +268,45 @@ def main():
     description = fields["description"].strip()
     primary_metric = fields["primary_metric"].strip()
     msa_mode = fields["msa_mode"].strip()
-    pdb_src_path = fields["pdb_file_path"].strip()
-    pdb_filename = os.path.basename(pdb_src_path)
+
+    # Determine PDB method and write file
+    has_server_path = not is_empty_field(fields.get("method_1:_server_path", ""))
+    has_upload = not is_empty_field(fields.get("method_2:_file_upload", ""))
+    has_paste = not is_empty_field(fields.get("method_3:_pasted_pdb_content", ""))
+
+    pdb_filename = ""
+    pdb_dest = ""
+
+    if has_server_path:
+        pdb_src_path = fields["method_1:_server_path"].strip()
+        pdb_filename = os.path.basename(pdb_src_path)
+        pdb_dest = os.path.join(args.targets_dir, pdb_filename)
+        shutil.copy2(pdb_src_path, pdb_dest)
+        print(f"Copied PDB from server: {pdb_src_path} -> {pdb_dest}")
+    elif has_upload:
+        upload_text = fields["method_2:_file_upload"].strip()
+        url = extract_attachment_url(upload_text)
+        assert url is not None, "No attachment URL found (should have been caught by validation)"
+        pdb_filename = extract_filename_from_upload(upload_text) or "uploaded.pdb"
+        pdb_dest = os.path.join(args.targets_dir, pdb_filename)
+        download_file(url, pdb_dest)
+        print(f"Downloaded PDB from upload: {url} -> {pdb_dest}")
+    elif has_paste:
+        pdb_filename = fields["method_3:_filename"].strip()
+        pdb_content = fields["method_3:_pasted_pdb_content"].strip()
+        pdb_dest = os.path.join(args.targets_dir, pdb_filename)
+        with open(pdb_dest, "w") as f:
+            f.write(pdb_content)
+            f.write("\n")
+        print(f"Wrote pasted PDB content to: {pdb_dest}")
+
+    residue_count = count_residues_from_pdb(pdb_dest)
+    print(f"PDB: {pdb_filename} ({residue_count} residues)")
 
     # Generate problem ID
     problem_id = get_next_problem_id(config.get("problems", []))
     display_name = f"{problem_id.replace('_', ' ').title()} - {problem_name}"
     print(f"New problem: {problem_id} ({display_name})")
-
-    # Copy PDB file to targets dir
-    pdb_dest = os.path.join(args.targets_dir, pdb_filename)
-    shutil.copy2(pdb_src_path, pdb_dest)
-    residue_count = count_residues_from_pdb(pdb_dest)
-    print(f"Copied PDB: {pdb_src_path} -> {pdb_dest} ({residue_count} residues)")
 
     # Build problem entry
     problem_entry = {

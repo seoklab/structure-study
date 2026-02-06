@@ -8,8 +8,13 @@ body:
       value: |
         ## Add a New Competition Problem
 
-        Fill in the fields below to add a new problem. The PDB file will be copied
-        from the server path and `config.json` will be updated.
+        Fill in the fields below to add a new problem.
+        `config.json` will be updated automatically.
+
+        **PDB file:** Provide the structure using ONE of these methods:
+        1. **Server path** — absolute path to a PDB on the server
+        2. **File upload** — drag-and-drop a `.pdb` file
+        3. **Paste content** — paste raw PDB text with a filename
 
   - type: input
     id: problem_name
@@ -75,14 +80,38 @@ body:
     validations:
       required: true
 
-  - type: input
-    id: pdb_path
+  - type: markdown
     attributes:
-      label: PDB File Path
-      description: Absolute path to the PDB file on the server (will be copied to docs/targets/)
+      value: |
+        ---
+        ### PDB File (choose one method)
+
+  - type: input
+    id: pdb_server_path
+    attributes:
+      label: "Method 1: Server Path"
+      description: Absolute path to a PDB file on the server (filename is derived automatically)
       placeholder: "/data/galaxy4/user/.../my-scaffold.pdb"
-    validations:
-      required: true
+
+  - type: textarea
+    id: pdb_upload
+    attributes:
+      label: "Method 2: File Upload"
+      description: Drag-and-drop a .pdb file here
+
+  - type: input
+    id: pdb_filename
+    attributes:
+      label: "Method 3: Filename"
+      description: Filename when pasting content below (e.g. my-scaffold.pdb)
+      placeholder: "3H-scaffold.pdb"
+
+  - type: textarea
+    id: pdb_content
+    attributes:
+      label: "Method 3: Pasted PDB Content"
+      description: Paste the full PDB file content here
+      render: text
 
   - type: markdown
     attributes:
