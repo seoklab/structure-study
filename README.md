@@ -4,6 +4,18 @@ A platform for running protein design competitions using AlphaFold3 structure pr
 
 Everything is done through the website — forms for creating sessions, adding problems, and submitting sequences. Behind the scenes, each form creates a GitHub Issue that triggers an automated workflow.
 
+![Main Page](assets/main-page.png)
+
+The home page shows the current session, links to submit sequences and view the leaderboard, and admin controls to add problems or open new sessions.
+
+![Manage](assets/manage-buttons.png)
+
+Use **"Submit a New Problem"** and **"Open a New Session"** from the home page to manage the competition. These open web forms that create GitHub Issues behind the scenes.
+
+![Leaderboard](assets/leaderboard.png)
+
+The leaderboard shows per-session rankings with z-scores across all problems. Switch between sessions using the tabs at the top.
+
 | Page | URL | Purpose |
 |------|-----|---------|
 | **Home** | https://seoklab.github.io/structure-study | Main page with links |
