@@ -301,6 +301,26 @@
             display: none !important;
         }
 
+        /* View links */
+        .view-link {
+            color: #65cbf3;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .view-link:hover {
+            text-decoration: underline;
+        }
+        .ranking-table th.view-col {
+            cursor: default;
+        }
+        .ranking-table th.view-col:hover {
+            background: #0f3460;
+        }
+        .ranking-table th.view-col::after {
+            display: none !important;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .container {
@@ -528,11 +548,15 @@
                         <th class="sortable" data-key="iptm" data-type="number">ipTM</th>
                         <th class="sortable" data-key="ptm" data-type="number">pTM</th>
                         <th class="sortable" data-key="plddt" data-type="number">pLDDT</th>
+                        <th class="view-col">View</th>
                     </tr>
                 `;
 
                 tableRows = rankings.map(entry => {
                     const rankClass = entry.rank <= 3 ? `rank-${entry.rank}` : '';
+                    const viewLink = entry.token
+                        ? `<a href="viewer.html?token=${encodeURIComponent(entry.token)}" target="_blank" class="view-link">View</a>`
+                        : '-';
                     return `
                         <tr>
                             <td class="rank-cell ${rankClass}">#${entry.rank}</td>
@@ -547,6 +571,7 @@
                             <td class="score-cell highlight">${formatScore(entry.iptm)}</td>
                             <td class="score-cell secondary">${formatScore(entry.ptm)}</td>
                             <td class="score-cell secondary">${formatScore(entry.plddt)}</td>
+                            <td>${viewLink}</td>
                         </tr>
                     `;
                 }).join('');
@@ -567,11 +592,15 @@
                         <th class="sortable" data-key="rmsd" data-type="number" data-order="asc">RMSD</th>
                         <th class="sortable" data-key="ptm" data-type="number">pTM</th>
                         <th class="sortable" data-key="plddt" data-type="number">pLDDT</th>
+                        <th class="view-col">View</th>
                     </tr>
                 `;
 
                 tableRows = rankings.map(entry => {
                     const rankClass = entry.rank <= 3 ? `rank-${entry.rank}` : '';
+                    const viewLink = entry.token
+                        ? `<a href="viewer.html?token=${encodeURIComponent(entry.token)}" target="_blank" class="view-link">View</a>`
+                        : '-';
                     return `
                         <tr>
                             <td class="rank-cell ${rankClass}">#${entry.rank}</td>
@@ -582,6 +611,7 @@
                             <td class="score-cell secondary">${formatScore(entry.rmsd)}</td>
                             <td class="score-cell secondary">${formatScore(entry.ptm)}</td>
                             <td class="score-cell secondary">${formatScore(entry.plddt)}</td>
+                            <td>${viewLink}</td>
                         </tr>
                     `;
                 }).join('');
@@ -642,12 +672,18 @@
                     return `<td class="score-cell secondary">-</td>`;
                 }).join('');
 
+                const firstToken = entry.problem_tokens ? Object.values(entry.problem_tokens)[0] : null;
+                const viewLink = firstToken
+                    ? `<a href="viewer.html?token=${encodeURIComponent(firstToken)}" target="_blank" class="view-link">View</a>`
+                    : '-';
+
                 return `
                     <tr>
                         <td class="rank-cell ${rankClass}">#${entry.rank}</td>
                         <td class="participant-id">${escapeHtml(entry.team)}</td>
                         <td class="score-cell primary">${zScore}</td>
                         ${problemCells}
+                        <td>${viewLink}</td>
                     </tr>
                 `;
             }).join('');
@@ -667,6 +703,7 @@
                                 <th class="sortable" data-key="team" data-type="string">Team</th>
                                 <th class="sortable" data-key="z_score" data-type="number">Z-Score</th>
                                 ${problemHeaders}
+                                <th class="view-col">View</th>
                             </tr>
                         </thead>
                         <tbody>${tableRows}</tbody>
