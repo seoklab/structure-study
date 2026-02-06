@@ -1,0 +1,73 @@
+name: New Session
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  new-session:
+    if: contains(github.event.issue.labels.*.name, 'new-session')
+    runs-on: [self-hosted, galaxy4]
+
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Parse and create session
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          python3 scripts/parse_new_session.py \
+            --issue-body "$ISSUE_BODY" \
+            --issue-number ${{ github.event.issue.number }} \
+            --config docs/targets/config.json
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/targets/config.json
+
+          git commit -m "Open session ${SESSION_KEY}: ${SESSION_NAME} [skip ci]"
+
+          for i in 1 2 3; do
+            if git push; then
+              echo "Push succeeded on attempt $i"
+              break
+            fi
+            echo "Push failed on attempt $i, rebasing..."
+            git pull --rebase
+          done
+
+      - name: Comment confirmation on issue
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BODY="## Session Created
+
+          | Field | Value |
+          |-------|-------|
+          | **Session Key** | \`${SESSION_KEY}\` |
+          | **Name** | ${SESSION_NAME} |
+          | **Previous Session** | \`${PREV_SESSION}\` (archived) |
+
+          The new session is now active. Add problems using the **New Competition Problem** issue template."
+
+          gh issue comment ${{ github.event.issue.number }} --body "$BODY"
+
+      - name: Comment failure on issue
+        if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} --body "## Session Creation Failed
+
+          There was an error creating this session. Please check the issue body format and try again.
+
+          See the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details."
+          gh issue edit ${{ github.event.issue.number }} --add-label "error"

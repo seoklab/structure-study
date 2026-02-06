@@ -219,9 +219,15 @@
                 <span class="status upcoming">Open</span>
             </a>
 
-            <a href="https://github.com/seoklab/structure-study/issues/new?template=new-problem.yml" class="competition-card" target="_blank">
+            <a id="new-problem-link" href="https://github.com/seoklab/structure-study/issues/new?template=new-problem.yml" class="competition-card" target="_blank">
                 <h3>Submit a New Problem</h3>
                 <p class="info">Propose a new protein design problem via GitHub Issues</p>
+                <span class="status upcoming">New</span>
+            </a>
+
+            <a href="https://github.com/seoklab/structure-study/issues/new?template=new-session.yml" class="competition-card" target="_blank">
+                <h3>Open a New Session</h3>
+                <p class="info">Create a new session and archive the current one</p>
                 <span class="status upcoming">New</span>
             </a>
         </div>
@@ -230,5 +236,17 @@
             <p>Supported by <a href="https://seoklab.org" target="_blank">SeokLab</a></p>
         </footer>
     </div>
+    <script>
+        fetch('targets/config.json')
+            .then(r => r.json())
+            .then(config => {
+                const session = config.active_session || '';
+                if (session) {
+                    const link = document.getElementById('new-problem-link');
+                    link.href += '&session=' + encodeURIComponent(session);
+                }
+            })
+            .catch(() => {});
+    </script>
 </body>
 </html>

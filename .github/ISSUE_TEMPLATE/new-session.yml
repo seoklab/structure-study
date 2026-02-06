@@ -1,0 +1,39 @@
+name: New Session
+description: Open a new competition session (archives the current active session)
+title: "New Session: "
+labels: ["new-session"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Open a New Session
+
+        This will create a new session, set it as active, and archive the
+        previous active session.
+
+  - type: input
+    id: session_key
+    attributes:
+      label: Session Key
+      description: Short identifier used internally (e.g. week3, round2)
+      placeholder: "week3"
+    validations:
+      required: true
+
+  - type: input
+    id: session_name
+    attributes:
+      label: Session Name
+      description: Display name for this session
+      placeholder: "Week 3 - De Novo Design"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Description shown to participants
+      placeholder: "De novo protein design challenges"
+    validations:
+      required: true

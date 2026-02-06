@@ -1,0 +1,120 @@
+#!/usr/bin/env python3
+"""
+Parse GitHub issue body for new session creation.
+
+Creates a new session in config.json, sets it as active,
+and archives the previous active session.
+"""
+
+import argparse
+import json
+import os
+import re
+import sys
+
+
+def parse_issue_body(body: str) -> dict:
+    """Parse ### field / value markdown format from GitHub issue body."""
+    fields = {}
+    current_field = None
+    current_value = []
+
+    for line in body.split("\n"):
+        if line.startswith("### "):
+            if current_field is not None:
+                fields[current_field] = "\n".join(current_value).strip()
+            current_field = line[4:].strip().lower().replace(" ", "_")
+            current_value = []
+        elif current_field is not None:
+            current_value.append(line)
+
+    if current_field is not None:
+        fields[current_field] = "\n".join(current_value).strip()
+
+    return fields
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Parse GitHub issue body for new session creation"
+    )
+    parser.add_argument("--issue-body", required=True, help="Issue body text")
+    parser.add_argument("--issue-number", required=True, type=int, help="Issue number")
+    parser.add_argument("--config", default="docs/targets/config.json", help="Config file path")
+
+    args = parser.parse_args()
+
+    # Parse issue body
+    fields = parse_issue_body(args.issue_body)
+    print(f"Parsed fields: {list(fields.keys())}")
+
+    # Extract fields
+    session_key = fields.get("session_key", "").strip()
+    session_name = fields.get("session_name", "").strip()
+    description = fields.get("description", "").strip()
+
+    # Validate
+    errors = []
+    if not session_key or session_key == "_No response_":
+        errors.append("Missing required field: session_key")
+    elif not re.match(r"^[a-z0-9_-]+$", session_key):
+        errors.append(f"Invalid session key: '{session_key}' (use lowercase letters, numbers, _, -)")
+
+    if not session_name or session_name == "_No response_":
+        errors.append("Missing required field: session_name")
+
+    if not description or description == "_No response_":
+        errors.append("Missing required field: description")
+
+    if errors:
+        print("Validation errors:", file=sys.stderr)
+        for err in errors:
+            print(f"  - {err}", file=sys.stderr)
+        sys.exit(1)
+
+    # Load config
+    with open(args.config) as f:
+        config = json.load(f)
+
+    sessions = config.get("sessions", {})
+
+    if session_key in sessions:
+        print(f"Session '{session_key}' already exists", file=sys.stderr)
+        sys.exit(1)
+
+    # Archive the current active session
+    prev_session = config.get("active_session", "")
+    if prev_session and prev_session in sessions:
+        sessions[prev_session]["status"] = "archived"
+        print(f"Archived previous session: {prev_session}")
+
+    # Create new session
+    sessions[session_key] = {
+        "name": session_name,
+        "status": "active",
+        "description": description,
+        "problems": [],
+    }
+
+    config["sessions"] = sessions
+    config["active_session"] = session_key
+
+    # Write config
+    with open(args.config, "w") as f:
+        json.dump(config, f, indent=2)
+        f.write("\n")
+    print(f"Updated config: {args.config}")
+
+    # Output env vars
+    github_env = os.environ.get("GITHUB_ENV")
+    if github_env:
+        with open(github_env, "a") as f:
+            f.write(f"SESSION_KEY={session_key}\n")
+            f.write(f"SESSION_NAME={session_name}\n")
+            f.write(f"PREV_SESSION={prev_session}\n")
+
+    print(f"Done: created session '{session_key}', archived '{prev_session}'")
+
+
+if __name__ == "__main__":
+    main()
