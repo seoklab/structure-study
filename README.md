@@ -1,6 +1,6 @@
-# Protein Design Competition Platform
+# SeokLab 구조스터디 - Protein Design Practice Platform
 
-A platform for running protein design competitions using AlphaFold3 structure prediction, hosted on GitHub Pages.
+A platform for running protein design jobs using AlphaFold3 structure prediction, hosted on GitHub Pages.
 
 Everything is done through the website — forms for creating sessions, adding problems, and submitting sequences. Behind the scenes, each form creates a GitHub Issue that triggers an automated workflow.
 
