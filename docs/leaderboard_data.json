@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-02-06T12:18:16.625862Z",
-  "active_session": "week2",
+  "last_updated": "2026-02-06T13:25:04.263462Z",
+  "active_session": "test1",
   "sessions": {
     "week1": {
       "name": "Week 1 - Scaffold Design",
@@ -14,11 +14,19 @@
     },
     "week2": {
       "name": "Week 2 - Binder Design",
-      "status": "active",
+      "status": "archived",
       "description": "Binder design challenges",
       "problems": [
         "problem_4",
         "problem_5"
+      ]
+    },
+    "test1": {
+      "name": "test1 - lab test",
+      "status": "active",
+      "description": "test1",
+      "problems": [
+        "problem_6"
       ]
     }
   },
@@ -1860,6 +1868,30 @@
           "interface_contacts": 571
         }
       ]
+    },
+    "problem_6": {
+      "name": "Problem 6 - testproblem",
+      "type": "monomer",
+      "primary_metric": "tm_score",
+      "session": "test1",
+      "rankings": [
+        {
+          "rank": 1,
+          "participant_id": "qwer",
+          "token": "V8NCrLRvVC9FbNmffcolLbyuGTp5Xzkk",
+          "submitted_at": "2026-02-06T13:21:35.244Z",
+          "primary_score": 0.47416,
+          "primary_metric": "tm_score",
+          "best_seq": "1",
+          "bb_lddt": 0.5231,
+          "bb_lddt_cov": 0.3184,
+          "tm_score": 0.47416,
+          "rmsd": 2.8,
+          "ptm": 0.78,
+          "plddt": 86.22,
+          "ranking_score": 0.78
+        }
+      ]
     }
   },
   "overall_rankings": {
@@ -2417,6 +2449,23 @@
           "problem_5": -2.486295517426327
         },
         "rank": 13
+      }
+    ],
+    "test1": [
+      {
+        "team": "qwer",
+        "problems_completed": 1,
+        "problem_scores": {
+          "problem_6": 0.47416
+        },
+        "problem_tokens": {
+          "problem_6": "V8NCrLRvVC9FbNmffcolLbyuGTp5Xzkk"
+        },
+        "overall_z_score": 0.0,
+        "problem_z_scores": {
+          "problem_6": 0.0
+        },
+        "rank": 1
       }
     ]
   }
