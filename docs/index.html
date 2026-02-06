@@ -43,10 +43,10 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .competitions-section {
+        .section {
             margin-bottom: 2rem;
         }
-        .competitions-section h2 {
+        .section h2 {
             color: #7eb8da;
             font-size: 0.9rem;
             font-weight: 600;
@@ -54,7 +54,7 @@
             text-transform: uppercase;
             margin-bottom: 1rem;
         }
-        .competition-card {
+        .card {
             display: block;
             background: rgba(22, 33, 62, 0.8);
             backdrop-filter: blur(10px);
@@ -66,33 +66,33 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
-        .competition-card:hover {
+        .card:hover {
             border-color: rgba(126, 184, 218, 0.5);
             transform: translateY(-4px);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
         }
-        .competition-card.featured {
+        .card.featured {
             border-color: rgba(255, 215, 0, 0.4);
             background: linear-gradient(135deg, rgba(26, 74, 122, 0.9) 0%, rgba(22, 33, 62, 0.9) 100%);
         }
-        .competition-card.featured:hover {
+        .card.featured:hover {
             border-color: rgba(255, 215, 0, 0.7);
         }
-        .competition-card h3 {
+        .card h3 {
             color: #fff;
             font-size: 1.4rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
         }
-        .competition-card.featured h3 {
+        .card.featured h3 {
             color: #ffd700;
         }
-        .competition-card .info {
+        .card .info {
             color: #9ab;
             font-size: 0.9rem;
             margin-bottom: 0.75rem;
         }
-        .competition-card .status {
+        .card .status {
             display: inline-block;
             padding: 0.3rem 0.9rem;
             border-radius: 20px;
@@ -100,15 +100,28 @@
             font-weight: 600;
             letter-spacing: 0.03em;
         }
+        .status.active {
+            background: rgba(46, 204, 113, 0.15);
+            color: #5ddb9a;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
         .status.completed {
             background: rgba(46, 204, 113, 0.15);
             color: #5ddb9a;
             border: 1px solid rgba(46, 204, 113, 0.3);
         }
-        .status.upcoming {
+        .status.open {
             background: rgba(126, 184, 218, 0.15);
             color: #7eb8da;
             border: 1px solid rgba(126, 184, 218, 0.3);
+        }
+        .card-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .card-row .card {
+            margin-bottom: 0;
         }
         .winners-display {
             margin-top: 1.25rem;
@@ -148,6 +161,19 @@
             color: #789;
             font-size: 0.75rem;
         }
+        /* Session detail in card */
+        .session-detail {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #789;
+        }
+        .session-detail span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
         footer {
             text-align: center;
             margin-top: 4rem;
@@ -168,6 +194,7 @@
             body { padding: 1rem; }
             h1 { font-size: 1.8rem; }
             .winners-list { gap: 1rem; }
+            .card-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -175,13 +202,45 @@
     <div class="container">
         <header>
             <p class="subtitle">SEOKLAB STRUCTURE STUDY</p>
-            <h1>Human ProteinMPNN Competition</h1>
+            <h1>Protein Design Competition</h1>
         </header>
 
-        <div class="competitions-section">
-            <h2>Competitions</h2>
+        <!-- Active Session -->
+        <div class="section">
+            <h2>Current Session</h2>
+            <a href="submit.html" class="card" id="session-card">
+                <h3 id="session-title">Loading...</h3>
+                <p class="info" id="session-desc">Loading active session...</p>
+                <span class="status active" id="session-status">Active</span>
+                <div class="session-detail" id="session-detail"></div>
+            </a>
 
-            <a href="archive-kidds-2026.html" class="competition-card featured">
+            <a href="leaderboard.html" class="card">
+                <h3>Leaderboard</h3>
+                <p class="info">View rankings and scores across all sessions</p>
+                <span class="status open">View</span>
+            </a>
+        </div>
+
+        <!-- Admin Actions -->
+        <div class="section">
+            <h2>Manage</h2>
+            <div class="card-row">
+                <a href="new-problem.html" class="card">
+                    <h3>Submit a New Problem</h3>
+                    <p class="info">Add a problem to the current session</p>
+                </a>
+                <a href="https://github.com/seoklab/structure-study/issues/new?template=new-session.yml" class="card" target="_blank">
+                    <h3>Open a New Session</h3>
+                    <p class="info">Archive current session and start a new one</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Past Competitions -->
+        <div class="section">
+            <h2>Archive</h2>
+            <a href="archive-kidds-2026.html" class="card featured">
                 <h3>1st KIDDS Human ProteinMPNN Competition</h3>
                 <p class="info">February 3-4, 2026 | Gyeongju, Korea</p>
                 <span class="status completed">Completed</span>
@@ -212,41 +271,41 @@
                     </div>
                 </div>
             </a>
-
-            <a href="submit.html" class="competition-card">
-                <h3>Ongoing Session-Based Competition</h3>
-                <p class="info">Submit sequences and view results on the leaderboard</p>
-                <span class="status upcoming">Open</span>
-            </a>
-
-            <a id="new-problem-link" href="https://github.com/seoklab/structure-study/issues/new?template=new-problem.yml" class="competition-card" target="_blank">
-                <h3>Submit a New Problem</h3>
-                <p class="info">Propose a new protein design problem via GitHub Issues</p>
-                <span class="status upcoming">New</span>
-            </a>
-
-            <a href="https://github.com/seoklab/structure-study/issues/new?template=new-session.yml" class="competition-card" target="_blank">
-                <h3>Open a New Session</h3>
-                <p class="info">Create a new session and archive the current one</p>
-                <span class="status upcoming">New</span>
-            </a>
         </div>
 
         <footer>
             <p>Supported by <a href="https://seoklab.org" target="_blank">SeokLab</a></p>
         </footer>
     </div>
+
     <script>
         fetch('targets/config.json')
             .then(r => r.json())
             .then(config => {
-                const session = config.active_session || '';
+                const activeKey = config.active_session || '';
+                const sessions = config.sessions || {};
+                const session = sessions[activeKey];
+
                 if (session) {
-                    const link = document.getElementById('new-problem-link');
-                    link.href += '&session=' + encodeURIComponent(session);
+                    document.getElementById('session-title').textContent = session.name;
+                    document.getElementById('session-desc').textContent = session.description;
+
+                    const problemCount = (session.problems || []).length;
+                    const detail = document.getElementById('session-detail');
+                    detail.innerHTML =
+                        `<span>Session: <strong>${activeKey}</strong></span>` +
+                        `<span>Problems: <strong>${problemCount}</strong></span>` +
+                        `<span>Status: <strong>${session.status}</strong></span>`;
+                } else {
+                    document.getElementById('session-title').textContent = 'No Active Session';
+                    document.getElementById('session-desc').textContent = 'Open a new session to get started';
+                    document.getElementById('session-status').textContent = 'None';
                 }
             })
-            .catch(() => {});
+            .catch(() => {
+                document.getElementById('session-title').textContent = 'Failed to load';
+                document.getElementById('session-desc').textContent = 'Could not load config.json';
+            });
     </script>
 </body>
 </html>

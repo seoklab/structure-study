@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Problem - SEOKLAB STRUCTURE STUDY</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            color: #e94560;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+        .card {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .card h2 {
+            color: #65cbf3;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            color: #ccc;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        label .required {
+            color: #e94560;
+        }
+        .hint {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+        }
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #2a3f5f;
+            border-radius: 8px;
+            background: #0f0f23;
+            color: #eee;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+        }
+        select option {
+            background: #0f0f23;
+            color: #eee;
+        }
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #65cbf3;
+        }
+        textarea {
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            resize: vertical;
+            min-height: 80px;
+        }
+        .error-msg {
+            color: #e94560;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #e94560;
+            color: white;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: #d63850;
+            transform: translateY(-1px);
+        }
+        .btn-primary:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-secondary {
+            background: #2a3f5f;
+            color: #ccc;
+        }
+        .btn-secondary:hover {
+            background: #3a5070;
+        }
+        .actions {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .message {
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        .message.success {
+            background: rgba(46, 204, 113, 0.15);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            color: #2ecc71;
+        }
+        .message.error {
+            background: rgba(233, 69, 96, 0.15);
+            border: 1px solid rgba(233, 69, 96, 0.3);
+            color: #e94560;
+        }
+        .message h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        .message p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        .binder-fields {
+            display: none;
+            border-top: 1px solid #2a3f5f;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .binder-fields.visible {
+            display: block;
+        }
+        .binder-fields h3 {
+            color: #d4a5ff;
+            margin-bottom: 1rem;
+        }
+        .session-info {
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(101, 203, 243, 0.1);
+            border: 1px solid rgba(101, 203, 243, 0.3);
+            border-radius: 8px;
+            display: inline-block;
+        }
+        .session-info .session-name {
+            color: #65cbf3;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .session-info .session-desc {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: #65cbf3;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            h1 { font-size: 1.8rem; }
+            .card { padding: 1.5rem; }
+            .actions { flex-direction: column; }
+            .btn { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <p style="margin-bottom: 0.5rem;">
+                <a href="./" style="color: #65cbf3; text-decoration: none;">&larr; Home</a>
+                <span style="margin: 0 0.5rem; color: #555;">|</span>
+                <a href="submit.html" style="color: #65cbf3; text-decoration: none;">Submit Sequences</a>
+                <span style="margin: 0 0.5rem; color: #555;">|</span>
+                <a href="leaderboard.html" style="color: #65cbf3; text-decoration: none;">Leaderboard</a>
+            </p>
+            <h1>SEOKLAB STRUCTURE STUDY</h1>
+            <p class="subtitle">Submit a new competition problem</p>
+            <div id="session-header" class="session-info" style="display: none;">
+                <div class="session-name" id="session-name"></div>
+                <div class="session-desc" id="session-desc"></div>
+            </div>
+        </header>
+
+        <div id="success-message" class="message success">
+            <h3>Redirecting to GitHub...</h3>
+            <p id="success-text">Your problem is being submitted as a GitHub Issue.</p>
+        </div>
+
+        <div id="error-message" class="message error">
+            <h3>Validation Error</h3>
+            <p id="error-text">Please fix the errors below.</p>
+        </div>
+
+        <div class="card">
+            <h2>Problem Details</h2>
+            <form id="problem-form">
+                <div class="form-group">
+                    <label for="problem_name">Problem Name <span class="required">*</span></label>
+                    <input type="text" id="problem_name" placeholder="e.g. 3-Helix Bundle" required>
+                    <p class="hint">Display name shown to participants</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="problem_type">Problem Type <span class="required">*</span></label>
+                    <select id="problem_type" required>
+                        <option value="monomer">Monomer (Scaffold Design)</option>
+                        <option value="binder">Binder Design</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="session">Session <span class="required">*</span></label>
+                    <select id="session" required>
+                        <option value="">Loading sessions...</option>
+                    </select>
+                    <p class="hint">Session this problem belongs to</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description <span class="required">*</span></label>
+                    <textarea id="description" placeholder="Design a sequence for a 3-helix bundle scaffold (73 residues)" required></textarea>
+                    <p class="hint">Problem description shown to participants</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="primary_metric">Primary Metric <span class="required">*</span></label>
+                    <select id="primary_metric" required>
+                        <option value="bb_lddt_cov">bb_lddt_cov (lDDT x Coverage)</option>
+                        <option value="bb_lddt">bb_lddt (Backbone lDDT)</option>
+                        <option value="tm_score">tm_score (TM-score)</option>
+                        <option value="binder_lddt">binder_lddt (Binder lDDT)</option>
+                        <option value="interface_lddt">interface_lddt (Interface lDDT)</option>
+                        <option value="iptm">iptm (Interface pTM)</option>
+                    </select>
+                    <p class="hint">Metric used for ranking participants</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="msa_mode">MSA Mode <span class="required">*</span></label>
+                    <select id="msa_mode" required>
+                        <option value="none">none (No MSA search)</option>
+                        <option value="search">search (Run MSA search)</option>
+                        <option value="precomputed">precomputed (Use pre-calculated MSA)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pdb_path">PDB File Path <span class="required">*</span></label>
+                    <input type="text" id="pdb_path" placeholder="/data/galaxy4/user/.../my-scaffold.pdb" required>
+                    <p class="hint">Absolute path to the PDB file on the server</p>
+                </div>
+
+                <div class="binder-fields" id="binder-fields">
+                    <h3>Binder-Specific Fields</h3>
+
+                    <div class="form-group">
+                        <label for="target_sequence">Target Sequence <span class="required">*</span></label>
+                        <textarea id="target_sequence" placeholder="Full amino acid sequence of the target protein..." style="min-height: 100px;"></textarea>
+                        <p class="hint">The target protein sequence that participants will design binders for</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expected_binder_length">Expected Binder Length <span class="required">*</span></label>
+                        <input type="text" id="expected_binder_length" placeholder="20,50">
+                        <p class="hint">Min and max residue count, comma-separated</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="target_msa_path">Target MSA Path</label>
+                        <input type="text" id="target_msa_path" placeholder="/data/galaxy4/user/.../target.a3m">
+                        <p class="hint">Absolute path to precomputed .a3m file on the server (optional)</p>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary" id="submit-btn">
+                        Submit via GitHub Issue
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear</button>
+                </div>
+            </form>
+        </div>
+
+        <footer>
+            <p>Supported by <a href="https://seoklab.org" target="_blank">SeokLab</a></p>
+        </footer>
+    </div>
+
+    <script>
+        const CONFIG_URL = './targets/config.json';
+        let config = null;
+
+        const form = document.getElementById('problem-form');
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
+        const successText = document.getElementById('success-text');
+        const errorText = document.getElementById('error-text');
+
+        // Load config and populate session dropdown
+        async function init() {
+            try {
+                const response = await fetch(CONFIG_URL);
+                if (!response.ok) throw new Error('Failed to load config');
+                config = await response.json();
+
+                const sessionSelect = document.getElementById('session');
+                const sessions = config.sessions || {};
+                const activeSession = config.active_session || '';
+
+                sessionSelect.innerHTML = '';
+                for (const [key, info] of Object.entries(sessions)) {
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = `${key} - ${info.name}`;
+                    if (info.status === 'archived') {
+                        option.textContent += ' (archived)';
+                    }
+                    if (key === activeSession) {
+                        option.selected = true;
+                    }
+                    sessionSelect.appendChild(option);
+                }
+
+                // Show session info
+                if (activeSession && sessions[activeSession]) {
+                    document.getElementById('session-name').textContent = sessions[activeSession].name;
+                    document.getElementById('session-desc').textContent = sessions[activeSession].description;
+                    document.getElementById('session-header').style.display = 'inline-block';
+                }
+            } catch (error) {
+                console.error('Error loading config:', error);
+                document.getElementById('session').innerHTML = '<option value="">Failed to load sessions</option>';
+            }
+        }
+
+        // Toggle binder fields
+        document.getElementById('problem_type').addEventListener('change', function() {
+            const binderFields = document.getElementById('binder-fields');
+            binderFields.classList.toggle('visible', this.value === 'binder');
+        });
+
+        function showSuccess(message) {
+            successText.innerHTML = message;
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.style.display = 'block';
+            successMessage.style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function hideMessages() {
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+        }
+
+        // Build issue body in ### field / value format
+        function constructIssueBody() {
+            const lines = [
+                '### Problem Name',
+                document.getElementById('problem_name').value.trim(),
+                '',
+                '### Problem Type',
+                document.getElementById('problem_type').value,
+                '',
+                '### Session',
+                document.getElementById('session').value,
+                '',
+                '### Description',
+                document.getElementById('description').value.trim(),
+                '',
+                '### Primary Metric',
+                document.getElementById('primary_metric').value,
+                '',
+                '### MSA Mode',
+                document.getElementById('msa_mode').value,
+                '',
+                '### PDB File Path',
+                document.getElementById('pdb_path').value.trim(),
+            ];
+
+            // Binder fields
+            const problemType = document.getElementById('problem_type').value;
+            if (problemType === 'binder') {
+                lines.push(
+                    '',
+                    '### Target Sequence',
+                    document.getElementById('target_sequence').value.trim(),
+                    '',
+                    '### Expected Binder Length',
+                    document.getElementById('expected_binder_length').value.trim(),
+                    '',
+                    '### Target MSA Path',
+                    document.getElementById('target_msa_path').value.trim() || '_No response_',
+                );
+            }
+
+            return lines.join('\n');
+        }
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            hideMessages();
+
+            // Validate
+            const problemName = document.getElementById('problem_name').value.trim();
+            const session = document.getElementById('session').value;
+            const description = document.getElementById('description').value.trim();
+            const pdbPath = document.getElementById('pdb_path').value.trim();
+            const problemType = document.getElementById('problem_type').value;
+
+            if (!problemName || !session || !description || !pdbPath) {
+                showError('Please fill in all required fields.');
+                return;
+            }
+
+            if (!pdbPath.startsWith('/')) {
+                showError('PDB file path must be an absolute path (starting with /).');
+                return;
+            }
+
+            if (!pdbPath.endsWith('.pdb')) {
+                showError('PDB file path must end with .pdb');
+                return;
+            }
+
+            if (problemType === 'binder') {
+                const targetSeq = document.getElementById('target_sequence').value.trim();
+                const binderLen = document.getElementById('expected_binder_length').value.trim();
+                if (!targetSeq) {
+                    showError('Binder problems require a target sequence.');
+                    return;
+                }
+                if (!binderLen) {
+                    showError('Binder problems require expected binder length.');
+                    return;
+                }
+                const parts = binderLen.split(',').map(s => s.trim());
+                if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) {
+                    showError('Expected binder length must be two numbers separated by comma (e.g. 20,50).');
+                    return;
+                }
+            }
+
+            const issueBody = constructIssueBody();
+            const issueTitle = `New Problem: ${problemName}`;
+            const issueLabels = 'new-problem';
+            const githubRepo = config?.github_repo || 'seoklab/structure-study';
+
+            const baseUrl = `https://github.com/${githubRepo}/issues/new`;
+            const params = new URLSearchParams({
+                title: issueTitle,
+                body: issueBody,
+                labels: issueLabels
+            });
+            const issueUrl = `${baseUrl}?${params.toString()}`;
+
+            showSuccess('Redirecting to GitHub to create the problem issue...');
+            window.open(issueUrl, '_blank');
+        });
+
+        function clearForm() {
+            form.reset();
+            hideMessages();
+            document.getElementById('binder-fields').classList.remove('visible');
+        }
+
+        init();
+    </script>
+</body>
+</html>
