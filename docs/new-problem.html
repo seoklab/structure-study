@@ -295,9 +295,29 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="pdb_path">PDB File Path <span class="required">*</span></label>
-                    <input type="text" id="pdb_path" placeholder="/data/galaxy4/user/.../my-scaffold.pdb" required>
+                    <label>PDB File <span class="required">*</span> (choose one method)</label>
+                    <select id="pdb_method" style="margin-bottom: 0.75rem;">
+                        <option value="path">Server Path</option>
+                        <option value="upload">File Upload (paste content)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="pdb-path-group">
+                    <label for="pdb_server_path">Server Path</label>
+                    <input type="text" id="pdb_server_path" placeholder="/data/galaxy4/user/.../my-scaffold.pdb">
                     <p class="hint">Absolute path to the PDB file on the server</p>
+                </div>
+
+                <div class="form-group" id="pdb-upload-group" style="display: none;">
+                    <label for="pdb_filename">Filename <span class="required">*</span></label>
+                    <input type="text" id="pdb_filename" placeholder="my-scaffold.pdb">
+                    <p class="hint">Filename to save as (must end with .pdb)</p>
+                </div>
+
+                <div class="form-group" id="pdb-content-group" style="display: none;">
+                    <label for="pdb_content">PDB Content <span class="required">*</span></label>
+                    <textarea id="pdb_content" placeholder="Paste PDB file content here (ATOM lines...)" style="min-height: 150px; font-size: 0.85rem;"></textarea>
+                    <p class="hint">Paste the full PDB file content</p>
                 </div>
 
                 <div class="binder-fields" id="binder-fields">
@@ -389,6 +409,14 @@
             binderFields.classList.toggle('visible', this.value === 'binder');
         });
 
+        // Toggle PDB method fields
+        document.getElementById('pdb_method').addEventListener('change', function() {
+            const isPath = this.value === 'path';
+            document.getElementById('pdb-path-group').style.display = isPath ? '' : 'none';
+            document.getElementById('pdb-upload-group').style.display = isPath ? 'none' : '';
+            document.getElementById('pdb-content-group').style.display = isPath ? 'none' : '';
+        });
+
         function showSuccess(message) {
             successText.innerHTML = message;
             successMessage.style.display = 'block';
@@ -410,6 +438,8 @@
 
         // Build issue body in ### field / value format
         function constructIssueBody() {
+            const pdbMethod = document.getElementById('pdb_method').value;
+
             const lines = [
                 '### Problem Name',
                 document.getElementById('problem_name').value.trim(),
@@ -429,8 +459,17 @@
                 '### MSA Mode',
                 document.getElementById('msa_mode').value,
                 '',
-                '### PDB File Path',
-                document.getElementById('pdb_path').value.trim(),
+                '### Method 1: Server Path',
+                pdbMethod === 'path' ? document.getElementById('pdb_server_path').value.trim() : '_No response_',
+                '',
+                '### Method 2: File Upload',
+                '_No response_',
+                '',
+                '### Method 3: Filename',
+                pdbMethod === 'upload' ? document.getElementById('pdb_filename').value.trim() : '_No response_',
+                '',
+                '### Method 3: Pasted PDB Content',
+                pdbMethod === 'upload' ? document.getElementById('pdb_content').value.trim() : '_No response_',
             ];
 
             // Binder fields
@@ -461,22 +500,47 @@
             const problemName = document.getElementById('problem_name').value.trim();
             const session = document.getElementById('session').value;
             const description = document.getElementById('description').value.trim();
-            const pdbPath = document.getElementById('pdb_path').value.trim();
             const problemType = document.getElementById('problem_type').value;
+            const pdbMethod = document.getElementById('pdb_method').value;
 
-            if (!problemName || !session || !description || !pdbPath) {
+            if (!problemName || !session || !description) {
                 showError('Please fill in all required fields.');
                 return;
             }
 
-            if (!pdbPath.startsWith('/')) {
-                showError('PDB file path must be an absolute path (starting with /).');
-                return;
-            }
-
-            if (!pdbPath.endsWith('.pdb')) {
-                showError('PDB file path must end with .pdb');
-                return;
+            if (pdbMethod === 'path') {
+                const pdbPath = document.getElementById('pdb_server_path').value.trim();
+                if (!pdbPath) {
+                    showError('Please enter the server path to the PDB file.');
+                    return;
+                }
+                if (!pdbPath.startsWith('/')) {
+                    showError('PDB file path must be an absolute path (starting with /).');
+                    return;
+                }
+                if (!pdbPath.endsWith('.pdb')) {
+                    showError('PDB file path must end with .pdb');
+                    return;
+                }
+            } else {
+                const pdbFilename = document.getElementById('pdb_filename').value.trim();
+                const pdbContent = document.getElementById('pdb_content').value.trim();
+                if (!pdbFilename) {
+                    showError('Please enter a filename for the PDB file.');
+                    return;
+                }
+                if (!pdbFilename.endsWith('.pdb')) {
+                    showError('PDB filename must end with .pdb');
+                    return;
+                }
+                if (!pdbContent) {
+                    showError('Please paste the PDB file content.');
+                    return;
+                }
+                if (!pdbContent.includes('ATOM')) {
+                    showError('PDB content does not appear to contain ATOM lines.');
+                    return;
+                }
             }
 
             if (problemType === 'binder') {
@@ -518,6 +582,9 @@
             form.reset();
             hideMessages();
             document.getElementById('binder-fields').classList.remove('visible');
+            document.getElementById('pdb-path-group').style.display = '';
+            document.getElementById('pdb-upload-group').style.display = 'none';
+            document.getElementById('pdb-content-group').style.display = 'none';
         }
 
         init();

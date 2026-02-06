@@ -247,6 +247,11 @@ def main():
 
     # Parse issue body
     fields = parse_issue_body(args.issue_body)
+
+    # Backward compat: old template used "pdb_file_path" as a single server path field
+    if "pdb_file_path" in fields and "method_1:_server_path" not in fields:
+        fields["method_1:_server_path"] = fields.pop("pdb_file_path")
+
     print(f"Parsed fields: {list(fields.keys())}")
 
     # Load config
