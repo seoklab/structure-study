@@ -1,0 +1,113 @@
+name: New Competition Problem
+description: Submit a new problem for the protein design competition
+title: "New Problem: "
+labels: ["new-problem"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Add a New Competition Problem
+
+        Fill in the fields below to add a new problem. The PDB file will be copied
+        from the server path and `config.json` will be updated.
+
+  - type: input
+    id: problem_name
+    attributes:
+      label: Problem Name
+      description: Display name for this problem
+      placeholder: "e.g. 3-Helix Bundle"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: problem_type
+    attributes:
+      label: Problem Type
+      options:
+        - monomer
+        - binder
+    validations:
+      required: true
+
+  - type: input
+    id: session
+    attributes:
+      label: Session
+      description: Session key this problem belongs to (e.g. week1, week2)
+      placeholder: "week2"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Problem description shown to participants
+      placeholder: "Design a sequence for a 3-helix bundle scaffold (73 residues)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: primary_metric
+    attributes:
+      label: Primary Metric
+      description: Metric used for ranking
+      options:
+        - bb_lddt_cov
+        - bb_lddt
+        - tm_score
+        - binder_lddt
+        - interface_lddt
+        - iptm
+    validations:
+      required: true
+
+  - type: dropdown
+    id: msa_mode
+    attributes:
+      label: MSA Mode
+      description: MSA search mode for structure prediction
+      options:
+        - "none"
+        - search
+        - precomputed
+    validations:
+      required: true
+
+  - type: input
+    id: pdb_path
+    attributes:
+      label: PDB File Path
+      description: Absolute path to the PDB file on the server (will be copied to docs/targets/)
+      placeholder: "/data/galaxy4/user/.../my-scaffold.pdb"
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ### Binder-Only Fields
+        Leave these blank for monomer problems.
+
+  - type: textarea
+    id: target_sequence
+    attributes:
+      label: Target Sequence
+      description: Full amino acid sequence of the target protein (binder only)
+      render: text
+
+  - type: input
+    id: expected_binder_length
+    attributes:
+      label: Expected Binder Length
+      description: "Min and max residue count, e.g. 20,50"
+      placeholder: "20,50"
+
+  - type: input
+    id: target_msa_path
+    attributes:
+      label: Target MSA Path
+      description: Absolute path to precomputed .a3m file on the server (binder only)
+      placeholder: "/data/galaxy4/user/.../target.a3m"

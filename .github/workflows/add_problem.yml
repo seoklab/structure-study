@@ -1,0 +1,78 @@
+name: Add New Problem
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  add-problem:
+    if: contains(github.event.issue.labels.*.name, 'new-problem')
+    runs-on: [self-hosted, galaxy4]
+
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Parse and add problem
+        id: parse
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          python3 scripts/parse_new_problem.py \
+            --issue-body "$ISSUE_BODY" \
+            --issue-number ${{ github.event.issue.number }} \
+            --config docs/targets/config.json \
+            --targets-dir docs/targets
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/targets/config.json "docs/targets/$PDB_FILENAME"
+
+          git commit -m "Add ${PROBLEM_ID}: ${PROBLEM_NAME} [skip ci]"
+
+          # Retry push with rebase up to 3 times
+          for i in 1 2 3; do
+            if git push; then
+              echo "Push succeeded on attempt $i"
+              break
+            fi
+            echo "Push failed on attempt $i, rebasing..."
+            git pull --rebase
+          done
+
+      - name: Comment confirmation on issue
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BODY="## Problem Added
+
+          | Field | Value |
+          |-------|-------|
+          | **Problem ID** | \`${PROBLEM_ID}\` |
+          | **Name** | ${PROBLEM_NAME} |
+          | **Session** | \`${SESSION}\` |
+          | **PDB File** | \`${PDB_FILENAME}\` |
+          | **Residues** | ${RESIDUE_COUNT} |
+
+          The problem is now available in the competition."
+
+          gh issue comment ${{ github.event.issue.number }} --body "$BODY"
+
+      - name: Comment failure on issue
+        if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} --body "## Problem Addition Failed
+
+          There was an error adding this problem. Please check the issue body format and try again.
+
+          See the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details."
+          gh issue edit ${{ github.event.issue.number }} --add-label "error"
