@@ -26,13 +26,19 @@ def extract_team_name(participant_id: str) -> str:
     """
     Extract team name from participant_id.
 
-    Expected format: team1_day1_round1 -> team1
-    Also handles: admin1_day2_round1 -> admin1
+    Expected format: team1_week2 -> team1
+    Also handles: team1_day1_round1 -> team1 (legacy)
+                  admin1_day2_round1 -> admin1
                   baker_mkz59sge_jt65 -> baker (for legacy format)
 
     Falls back to full participant_id if pattern not matched.
     """
-    # Pattern: teamname_day<N>_round<M>
+    # Pattern: teamname_week<N> (new format)
+    match = re.match(r'^([^_]+)_week\d+', participant_id)
+    if match:
+        return match.group(1)
+
+    # Pattern: teamname_day<N>_round<M> (legacy format)
     match = re.match(r'^([^_]+)_day\d+_round\d+$', participant_id)
     if match:
         return match.group(1)
@@ -41,7 +47,6 @@ def extract_team_name(participant_id: str) -> str:
     # Only if it looks like a team name (alphanumeric)
     parts = participant_id.split('_')
     if len(parts) >= 1 and parts[0].isalnum():
-        # For legacy submissions, use the first part
         return parts[0]
 
     return participant_id
@@ -65,11 +70,9 @@ def get_problem_info(config: dict) -> dict:
             "residue_count": p.get("residue_count"),
             "description": p.get("description", ""),
             # Primary metric for z-score ranking (configurable per problem in config.json)
-            # Options: bb_lddt, binder_lddt, interface_lddt, iptm, tm_score, etc.
             "primary_metric": p.get("primary_metric", "bb_lddt"),
-            # Day and visibility for auto-hiding problems
-            "day": p.get("day", 1),
-            "hidden": p.get("hidden")  # None = auto, True = always hide, False = always show
+            # Session-based organization
+            "session": p.get("session", "week1"),
         }
     return problems
 
@@ -547,13 +550,16 @@ def compute_overall_rankings(problem_results: dict[str, list], problem_info: dic
 def generate_leaderboard(
     problem_results: dict[str, list],
     problem_info: dict,
+    config: dict,
     output_path: str
 ) -> dict:
     """Generate the leaderboard data structure."""
     leaderboard = {
         "last_updated": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "active_session": config.get("active_session", ""),
+        "sessions": config.get("sessions", {}),
         "problems": {},
-        "overall_rankings": []
+        "overall_rankings": {}
     }
 
     # Generate per-problem rankings
@@ -627,13 +633,26 @@ def generate_leaderboard(
             "name": info["name"],
             "type": info["type"],
             "primary_metric": primary_metric,
-            "day": info.get("day", 1),
-            "hidden": info.get("hidden"),  # None = auto, True = always hide, False = always show
+            "session": info.get("session", "week1"),
             "rankings": rankings
         }
 
-    # Generate overall rankings
-    leaderboard["overall_rankings"] = compute_overall_rankings(problem_results, problem_info)
+    # Generate overall rankings per session
+    sessions = config.get("sessions", {})
+    for session_id, session_info in sessions.items():
+        session_problem_ids = set(session_info.get("problems", []))
+        session_problem_results = {
+            pid: entries for pid, entries in problem_results.items()
+            if pid in session_problem_ids
+        }
+        session_problem_info = {
+            pid: info for pid, info in problem_info.items()
+            if pid in session_problem_ids
+        }
+        if session_problem_info:
+            leaderboard["overall_rankings"][session_id] = compute_overall_rankings(
+                session_problem_results, session_problem_info
+            )
 
     # Write output
     output_dir = os.path.dirname(output_path)
@@ -672,18 +691,19 @@ def main():
         print(f"  {pid}: {len(entries)} entries")
 
     # Generate leaderboard
-    leaderboard = generate_leaderboard(problem_results, problem_info, args.output)
+    leaderboard = generate_leaderboard(problem_results, problem_info, config, args.output)
 
     print(f"\nLeaderboard saved to {args.output}")
     print(f"Last updated: {leaderboard['last_updated']}")
 
     # Print summary
-    print("\n=== Overall Rankings (by Team) ===")
-    for entry in leaderboard["overall_rankings"][:10]:
-        z_score = entry.get('overall_z_score', 0)
-        print(f"  #{entry['rank']}: {entry['team']} "
-              f"({entry['problems_completed']} problems, "
-              f"z-score: {z_score:+.2f})")
+    for session_id, rankings in leaderboard["overall_rankings"].items():
+        print(f"\n=== Overall Rankings - {session_id} (by Team) ===")
+        for entry in rankings[:10]:
+            z_score = entry.get('overall_z_score', 0)
+            print(f"  #{entry['rank']}: {entry['team']} "
+                  f"({entry['problems_completed']} problems, "
+                  f"z-score: {z_score:+.2f})")
 
     return 0
 

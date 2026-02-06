@@ -74,6 +74,51 @@
             font-size: 0.9rem;
             margin-bottom: 1.5rem;
         }
+
+        /* Session selector */
+        .session-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .session-selector label {
+            color: #888;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+        }
+        .session-btn {
+            padding: 0.5rem 1rem;
+            background: #0f0f23;
+            border: 2px solid #2a3f5f;
+            border-radius: 8px;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .session-btn:hover {
+            border-color: #65cbf3;
+            color: #fff;
+        }
+        .session-btn.active {
+            background: #0f3460;
+            border-color: #65cbf3;
+            color: #65cbf3;
+            font-weight: 600;
+        }
+        .session-status {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            margin-left: 0.3rem;
+            vertical-align: middle;
+        }
+        .session-status.active { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+        .session-status.archived { background: rgba(136, 136, 136, 0.2); color: #888; }
+        .session-status.upcoming { background: rgba(101, 203, 243, 0.2); color: #65cbf3; }
+
         .tabs {
             display: flex;
             flex-wrap: wrap;
@@ -227,12 +272,6 @@
             padding: 3rem;
             color: #888;
         }
-        .metric-label {
-            font-size: 0.7rem;
-            color: #666;
-            display: block;
-            margin-top: 0.1rem;
-        }
         .loading {
             text-align: center;
             padding: 3rem;
@@ -290,9 +329,10 @@
         <div class="header-content">
             <div class="header-left">
                 <nav class="nav-links">
-                    <a href="./">← Submit</a>
+                    <a href="./">Home</a>
+                    <a href="submit.html">Submit</a>
                 </nav>
-                <h1>🏆 Leaderboard</h1>
+                <h1>Leaderboard</h1>
             </div>
             <div class="header-links">
                 <a href="downloads.html">Downloads</a>
@@ -303,6 +343,10 @@
     <div class="container">
         <p class="last-updated" id="last-updated">Loading...</p>
 
+        <div class="session-selector" id="session-selector">
+            <label>Session:</label>
+        </div>
+
         <div class="tabs" id="tabs">
             <button class="tab overall active" data-tab="overall">Overall Rankings</button>
         </div>
@@ -311,7 +355,7 @@
             <div class="panel active" id="panel-overall">
                 <div class="panel-header">
                     <h2>Overall Rankings</h2>
-                    <p>Aggregate rankings across all problems. Score based on average placement.</p>
+                    <p>Aggregate rankings across all problems. Score based on average z-score.</p>
                 </div>
                 <div class="loading">Loading leaderboard data...</div>
             </div>
@@ -321,30 +365,9 @@
     <script>
         const LEADERBOARD_URL = './leaderboard_data.json';
 
-        // Competition day start dates (problems auto-show on their day)
-        // Local time (KST for this competition)
-        const COMPETITION_DAYS = {
-            1: new Date('2026-01-01T00:00:00'),  // Day 1: always visible
-            2: new Date('2026-02-04T09:20:00')   // Day 2: Wednesday, Feb 4, 9:20 AM KST
-        };
-
-        // Check if a problem should be visible
-        function isProblemVisible(problem) {
-            // Manual override: hidden = true -> always hide, hidden = false -> always show
-            if (problem.hidden === true) return false;
-            if (problem.hidden === false) return true;
-
-            // Auto-hide based on day (if no manual override)
-            const problemDay = problem.day || 1;
-            const dayStart = COMPETITION_DAYS[problemDay];
-            if (!dayStart) return true;  // No date config, show by default
-
-            const now = new Date();
-            return now >= dayStart;
-        }
-
         let leaderboardData = null;
-        let currentSorts = {}; // Track current sort state per table
+        let currentSorts = {};
+        let currentSession = null;
 
         async function loadLeaderboard() {
             try {
@@ -353,12 +376,51 @@
                     throw new Error('Failed to load leaderboard data');
                 }
                 leaderboardData = await response.json();
+
+                // Default to active session
+                currentSession = leaderboardData.active_session || Object.keys(leaderboardData.sessions || {})[0] || null;
+
+                renderSessionSelector();
                 renderLeaderboard();
             } catch (error) {
                 console.error('Error loading leaderboard:', error);
                 document.getElementById('panel-overall').innerHTML =
                     '<div class="error">Failed to load leaderboard data. Rankings will appear once submissions are evaluated.</div>';
             }
+        }
+
+        function renderSessionSelector() {
+            const container = document.getElementById('session-selector');
+            const sessions = leaderboardData.sessions || {};
+
+            if (Object.keys(sessions).length <= 1) {
+                container.style.display = 'none';
+                return;
+            }
+
+            Object.entries(sessions).forEach(([sessionId, info]) => {
+                const btn = document.createElement('button');
+                btn.className = 'session-btn' + (sessionId === currentSession ? ' active' : '');
+                btn.dataset.session = sessionId;
+
+                const statusBadge = info.status ? `<span class="session-status ${info.status}">${info.status}</span>` : '';
+                btn.innerHTML = info.name + statusBadge;
+
+                btn.addEventListener('click', () => selectSession(sessionId));
+                container.appendChild(btn);
+            });
+        }
+
+        function selectSession(sessionId) {
+            currentSession = sessionId;
+
+            // Update session buttons
+            document.querySelectorAll('.session-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.session === sessionId);
+            });
+
+            // Re-render leaderboard for this session
+            renderLeaderboard();
         }
 
         function renderLeaderboard() {
@@ -369,14 +431,20 @@
             document.getElementById('last-updated').textContent =
                 `Last updated: ${lastUpdated.toLocaleString()}`;
 
-            // Render tabs
+            // Clear existing tabs and panels (except overall)
             const tabsContainer = document.getElementById('tabs');
             const panelsContainer = document.getElementById('panels');
+            tabsContainer.innerHTML = '<button class="tab overall active" data-tab="overall">Overall Rankings</button>';
+            panelsContainer.innerHTML = '<div class="panel active" id="panel-overall"></div>';
 
-            // Create problem tabs (filter by visibility)
+            // Filter problems by selected session
             const problems = leaderboardData.problems || {};
+            const sessions = leaderboardData.sessions || {};
+            const sessionInfo = sessions[currentSession];
+            const sessionProblemIds = sessionInfo ? new Set(sessionInfo.problems || []) : new Set(Object.keys(problems));
+
             const sortedProblems = Object.keys(problems).sort().filter(pid =>
-                isProblemVisible(problems[pid])
+                sessionProblemIds.has(pid)
             );
 
             sortedProblems.forEach(problemId => {
@@ -399,7 +467,7 @@
                 panelsContainer.appendChild(panel);
             });
 
-            // Render overall panel
+            // Render overall panel for current session
             document.getElementById('panel-overall').innerHTML = renderOverallPanel();
 
             // Add click handler for overall tab
@@ -410,12 +478,9 @@
         }
 
         function selectTab(tabId) {
-            // Update tabs
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.toggle('active', tab.dataset.tab === tabId);
             });
-
-            // Update panels
             document.querySelectorAll('.panel').forEach(panel => {
                 panel.classList.toggle('active', panel.id === `panel-${tabId}`);
             });
@@ -439,7 +504,6 @@
             let tableHeaders, tableRows;
 
             if (isBinder) {
-                // Show lDDT×Cov column for problem_4 only (problem_5 has unreliable coverage due to short peptide)
                 const showBinderCov = problemId === 'problem_4';
                 const binderColSpan = showBinderCov ? 4 : 3;
 
@@ -487,7 +551,6 @@
                     `;
                 }).join('');
             } else {
-                // Monomer design
                 tableHeaders = `
                     <tr>
                         <th class="sortable" data-key="rank" data-type="number">Rank</th>
@@ -539,7 +602,8 @@
         }
 
         function renderOverallPanel() {
-            const rankings = leaderboardData.overall_rankings || [];
+            const overallRankings = leaderboardData.overall_rankings || {};
+            const rankings = overallRankings[currentSession] || [];
 
             if (rankings.length === 0) {
                 return `
@@ -551,13 +615,14 @@
                 `;
             }
 
-            // Get sorted problem IDs (filtered by visibility)
+            // Get problem IDs for current session
             const problems = leaderboardData.problems || {};
-            const problemIds = Object.keys(problems).sort().filter(pid =>
-                isProblemVisible(problems[pid])
-            );
+            const sessions = leaderboardData.sessions || {};
+            const sessionInfo = sessions[currentSession];
+            const sessionProblemIds = sessionInfo ? sessionInfo.problems || [] : Object.keys(problems).sort();
 
-            // Build problem column headers
+            const problemIds = sessionProblemIds.filter(pid => pid in problems).sort();
+
             const problemHeaders = problemIds.map(pid => {
                 const pnum = pid.replace('problem_', '');
                 return `<th class="sortable" data-key="problem_${pnum}" data-type="number">P${pnum}</th>`;
@@ -566,11 +631,9 @@
             const tableRows = rankings.map(entry => {
                 const rankClass = entry.rank <= 3 ? `rank-${entry.rank}` : '';
 
-                // Format z-score
                 const zScore = entry.overall_z_score !== undefined ?
                     (entry.overall_z_score >= 0 ? '+' : '') + entry.overall_z_score.toFixed(2) : '-';
 
-                // Build problem score cells
                 const problemCells = problemIds.map(pid => {
                     const score = entry.problem_scores ? entry.problem_scores[pid] : null;
                     if (score !== null && score !== undefined) {
@@ -589,10 +652,12 @@
                 `;
             }).join('');
 
+            const sessionName = sessionInfo ? sessionInfo.name : currentSession;
+
             return `
                 <div class="panel-header">
-                    <h2>Overall Rankings</h2>
-                    <p>Rankings by team, based on z-score of primary metric (TM-score) across all problems. Shows best score per problem per team.</p>
+                    <h2>Overall Rankings - ${sessionName}</h2>
+                    <p>Rankings by team, based on z-score of primary metric across problems. Shows best score per problem per team.</p>
                 </div>
                 <div class="table-container">
                     <table class="ranking-table" data-table-id="overall">
@@ -621,7 +686,6 @@
                         const type = th.dataset.type || 'number';
                         const defaultOrder = th.dataset.order || 'desc';
 
-                        // Toggle sort order
                         let order;
                         if (currentSorts[tableId].key === key) {
                             order = currentSorts[tableId].order === 'asc' ? 'desc' : 'asc';
@@ -632,7 +696,6 @@
                         currentSorts[tableId] = { key, order };
                         sortTable(table, key, type, order);
 
-                        // Update header classes
                         table.querySelectorAll('th.sortable').forEach(h => {
                             h.classList.remove('sort-asc', 'sort-desc');
                         });
@@ -646,25 +709,19 @@
             const tbody = table.querySelector('tbody');
             const rows = Array.from(tbody.querySelectorAll('tr'));
 
-            // Find cell index by key ONCE before sorting
-            const headerRow = table.querySelector('thead tr:last-child'); // Use last row in case of multi-row headers
+            const headerRow = table.querySelector('thead tr:last-child');
             const headers = headerRow ? Array.from(headerRow.children) : [];
             let cellIndex = headers.findIndex(h => h.dataset && h.dataset.key === key);
 
-            if (cellIndex === -1) {
-                console.warn('Sort key not found:', key);
-                return;
-            }
+            if (cellIndex === -1) return;
 
             rows.sort((a, b) => {
                 let aVal = a.children[cellIndex]?.textContent.trim() || '';
                 let bVal = b.children[cellIndex]?.textContent.trim() || '';
 
-                // Handle special values (missing data shown as '-')
                 if (aVal === '-' || aVal === '') aVal = type === 'number' ? -Infinity : '';
                 if (bVal === '-' || bVal === '') bVal = type === 'number' ? -Infinity : '';
 
-                // Remove # from rank and + from z-scores
                 if (aVal.startsWith && aVal.startsWith('#')) aVal = aVal.slice(1);
                 if (bVal.startsWith && bVal.startsWith('#')) bVal = bVal.slice(1);
                 if (typeof aVal === 'string' && aVal.startsWith('+')) aVal = aVal.slice(1);
@@ -673,7 +730,6 @@
                 if (type === 'number') {
                     aVal = parseFloat(aVal);
                     bVal = parseFloat(bVal);
-                    // Handle NaN from parseFloat
                     if (isNaN(aVal)) aVal = -Infinity;
                     if (isNaN(bVal)) bVal = -Infinity;
                 }
@@ -688,7 +744,6 @@
                 return order === 'asc' ? result : -result;
             });
 
-            // Re-append sorted rows
             rows.forEach(row => tbody.appendChild(row));
         }
 

@@ -1,55 +1,40 @@
 name: Process Sequence Submission
 
 on:
-  repository_dispatch:
-    types: [new_submission]
+  issues:
+    types: [opened]
 
 jobs:
   process-submission:
+    if: contains(github.event.issue.labels.*.name, 'submission')
     runs-on: [self-hosted, galaxy4]
 
     permissions:
       contents: read
+      issues: write
 
     env:
       SUBMISSIONS_BASE: /data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions
-      ADMIN_EMAILS: "oilbeen@snu.ac.kr,j2hosim@snu.ac.kr,hahnbeom@gmail.com"
-      SITE_URL: https://kidds2026.netlify.app
+      SITE_URL: https://seoklab.github.io/structure-study
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract submission data
-        id: extract
+      - name: Parse and validate submission
+        id: parse
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
-          # Extract data from repository_dispatch payload
-          SUBMISSION_ID="${{ github.event.client_payload.submission_id }}"
-          PARTICIPANT_ID="${{ github.event.client_payload.participant_id }}"
-          EMAIL="${{ github.event.client_payload.email }}"
-          SUBMITTED_AT="${{ github.event.client_payload.submitted_at }}"
+          python3 scripts/parse_issue_submission.py \
+            --issue-body "$ISSUE_BODY" \
+            --issue-number ${{ github.event.issue.number }} \
+            --config docs/targets/config.json \
+            --submissions-base "$SUBMISSIONS_BASE"
 
-          echo "Processing submission: $SUBMISSION_ID from $PARTICIPANT_ID"
-
-          # Create submission directory with group write permissions
-          SUBMISSION_DIR="${SUBMISSIONS_BASE}/${SUBMISSION_ID}"
-          mkdir -p "${SUBMISSION_DIR}"
-          chmod 775 "${SUBMISSION_DIR}"
-
-          echo "SUBMISSION_ID=${SUBMISSION_ID}" >> $GITHUB_ENV
-          echo "SUBMISSION_DIR=${SUBMISSION_DIR}" >> $GITHUB_ENV
-          echo "PARTICIPANT_ID=${PARTICIPANT_ID}" >> $GITHUB_ENV
-          echo "EMAIL=${EMAIL}" >> $GITHUB_ENV
-
-      - name: Save submission data and prepare jobs
+      - name: Process submission and prepare AF3 jobs
         id: prepare
         run: |
-          # Save the full submission data as JSON
-          cat > "$SUBMISSION_DIR/submission.json" << 'SUBMISSION_EOF'
-          ${{ toJson(github.event.client_payload) }}
-          SUBMISSION_EOF
-
-          # Process each problem/sequence
           python3 scripts/process_multi_submission.py \
             --submission-dir "$SUBMISSION_DIR" \
             --submission-id "$SUBMISSION_ID"
@@ -59,19 +44,15 @@ jobs:
         run: |
           QUEUE_DIR="/data/galaxy4/user/j2ho/job_queue"
 
-          # Find all problem directories and queue their jobs
-          # New structure: problem_N/seq_M/ contains af3_input.json
           QUEUED_COUNT=0
           for problem_dir in "$SUBMISSION_DIR"/problem_*; do
             [ ! -d "$problem_dir" ] && continue
             PROBLEM_ID=$(basename "$problem_dir")
 
-            # Iterate through sequence subdirectories
             for seq_dir in "$problem_dir"/seq_*; do
               [ ! -d "$seq_dir" ] && continue
               SEQ_NUM=$(basename "$seq_dir" | sed 's/seq_//')
 
-              # Check if af3_input.json exists in this seq directory
               if [ ! -f "$seq_dir/af3_input.json" ]; then
                 echo "Skipping $seq_dir - no af3_input.json found"
                 continue
@@ -79,14 +60,12 @@ jobs:
 
               JOB_ID="${SUBMISSION_ID}_${PROBLEM_ID}_seq${SEQ_NUM}"
 
-              # Generate the SLURM script (singleton groups by participant for fair scheduling)
               python3 scripts/run_af3.py \
                 --submission-dir "$seq_dir" \
                 --submission-id "$JOB_ID" \
                 --participant-id "$PARTICIPANT_ID" \
                 --mode full
 
-              # Copy to queue directory
               SCRIPT_FILE="$seq_dir/scripts/run_${JOB_ID}_full.sh"
               if [ -f "$SCRIPT_FILE" ]; then
                 cp "$SCRIPT_FILE" "$QUEUE_DIR/${JOB_ID}.sh"
@@ -99,45 +78,62 @@ jobs:
 
           echo "Queued $QUEUED_COUNT jobs for submission $SUBMISSION_ID"
 
-          # Update status file
           cat > "$SUBMISSION_DIR/status.json" << EOF
           {
             "status": "queued",
             "submission_id": "$SUBMISSION_ID",
             "participant_id": "$PARTICIPANT_ID",
-            "submitted_at": "${{ github.event.client_payload.submitted_at }}",
+            "issue_number": ${{ github.event.issue.number }},
+            "submitted_at": "$(python3 -c "import json; print(json.load(open('$SUBMISSION_DIR/submission.json')).get('submitted_at', ''))" 2>/dev/null)",
             "queued_at": "$(date -Iseconds)",
             "job_count": $QUEUED_COUNT
           }
           EOF
 
-      - name: Send confirmation email
+      - name: Comment confirmation on issue
         if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PROBLEM_COUNT=$(python3 -c "import json; print(len(json.load(open('$SUBMISSION_DIR/submission.json')).get('sequences', {})))" 2>/dev/null || echo "0")
           PROBLEM_LIST=$(python3 -c "import json; d=json.load(open('$SUBMISSION_DIR/submission.json')); print(', '.join(d.get('sequences', {}).keys()))" 2>/dev/null || echo "")
+          SEQ_COUNT=$(python3 -c "import json; d=json.load(open('$SUBMISSION_DIR/submission.json')); print(sum(len(v) for v in d.get('sequences', {}).values()))" 2>/dev/null || echo "0")
 
-          if [ -n "$EMAIL" ]; then
-            printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Submission Received - KIDDS 2026\n\nHello,\n\nYour submission has been received and queued for AlphaFold3 structure prediction.\n\nSubmission ID: %s\nParticipant: %s\nProblems submitted: %s\n\nYou will receive another email when your results are ready.\n\nBest regards,\nKIDDS 2026 Winter Workshop\n" "$EMAIL" "$SUBMISSION_ID" "$PARTICIPANT_ID" "$PROBLEM_COUNT" | sendmail -t
-            echo "Confirmation email sent to $EMAIL"
-          fi
+          BODY="## Submission Received
 
-          # Send admin notification (to multiple admins)
-          for ADMIN in $(echo "${ADMIN_EMAILS}" | tr ',' ' '); do
-            printf "To: %s\nFrom: noreply@seoklab.org\nSubject: [ADMIN] New Submission - %s\n\nNew submission received!\n\nSubmission ID: %s\nParticipant: %s (%s)\nProblems: %s (%s)\n\nSubmission directory:\n%s\n" "$ADMIN" "$SUBMISSION_ID" "$SUBMISSION_ID" "$PARTICIPANT_ID" "$EMAIL" "$PROBLEM_COUNT" "$PROBLEM_LIST" "$SUBMISSION_DIR" | sendmail -t || true
-          done
-          echo "Admin notifications sent"
+          Your sequences have been received and queued for AlphaFold3 structure prediction.
 
-      - name: Log failure
+          | Field | Value |
+          |-------|-------|
+          | **Submission ID** | \`${SUBMISSION_ID}\` |
+          | **Participant** | \`${PARTICIPANT_ID}\` |
+          | **Problems** | ${PROBLEM_COUNT} (${PROBLEM_LIST}) |
+          | **Total sequences** | ${SEQ_COUNT} |
+
+          You will receive another comment when your results are ready."
+
+          gh issue comment ${{ github.event.issue.number }} --body "$BODY"
+
+      - name: Comment failure on issue
         if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Failed to process submission $SUBMISSION_ID"
-          # Save error status
-          cat > "$SUBMISSION_DIR/status.json" << EOF
-          {
-            "status": "failed",
-            "submission_id": "$SUBMISSION_ID",
-            "error": "Processing failed",
-            "failed_at": "$(date -Iseconds)"
-          }
+          gh issue comment ${{ github.event.issue.number }} --body "## Submission Failed
+
+          There was an error processing your submission. The organizers have been notified.
+
+          Please check your submission format and try again, or contact the organizers."
+          gh issue edit ${{ github.event.issue.number }} --add-label "error"
+
+          # Save error status if submission dir exists
+          if [ -n "$SUBMISSION_DIR" ] && [ -d "$SUBMISSION_DIR" ]; then
+            cat > "$SUBMISSION_DIR/status.json" << EOF
+            {
+              "status": "failed",
+              "submission_id": "${SUBMISSION_ID:-unknown}",
+              "error": "Processing failed",
+              "failed_at": "$(date -Iseconds)"
+            }
           EOF
+          fi

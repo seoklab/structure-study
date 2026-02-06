@@ -11,13 +11,13 @@ jobs:
     runs-on: [self-hosted, galaxy4]
     permissions:
       contents: write
+      issues: write
     env:
       SUBMISSIONS_BASE: /data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions
       PUBLIC_RESULTS: /data/galaxy4/user/j2ho/kidds2026/protein-competition/public_results
-      SITE_URL: https://kidds2026.netlify.app
-      ADMIN_EMAILS: "oilbeen@snu.ac.kr,j2hosim@snu.ac.kr,hahnbeom@gmail.com"
-      # Set to "true" for email after each problem (uses more Netlify deploys)
-      # Set to "false" for single email when all problems complete (default)
+      SITE_URL: https://seoklab.github.io/structure-study
+      # Set to "true" for notification after each problem
+      # Set to "false" for single notification when all problems complete (default)
       INCREMENTAL_NOTIFICATIONS: "false"
     steps:
       - name: Checkout repository
@@ -25,6 +25,8 @@ jobs:
 
       - name: Check and package completed submissions
         id: check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           RESULTS_UPDATED=false
 
@@ -47,8 +49,8 @@ jobs:
 
             # Get submission info
             SUBMISSION_FILE="$dir/submission.json"
-            EMAIL=$(python3 -c "import json; print(json.load(open('$SUBMISSION_FILE')).get('email', ''))" 2>/dev/null || echo "")
             PARTICIPANT_ID=$(python3 -c "import json; print(json.load(open('$SUBMISSION_FILE')).get('participant_id', 'unknown'))" 2>/dev/null || echo "unknown")
+            ISSUE_NUMBER=$(python3 -c "import json; print(json.load(open('$SUBMISSION_FILE')).get('issue_number', ''))" 2>/dev/null || echo "")
 
             # Check for multi-problem submission
             PROBLEM_DIRS=$(find "$dir" -maxdepth 1 -type d -name "problem_*" 2>/dev/null | sort)
@@ -197,54 +199,58 @@ jobs:
                   if [ "$COMPLETED_COUNT" -ge "$TOTAL_PROBLEMS" ]; then
                     python3 -c "import json; f=open('$STATUS_FILE'); d=json.load(f); f.close(); d['status']='completed'; f=open('$STATUS_FILE','w'); json.dump(d,f,indent=2); f.close()"
                     echo "Marked submission as completed"
-
-                    # Send admin notification with token for easy access
-                    for ADMIN in $(echo "${ADMIN_EMAILS}" | tr ',' ' '); do
-                      printf "To: %s\nFrom: noreply@seoklab.org\nSubject: [ADMIN] Results Ready - %s\n\nResults are ready!\n\nSubmission ID: %s\nParticipant: %s (%s)\nCompleted: %s problems (%s)\n\nToken: %s\n\nView results:\n%s/viewer.html?token=%s\n\nDirect files:\n%s/results/%s/\n\nSubmission directory:\n%s\n" "$ADMIN" "$SUBMISSION_ID" "$SUBMISSION_ID" "$PARTICIPANT_ID" "$EMAIL" "$COMPLETED_COUNT" "$COMPLETED_LIST" "$TOKEN" "${SITE_URL}" "$TOKEN" "${SITE_URL}" "$TOKEN" "$dir" | sendmail -t || true
-                    done
-                    echo "Admin notifications sent"
                   fi
                 fi
               fi
 
-              # Send email based on mode
-              if [ -n "$EMAIL" ] && [ -n "$TOKEN" ]; then
+              # Comment results on issue
+              if [ -n "$ISSUE_NUMBER" ] && [ -n "$TOKEN" ]; then
                 if [ "$COMPLETED_COUNT" -ge "$TOTAL_PROBLEMS" ]; then
-                  # All done - send final email
-                  echo "Sending FINAL results email to: $EMAIL"
-                  printf "To: %s\nFrom: noreply@seoklab.org\nSubject: All Results Ready - KIDDS 2026\n\nHello %s,\n\nGreat news! All %s of your AlphaFold3 structure predictions are complete.\n\nCompleted: %s\n\nView your results:\n%s/viewer.html?token=%s\n\nDownload all files:\n%s/results/%s/\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$PARTICIPANT_ID" "$COMPLETED_COUNT" "$COMPLETED_LIST" "${SITE_URL}" "$TOKEN" "${SITE_URL}" "$TOKEN" | sendmail -t || true
+                  echo "Posting FINAL results comment on issue #$ISSUE_NUMBER"
+                  gh issue comment "$ISSUE_NUMBER" --body "## All Results Ready
+
+          All $COMPLETED_COUNT of your AlphaFold3 structure predictions are complete.
+
+          **Completed:** $COMPLETED_LIST
+
+          **View results:** [${SITE_URL}/viewer.html?token=${TOKEN}](${SITE_URL}/viewer.html?token=${TOKEN})
+          **Download files:** [${SITE_URL}/results/${TOKEN}/](${SITE_URL}/results/${TOKEN}/)" || true
+                  gh issue edit "$ISSUE_NUMBER" --add-label "completed" || true
                   echo "Processed submission: $SUBMISSION_ID"
                 elif [ "$INCREMENTAL_NOTIFICATIONS" = "true" ] && [ -n "$NEW_COMPLETED_LIST" ]; then
-                  # Incremental mode: send progress email
-                  echo "Sending PROGRESS email to: $EMAIL ($COMPLETED_COUNT/$TOTAL_PROBLEMS)"
-                  printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Progress Update (%s/%s) - KIDDS 2026\n\nHello %s,\n\nYour AlphaFold3 predictions are in progress.\n\nCompleted: %s/%s (%s)\nJust finished: %s\nStill running: %s\n\nView your results (updates as more complete):\n%s/viewer.html?token=%s\n\nYou will receive another email when more results are ready.\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$COMPLETED_COUNT" "$TOTAL_PROBLEMS" "$PARTICIPANT_ID" "$COMPLETED_COUNT" "$TOTAL_PROBLEMS" "$COMPLETED_LIST" "$NEW_COMPLETED_LIST" "$PENDING_LIST" "${SITE_URL}" "$TOKEN" | sendmail -t
+                  echo "Posting PROGRESS comment on issue #$ISSUE_NUMBER"
+                  gh issue comment "$ISSUE_NUMBER" --body "## Progress Update ($COMPLETED_COUNT/$TOTAL_PROBLEMS)
 
-                  # Send admin notification for progress
-                  for ADMIN in $(echo "${ADMIN_EMAILS}" | tr ',' ' '); do
-                    printf "To: %s\nFrom: noreply@seoklab.org\nSubject: [ADMIN] Progress Update - %s (%s/%s)\n\nProgress update!\n\nSubmission ID: %s\nParticipant: %s (%s)\n\nCompleted: %s/%s (%s)\nJust finished: %s\nStill running: %s\n\nToken: %s\n\nView results:\n%s/viewer.html?token=%s\n\nSubmission directory:\n%s\n" "$ADMIN" "$SUBMISSION_ID" "$COMPLETED_COUNT" "$TOTAL_PROBLEMS" "$SUBMISSION_ID" "$PARTICIPANT_ID" "$EMAIL" "$COMPLETED_COUNT" "$TOTAL_PROBLEMS" "$COMPLETED_LIST" "$NEW_COMPLETED_LIST" "$PENDING_LIST" "$TOKEN" "${SITE_URL}" "$TOKEN" "$dir" | sendmail -t || true
-                  done
+          **Completed:** $COMPLETED_COUNT/$TOTAL_PROBLEMS ($COMPLETED_LIST)
+          **Just finished:** $NEW_COMPLETED_LIST
+          **Still running:** $PENDING_LIST
 
+          **View results:** [${SITE_URL}/viewer.html?token=${TOKEN}](${SITE_URL}/viewer.html?token=${TOKEN})" || true
                   echo "Processed submission: $SUBMISSION_ID"
                 fi
               fi
 
               # Handle failures (only when no more pending jobs)
               if [ "$FAILED_COUNT" -gt 0 ] && [ -z "$PENDING_LIST" ]; then
-                echo "Some problems failed, sending notification..."
+                echo "Some problems failed..."
                 python3 -c "import json; f=open('$STATUS_FILE'); d=json.load(f); f.close(); d['status']='notified_partial'; d['failed']='$FAILED_LIST'; f=open('$STATUS_FILE','w'); json.dump(d,f,indent=2); f.close()"
 
-                if [ -n "$EMAIL" ]; then
-                  if [ -n "$TOKEN" ]; then
-                    printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Results Ready (with errors) - KIDDS 2026\n\nHello %s,\n\nYour AlphaFold3 predictions have finished, but some encountered errors.\n\nCompleted (%s): %s\nFailed (%s): %s\n\nView your completed results:\n%s/viewer.html?token=%s\n\nThe workshop organizers have been notified. You may resubmit failed problems if needed.\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$PARTICIPANT_ID" "$COMPLETED_COUNT" "$COMPLETED_LIST" "$FAILED_COUNT" "$FAILED_LIST" "${SITE_URL}" "$TOKEN" | sendmail -t
-                  else
-                    printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Submission Failed - KIDDS 2026\n\nHello %s,\n\nUnfortunately, your AlphaFold3 predictions encountered errors.\n\nFailed (%s): %s\n\nThe workshop organizers have been notified. You may resubmit if needed.\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$PARTICIPANT_ID" "$FAILED_COUNT" "$FAILED_LIST" | sendmail -t
-                  fi
-                fi
+                if [ -n "$ISSUE_NUMBER" ]; then
+                  BODY="## Results Ready (with errors)
 
-                # Send admin notification
-                for ADMIN in $(echo "${ADMIN_EMAILS}" | tr ',' ' '); do
-                  printf "To: %s\nFrom: noreply@seoklab.org\nSubject: [ADMIN] Submission Failure - %s\n\nSubmission ID: %s\nParticipant: %s (%s)\n\nCompleted (%s): %s\nFailed (%s): %s\n\nLogs: %s/\n" "$ADMIN" "$SUBMISSION_ID" "$SUBMISSION_ID" "$PARTICIPANT_ID" "$EMAIL" "$COMPLETED_COUNT" "$COMPLETED_LIST" "$FAILED_COUNT" "$FAILED_LIST" "$dir" | sendmail -t || true
-                done
+          **Completed ($COMPLETED_COUNT):** $COMPLETED_LIST
+          **Failed ($FAILED_COUNT):** $FAILED_LIST"
+                  if [ -n "$TOKEN" ]; then
+                    BODY="${BODY}
+
+          **View completed results:** [${SITE_URL}/viewer.html?token=${TOKEN}](${SITE_URL}/viewer.html?token=${TOKEN})"
+                  fi
+                  BODY="${BODY}
+
+          You may resubmit failed problems if needed."
+                  gh issue comment "$ISSUE_NUMBER" --body "$BODY" || true
+                  gh issue edit "$ISSUE_NUMBER" --add-label "error" || true
+                fi
               fi
 
             else
@@ -265,16 +271,16 @@ jobs:
                   cp -r ${PUBLIC_RESULTS}/${TOKEN}/* docs/results/${TOKEN}/
                   RESULTS_UPDATED=true
 
-                  SEQ_NAME=$(python3 -c "import json; print(json.load(open('$SUBMISSION_FILE')).get('sequence_name', 'your sequence'))" 2>/dev/null)
+                  # Comment on issue if available
+                  if [ -n "$ISSUE_NUMBER" ]; then
+                    gh issue comment "$ISSUE_NUMBER" --body "## Results Ready
 
-                  if [ -n "$EMAIL" ]; then
-                    printf "To: %s\nFrom: noreply@seoklab.org\nSubject: Your Protein Structure Results are Ready\n\nHello,\n\nYour AlphaFold3 structure prediction for \"%s\" is now complete!\n\nView your results:\n%s/viewer.html?token=%s\n\nDownload files:\n%s/results/%s/\n\nBest regards,\nKIDDS workshop organizers\n" "$EMAIL" "$SEQ_NAME" "${SITE_URL}" "$TOKEN" "${SITE_URL}" "$TOKEN" | sendmail -t
+          Your AlphaFold3 structure prediction is complete!
+
+          **View results:** [${SITE_URL}/viewer.html?token=${TOKEN}](${SITE_URL}/viewer.html?token=${TOKEN})
+          **Download files:** [${SITE_URL}/results/${TOKEN}/](${SITE_URL}/results/${TOKEN}/)" || true
+                    gh issue edit "$ISSUE_NUMBER" --add-label "completed" || true
                   fi
-
-                  # Send admin notification
-                  for ADMIN in $(echo "${ADMIN_EMAILS}" | tr ',' ' '); do
-                    printf "To: %s\nFrom: noreply@seoklab.org\nSubject: [ADMIN] Results Ready - %s\n\nResults are ready!\n\nSubmission ID: %s\nParticipant: %s (%s)\nSequence: %s\n\nToken: %s\n\nView results:\n%s/viewer.html?token=%s\n\nDirect files:\n%s/results/%s/\n\nSubmission directory:\n%s\n" "$ADMIN" "$SUBMISSION_ID" "$SUBMISSION_ID" "$PARTICIPANT_ID" "$EMAIL" "$SEQ_NAME" "$TOKEN" "${SITE_URL}" "$TOKEN" "${SITE_URL}" "$TOKEN" "$dir" | sendmail -t || true
-                  done
 
                   echo "Processed submission: $SUBMISSION_ID"
                 fi
@@ -293,13 +299,15 @@ jobs:
           TARGETS_DIR="${GITHUB_WORKSPACE}/docs/targets"
           RESULTS_DIR="${GITHUB_WORKSPACE}/docs/results"
 
-          declare -A PROBLEM_REFS=(
-            ["problem_1"]="3H-scaffold.pdb:monomer"
-            ["problem_2"]="4B1H-scaffold.pdb:monomer"
-            ["problem_3"]="top7-scaffold.pdb:monomer"
-            ["problem_4"]="PepBinder1-scaffold.pdb:binder"
-            ["problem_5"]="PepBinder2-scaffold.pdb:binder"
-          )
+          # Read problem refs dynamically from config.json
+          CONFIG_FILE="${GITHUB_WORKSPACE}/docs/targets/config.json"
+          declare -A PROBLEM_REFS
+          while IFS= read -r line; do
+            PID=$(echo "$line" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+            TF=$(echo "$line" | python3 -c "import sys,json; print(json.load(sys.stdin)['target_file'])")
+            PT=$(echo "$line" | python3 -c "import sys,json; print(json.load(sys.stdin).get('type','monomer'))")
+            PROBLEM_REFS["$PID"]="${TF}:${PT}"
+          done < <(python3 -c "import json; [print(json.dumps(p)) for p in json.load(open('$CONFIG_FILE'))['problems']]")
 
           # Run evaluation for each result directory
           for token_dir in ${RESULTS_DIR}/*/; do
@@ -314,7 +322,7 @@ jobs:
             PARTICIPANT_ID=$(python3 -c "import json; print(json.load(open('$SUBMISSION_FILE')).get('participant_id', 'unknown'))" 2>/dev/null || echo "unknown")
 
             # Check each problem
-            for problem_id in problem_1 problem_2 problem_3 problem_4 problem_5; do
+            for problem_id in "${!PROBLEM_REFS[@]}"; do
               REF_INFO="${PROBLEM_REFS[$problem_id]}"
               REF_FILE="${REF_INFO%:*}"
               PROBLEM_TYPE="${REF_INFO#*:}"

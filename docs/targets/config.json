@@ -1,6 +1,22 @@
 {
-  "submissions_open": false,
+  "submissions_open": true,
+  "active_session": "week2",
+  "github_repo": "seoklab/structure-study",
   "_comment_primary_metric": "primary_metric: bb_lddt, bb_lddt_cov (lDDT×Coverage), binder_lddt (binder), interface_lddt, iptm, tm_score, etc. Used for z-score ranking.",
+  "sessions": {
+    "week1": {
+      "name": "Week 1 - Scaffold Design",
+      "status": "archived",
+      "description": "Introductory scaffold design problems",
+      "problems": ["problem_1", "problem_2", "problem_3"]
+    },
+    "week2": {
+      "name": "Week 2 - Binder Design",
+      "status": "active",
+      "description": "Binder design challenges",
+      "problems": ["problem_4", "problem_5"]
+    }
+  },
   "problems": [
     {
       "id": "problem_1",
@@ -11,7 +27,7 @@
       "type": "monomer",
       "primary_metric": "bb_lddt_cov",
       "msa_mode": "none",
-      "day": 1
+      "session": "week1"
     },
     {
       "id": "problem_2",
@@ -22,7 +38,7 @@
       "type": "monomer",
       "primary_metric": "bb_lddt_cov",
       "msa_mode": "none",
-      "day": 1
+      "session": "week1"
     },
     {
       "id": "problem_3",
@@ -33,7 +49,7 @@
       "type": "monomer",
       "primary_metric": "bb_lddt_cov",
       "msa_mode": "none",
-      "day": 1
+      "session": "week1"
     },
     {
       "id": "problem_4",
@@ -47,7 +63,7 @@
       "target_msa_file": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/docs/targets/PepBinder1_target.a3m",
       "participant_msa_mode": "none",
       "expected_binder_length": [20, 50],
-      "day": 2
+      "session": "week2"
     },
     {
       "id": "problem_5",
@@ -61,21 +77,9 @@
       "target_msa_file": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/docs/targets/PepBinder2_target.a3m",
       "participant_msa_mode": "none",
       "expected_binder_length": [10, 30],
-      "day": 2
+      "session": "week2"
     }
   ],
-  "competition": {
-    "day1": {
-      "problems": ["problem_1", "problem_2", "problem_3"],
-      "submissions": 2,
-      "description": "Scaffold design - initial submission, see results, final submission"
-    },
-    "day2": {
-      "problems": ["problem_4", "problem_5"],
-      "submissions": 1,
-      "description": "Binder design - single submission"
-    }
-  },
   "problem_types": {
     "monomer": {
       "description": "Scaffold design - design a sequence for the given backbone",

@@ -2,7 +2,7 @@
 /results/
 /submissions/
 /public_results/
-# But allow docs/results for Netlify serving
+# But allow docs/results for GitHub Pages serving
 !docs/results/
 
 # Python
