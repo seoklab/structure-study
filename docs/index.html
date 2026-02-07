@@ -196,6 +196,34 @@
             .winners-list { gap: 1rem; }
             .card-row { grid-template-columns: 1fr; }
         }
+
+        /* Snow effect */
+        @keyframes snowfall {
+            0% {
+                transform: translateY(-100px) translateX(0px) rotate(var(--start-rot));
+                opacity: 0;
+            }
+            5% {
+                opacity: 0.85;
+            }
+            100% {
+                transform: translateY(calc(100vh + 100px)) translateX(var(--sway)) rotate(calc(var(--start-rot) + 360deg));
+                opacity: 0.85;
+            }
+        }
+        .snow-image {
+            position: fixed;
+            top: 0;
+            pointer-events: none;
+            z-index: 9999;
+            border-radius: 50%;
+            object-fit: cover;
+            animation: snowfall var(--duration) linear forwards;
+            transition: opacity 0.8s ease;
+        }
+        .snow-image.fade-out {
+            opacity: 0 !important;
+        }
     </style>
 </head>
 <body>
@@ -306,6 +334,64 @@
                 document.getElementById('session-title').textContent = 'Failed to load';
                 document.getElementById('session-desc').textContent = 'Could not load config.json';
             });
+    </script>
+
+    <script>
+        (function() {
+            var members = ['bh', 'bw', 'hs', 'se', 'yb'];
+            var basePath = 'assets/seoklab-members/';
+            var snowInterval = null;
+            var stopped = false;
+
+            function spawnSnowImage() {
+                var img = document.createElement('img');
+                var member = members[Math.floor(Math.random() * members.length)];
+                var size = 40 + Math.random() * 40; // 40–80px
+                var left = Math.random() * 100; // 0–100% viewport width
+                var duration = 4 + Math.random() * 4; // 4–8s
+                var startRot = Math.floor(Math.random() * 360);
+                var sway = (Math.random() - 0.5) * 120; // -60 to +60px horizontal sway
+
+                img.src = basePath + member + '.png';
+                img.className = 'snow-image';
+                img.style.left = left + 'vw';
+                img.style.width = size + 'px';
+                img.style.height = size + 'px';
+                img.style.setProperty('--duration', duration + 's');
+                img.style.setProperty('--start-rot', startRot + 'deg');
+                img.style.setProperty('--sway', sway + 'px');
+
+                img.addEventListener('animationend', function() {
+                    if (img.parentNode) img.parentNode.removeChild(img);
+                });
+
+                document.body.appendChild(img);
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                snowInterval = setInterval(spawnSnowImage, 300);
+            });
+
+            window.addEventListener('scroll', function onScroll() {
+                if (stopped) return;
+                stopped = true;
+                if (snowInterval) clearInterval(snowInterval);
+
+                var snowImages = document.querySelectorAll('.snow-image');
+                for (var i = 0; i < snowImages.length; i++) {
+                    snowImages[i].classList.add('fade-out');
+                }
+
+                setTimeout(function() {
+                    var remaining = document.querySelectorAll('.snow-image');
+                    for (var i = 0; i < remaining.length; i++) {
+                        if (remaining[i].parentNode) remaining[i].parentNode.removeChild(remaining[i]);
+                    }
+                }, 1000);
+
+                window.removeEventListener('scroll', onScroll);
+            });
+        })();
     </script>
 </body>
 </html>
