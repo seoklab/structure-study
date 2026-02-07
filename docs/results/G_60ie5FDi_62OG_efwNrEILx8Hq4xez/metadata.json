@@ -1,0 +1,36 @@
+{
+  "token": "G_60ie5FDi_62OG_efwNrEILx8Hq4xez",
+  "participant_id": "t2_top7_test",
+  "total_problems": 1,
+  "completed_problems": 1,
+  "total_sequences": 1,
+  "all_complete": true,
+  "files": [
+    "t2_top7_test_problem_6_seq1_ranking_scores.csv",
+    "t2_top7_test_problem_6_seq1_confidences.json",
+    "t2_top7_test_problem_6_seq1_summary_confidences.json",
+    "submission.json",
+    "t2_top7_test_problem_6_seq1_model.cif"
+  ],
+  "problems": {
+    "problem_6": {
+      "files": [
+        "t2_top7_test_problem_6_seq1_model.cif",
+        "t2_top7_test_problem_6_seq1_confidences.json",
+        "t2_top7_test_problem_6_seq1_summary_confidences.json",
+        "t2_top7_test_problem_6_seq1_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "t2_top7_test_problem_6_seq1_model.cif",
+            "t2_top7_test_problem_6_seq1_confidences.json",
+            "t2_top7_test_problem_6_seq1_summary_confidences.json",
+            "t2_top7_test_problem_6_seq1_ranking_scores.csv"
+          ]
+        }
+      }
+    }
+  },
+  "source_dir": "/home/j2ho/seoklab/structure-study/submissions/t2top7test_10_6986b896_uibz"
+}
