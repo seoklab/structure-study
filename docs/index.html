@@ -214,7 +214,8 @@
         .snow-image {
             position: fixed;
             top: 0;
-            pointer-events: none;
+            pointer-events: auto;
+            cursor: pointer;
             z-index: 9999;
             border-radius: 50%;
             object-fit: cover;
@@ -223,6 +224,44 @@
         }
         .snow-image.fade-out {
             opacity: 0 !important;
+        }
+
+        /* Lottery popup */
+        @keyframes lottery-pop {
+            0% {
+                transform: scale(0) translateY(0);
+                opacity: 0;
+            }
+            30% {
+                transform: scale(1.3) translateY(-10px);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1) translateY(-20px);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0.8) translateY(-60px);
+                opacity: 0;
+            }
+        }
+        .lottery-popup {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            font-weight: 700;
+            font-size: 2rem;
+            font-family: 'Inter', sans-serif;
+            animation: lottery-pop 1.2s ease-out forwards;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .lottery-popup.win {
+            color: #f59e0b;
+            font-size: 2.5rem;
+            text-shadow: 0 0 20px rgba(245,158,11,0.5), 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .lottery-popup.lose {
+            color: #94a3b8;
         }
     </style>
 </head>
@@ -362,6 +401,31 @@
                 img.style.setProperty('--sway', sway + 'px');
 
                 img.addEventListener('animationend', function() {
+                    if (img.parentNode) img.parentNode.removeChild(img);
+                });
+
+                img.addEventListener('click', function(e) {
+                    var rect = img.getBoundingClientRect();
+                    var popup = document.createElement('div');
+                    popup.className = 'lottery-popup';
+
+                    var isWin = Math.random() < 0.15;
+                    if (isWin) {
+                        popup.classList.add('win');
+                        popup.textContent = '당첨!';
+                    } else {
+                        popup.classList.add('lose');
+                        popup.textContent = '꽝!';
+                    }
+
+                    popup.style.left = rect.left + rect.width / 2 - 30 + 'px';
+                    popup.style.top = rect.top + 'px';
+                    document.body.appendChild(popup);
+
+                    popup.addEventListener('animationend', function() {
+                        if (popup.parentNode) popup.parentNode.removeChild(popup);
+                    });
+
                     if (img.parentNode) img.parentNode.removeChild(img);
                 });
 
