@@ -1,6 +1,6 @@
 {
   "submissions_open": true,
-  "active_session": "test1",
+  "active_session": "2026feb10",
   "github_repo": "seoklab/structure-study",
   "_comment_primary_metric": "primary_metric: bb_lddt, bb_lddt_cov (lDDT\u00d7Coverage), binder_lddt (binder), interface_lddt, iptm, tm_score, etc. Used for z-score ranking.",
   "sessions": {
