@@ -1,0 +1,36 @@
+{
+  "token": "gw4bgA4Ipoc5I-fX6AS4WZJDsz43LIOn",
+  "participant_id": "half_beta_sheet",
+  "total_problems": 1,
+  "completed_problems": 1,
+  "total_sequences": 1,
+  "all_complete": true,
+  "files": [
+    "half_beta_sheet_problem_11_seq1_model.cif",
+    "half_beta_sheet_problem_11_seq1_ranking_scores.csv",
+    "half_beta_sheet_problem_11_seq1_confidences.json",
+    "half_beta_sheet_problem_11_seq1_summary_confidences.json",
+    "submission.json"
+  ],
+  "problems": {
+    "problem_11": {
+      "files": [
+        "half_beta_sheet_problem_11_seq1_model.cif",
+        "half_beta_sheet_problem_11_seq1_confidences.json",
+        "half_beta_sheet_problem_11_seq1_summary_confidences.json",
+        "half_beta_sheet_problem_11_seq1_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "half_beta_sheet_problem_11_seq1_model.cif",
+            "half_beta_sheet_problem_11_seq1_confidences.json",
+            "half_beta_sheet_problem_11_seq1_summary_confidences.json",
+            "half_beta_sheet_problem_11_seq1_ranking_scores.csv"
+          ]
+        }
+      }
+    }
+  },
+  "source_dir": "/home/j2ho/seoklab/structure-study/submissions/halfbetasheet_27_6989d74a_n80g"
+}

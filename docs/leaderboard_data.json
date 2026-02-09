@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-09T11:01:42.099432Z",
+  "last_updated": "2026-02-09T12:51:46.981373Z",
   "active_session": "2026feb10",
   "sessions": {
     "week1": {
@@ -1942,6 +1942,22 @@
       "rankings": [
         {
           "rank": 1,
+          "participant_id": "half_beta_sheet",
+          "token": "gw4bgA4Ipoc5I-fX6AS4WZJDsz43LIOn",
+          "submitted_at": "2026-02-09T12:46:55.174Z",
+          "primary_score": 0.4589,
+          "primary_metric": "bb_lddt_cov",
+          "best_seq": "1",
+          "bb_lddt": 0.6424,
+          "bb_lddt_cov": 0.4589,
+          "tm_score": 0.43105,
+          "rmsd": 2.89,
+          "ptm": 0.52,
+          "plddt": 65.13,
+          "ranking_score": 0.52
+        },
+        {
+          "rank": 2,
           "participant_id": "beta_sheet_thr",
           "token": "fRVGBSjGFFcuMYFTZnQu-UvskoU527ge",
           "submitted_at": "2026-02-09T10:57:27.274Z",
@@ -2525,6 +2541,21 @@
     ],
     "2026feb10": [
       {
+        "team": "half",
+        "problems_completed": 1,
+        "problem_scores": {
+          "problem_11": 0.4589
+        },
+        "problem_tokens": {
+          "problem_11": "gw4bgA4Ipoc5I-fX6AS4WZJDsz43LIOn"
+        },
+        "overall_z_score": 1.000000000000001,
+        "problem_z_scores": {
+          "problem_11": 1.000000000000001
+        },
+        "rank": 1
+      },
+      {
         "team": "reference",
         "problems_completed": 1,
         "problem_scores": {
@@ -2537,7 +2568,7 @@
         "problem_z_scores": {
           "problem_10": 0.0
         },
-        "rank": 1
+        "rank": 2
       },
       {
         "team": "beta",
@@ -2548,11 +2579,11 @@
         "problem_tokens": {
           "problem_11": "fRVGBSjGFFcuMYFTZnQu-UvskoU527ge"
         },
-        "overall_z_score": 0.0,
+        "overall_z_score": -0.9999999999999989,
         "problem_z_scores": {
-          "problem_11": 0.0
+          "problem_11": -0.9999999999999989
         },
-        "rank": 2
+        "rank": 3
       }
     ]
   }
