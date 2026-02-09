@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-07T04:27:24.788302Z",
+  "last_updated": "2026-02-09T07:01:34.823378Z",
   "active_session": "2026feb10",
   "sessions": {
     "week1": {
@@ -22,11 +22,12 @@
       ]
     },
     "2026feb10": {
-      "name": "구조스터디- 2026.Feb.10",
+      "name": "\uad6c\uc870\uc2a4\ud130\ub514- 2026.Feb.10",
       "status": "active",
-      "description": "Team1(세은유신지호)",
+      "description": "Team1(\uc138\uc740\uc720\uc2e0\uc9c0\ud638)",
       "problems": [
-        "problem_6"
+        "problem_6",
+        "problem_7"
       ]
     }
   },
@@ -1870,10 +1871,10 @@
       ]
     },
     "problem_6": {
-      "name": "Problem 6 - testproblem",
+      "name": "testproblem",
       "type": "monomer",
       "primary_metric": "tm_score",
-      "session": "test1",
+      "session": "2026feb10",
       "rankings": [
         {
           "rank": 1,
@@ -1906,6 +1907,30 @@
           "ptm": 0.5,
           "plddt": 68.81,
           "ranking_score": 0.69
+        }
+      ]
+    },
+    "problem_7": {
+      "name": "Problem 7 - 2-Helix with a loop",
+      "type": "monomer",
+      "primary_metric": "bb_lddt_cov",
+      "session": "2026feb10",
+      "rankings": [
+        {
+          "rank": 1,
+          "participant_id": "reference",
+          "token": "DqZ0JOynh_DS5kkMIApNsqiKOuTQs8Ds",
+          "submitted_at": "2026-02-09T06:05:18.921Z",
+          "primary_score": 0.514,
+          "primary_metric": "bb_lddt_cov",
+          "best_seq": "1",
+          "bb_lddt": 0.7995,
+          "bb_lddt_cov": 0.514,
+          "tm_score": 0.36555,
+          "rmsd": 1.29,
+          "ptm": 0.43,
+          "plddt": 93.18,
+          "ranking_score": 0.93
         }
       ]
     }
@@ -2484,6 +2509,21 @@
         "rank": 1
       },
       {
+        "team": "reference",
+        "problems_completed": 1,
+        "problem_scores": {
+          "problem_7": 0.514
+        },
+        "problem_tokens": {
+          "problem_7": "DqZ0JOynh_DS5kkMIApNsqiKOuTQs8Ds"
+        },
+        "overall_z_score": 0.0,
+        "problem_z_scores": {
+          "problem_7": 0.0
+        },
+        "rank": 2
+      },
+      {
         "team": "t2",
         "problems_completed": 1,
         "problem_scores": {
@@ -2496,7 +2536,7 @@
         "problem_z_scores": {
           "problem_6": -1.0
         },
-        "rank": 2
+        "rank": 3
       }
     ]
   }
