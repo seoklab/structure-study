@@ -23,10 +23,10 @@
         "problem_5"
       ]
     },
-    "test1": {
-      "name": "test1 - lab test",
+    "2026feb10": {
+      "name": "구조스터디- 2026.Feb.10",
       "status": "active",
-      "description": "test1",
+      "description": "Team1(세은유신지호)",
       "problems": [
         "problem_6"
       ]
@@ -102,14 +102,14 @@
     },
     {
       "id": "problem_6",
-      "name": "Problem 6 - testproblem",
-      "description": "aa",
+      "name": "testproblem",
+      "description": "Do not solve. Top7 from KIDDS",
       "target_file": "Top7-scaffold.pdb",
       "residue_count": 92,
       "type": "monomer",
       "primary_metric": "tm_score",
       "msa_mode": "none",
-      "session": "test1"
+      "session": "2026feb10"
     }
   ],
   "problem_types": {
