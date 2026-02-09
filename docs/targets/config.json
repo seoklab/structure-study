@@ -116,7 +116,7 @@
       "id": "problem_7",
       "name": "Problem 7 - 2-Helix with a loop",
       "description": "Design a sequence for a 2-helix with a loop (28 residues)",
-      "target_file": "1cq0.pdb",
+      "target_file": "problem_7.pdb",
       "residue_count": 28,
       "type": "monomer",
       "primary_metric": "bb_lddt_cov",
