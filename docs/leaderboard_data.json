@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-09T07:01:34.823378Z",
+  "last_updated": "2026-02-09T08:13:41.274849Z",
   "active_session": "2026feb10",
   "sessions": {
     "week1": {
@@ -27,7 +27,12 @@
       "description": "Team1(\uc138\uc740\uc720\uc2e0\uc9c0\ud638)",
       "problems": [
         "problem_6",
-        "problem_7"
+        "problem_7",
+        "problem_8",
+        "problem_9",
+        "problem_10",
+        "problem_11",
+        "problem_12"
       ]
     }
   },
@@ -1933,6 +1938,58 @@
           "ranking_score": 0.93
         }
       ]
+    },
+    "problem_8": {
+      "name": "Problem 8 - 2-Helix with a loop (No MSA)",
+      "type": "monomer",
+      "primary_metric": "bb_lddt_cov",
+      "session": "2026feb10",
+      "rankings": []
+    },
+    "problem_9": {
+      "name": "Problem 9 - 1-Helix",
+      "type": "monomer",
+      "primary_metric": "bb_lddt_cov",
+      "session": "2026feb10",
+      "rankings": []
+    },
+    "problem_10": {
+      "name": "Problem 10 - 1-Helix w/ beta-Sheet | Partial Prediction",
+      "type": "monomer",
+      "primary_metric": "bb_lddt_cov",
+      "session": "2026feb10",
+      "rankings": [
+        {
+          "rank": 1,
+          "participant_id": "reference",
+          "token": "5gKpgKV44Tg6m-E4_Uacopw0MGV27qWt",
+          "submitted_at": "2026-02-09T08:07:23.942Z",
+          "primary_score": 0.9859,
+          "primary_metric": "bb_lddt_cov",
+          "best_seq": "1",
+          "bb_lddt": 0.9859,
+          "bb_lddt_cov": 0.9859,
+          "tm_score": 0.9831,
+          "rmsd": 0.33,
+          "ptm": 0.81,
+          "plddt": 93.75,
+          "ranking_score": 0.81
+        }
+      ]
+    },
+    "problem_11": {
+      "name": "Problem 11 - 1-Helix w/ beta-Sheet | Partial Prediction",
+      "type": "monomer",
+      "primary_metric": "bb_lddt_cov",
+      "session": "2026feb10",
+      "rankings": []
+    },
+    "problem_12": {
+      "name": "Problem 12 - 3-Helix | Partial Prediction",
+      "type": "monomer",
+      "primary_metric": "bb_lddt_cov",
+      "session": "2026feb10",
+      "rankings": []
     }
   },
   "overall_rankings": {
@@ -2494,6 +2551,24 @@
     ],
     "2026feb10": [
       {
+        "team": "reference",
+        "problems_completed": 2,
+        "problem_scores": {
+          "problem_7": 0.514,
+          "problem_10": 0.9859
+        },
+        "problem_tokens": {
+          "problem_7": "DqZ0JOynh_DS5kkMIApNsqiKOuTQs8Ds",
+          "problem_10": "5gKpgKV44Tg6m-E4_Uacopw0MGV27qWt"
+        },
+        "overall_z_score": 0.0,
+        "problem_z_scores": {
+          "problem_10": 0.0,
+          "problem_7": 0.0
+        },
+        "rank": 1
+      },
+      {
         "team": "qwer",
         "problems_completed": 1,
         "problem_scores": {
@@ -2505,21 +2580,6 @@
         "overall_z_score": 1.0,
         "problem_z_scores": {
           "problem_6": 1.0
-        },
-        "rank": 1
-      },
-      {
-        "team": "reference",
-        "problems_completed": 1,
-        "problem_scores": {
-          "problem_7": 0.514
-        },
-        "problem_tokens": {
-          "problem_7": "DqZ0JOynh_DS5kkMIApNsqiKOuTQs8Ds"
-        },
-        "overall_z_score": 0.0,
-        "problem_z_scores": {
-          "problem_7": 0.0
         },
         "rank": 2
       },
