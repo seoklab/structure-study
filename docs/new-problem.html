@@ -293,6 +293,9 @@
                         <option value="search">search (Run MSA search)</option>
                         <option value="precomputed">precomputed (Use pre-calculated MSA)</option>
                     </select>
+                    <div style="margin-top: 0.5rem; padding: 0.75rem 1rem; background: #fef3c7; border: 1px solid #f59e0b; border-radius: 6px; font-size: 0.85rem; color: #92400e;">
+                        <strong>Warning:</strong> For designed sequences, use <strong>"none"</strong> (recommended). Selecting "search" will run Jackhmmer against large databases, adding 30+ min per job. "precomputed" requires a pre-calculated .a3m file — for monomer problems this option will be ignored and fall back to "none". For binder problems, the designed binder chain always skips MSA regardless of this setting; this option only affects the target chain.
+                    </div>
                 </div>
 
                 <div class="form-group">
