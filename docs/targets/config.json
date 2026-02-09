@@ -29,7 +29,8 @@
       "description": "Team1(\uc138\uc740\uc720\uc2e0\uc9c0\ud638)",
       "problems": [
         "problem_6",
-        "problem_7"
+        "problem_7",
+        "problem_8"
       ]
     }
   },
@@ -117,6 +118,17 @@
       "name": "Problem 7 - 2-Helix with a loop",
       "description": "Design a sequence for a 2-helix with a loop (28 residues)",
       "target_file": "problem_7.pdb",
+      "residue_count": 28,
+      "type": "monomer",
+      "primary_metric": "bb_lddt_cov",
+      "msa_mode": "none",
+      "session": "2026feb10"
+    },
+    {
+      "id": "problem_8",
+      "name": "Problem 8 - 2-Helix with a loop (No MSA)",
+      "description": "Design a sequence for a 2-helix with a loop (28 residues) without MSA",
+      "target_file": "1cq0.pdb",
       "residue_count": 28,
       "type": "monomer",
       "primary_metric": "bb_lddt_cov",
