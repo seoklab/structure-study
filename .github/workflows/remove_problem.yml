@@ -26,11 +26,18 @@ jobs:
             --issue-number ${{ github.event.issue.number }} \
             --config docs/targets/config.json
 
+      - name: Regenerate leaderboard
+        run: |
+          python3 scripts/update_leaderboard.py \
+            --results-dir docs/results \
+            --config docs/targets/config.json \
+            --output docs/leaderboard_data.json
+
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/targets/config.json
+          git add docs/targets/config.json docs/leaderboard_data.json
 
           git commit -m "Remove ${PROBLEM_ID} from session ${SESSION_KEY}"
 
