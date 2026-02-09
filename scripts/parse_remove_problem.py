@@ -49,7 +49,7 @@ def main():
 
     # Extract fields
     problem_id = fields.get("problem_id", "").strip()
-    session_key = fields.get("session", "").strip()
+    session_key = fields.get("session_key", "").strip()
 
     # Validate inputs
     errors = []
