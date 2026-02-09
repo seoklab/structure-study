@@ -80,6 +80,17 @@ Set `"active_session": "week3"` and change the old session's status to `"archive
 
 A problem defines a target structure that participants will design sequences for.
 
+### IMPORTANT: Preparing PDB files before adding a problem
+
+Target PDB files are publicly visible on GitHub Pages. To prevent participants from looking up the original structure, you **must** sanitize every PDB before submitting it:
+
+1. **Mask all residues to ALA** — change every residue name to `ALA` in ATOM records
+2. **Keep only backbone atoms** — retain only `N`, `CA`, `C`, `O`; remove all side-chain atoms and hydrogens
+3. **Strip all identifying headers** — remove `HEADER`, `TITLE`, `COMPND`, `SOURCE`, `KEYWDS`, `EXPDTA`, `AUTHOR`, `REVDAT`, `JRNL`, `REMARK`, `DBREF`, `SEQRES`, `HELIX`, `SHEET`, and `MASTER` records. Only keep `CRYST1`, `ORIGX`, `SCALE`, `ATOM`, `TER`, and `END`.
+4. **Use a generic filename** — never use the PDB ID (e.g. `1cq0.pdb`). Name it something like `problem_7.pdb` or `2helix-loop.pdb`.
+
+Without these steps, participants can trivially identify the target by searching the PDB ID, reading SEQRES records, or inspecting the header in the 3D viewer.
+
 ### Via the website (recommended)
 
 1. Go to https://seoklab.github.io/structure-study/new-problem.html
