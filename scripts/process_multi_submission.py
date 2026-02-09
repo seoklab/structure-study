@@ -97,19 +97,20 @@ def create_af3_input_monomer(
     }
 
     # Apply MSA mode
-    if msa_mode == "none" and output_dir:
-        # Create single-sequence MSA file to skip MSA search
-        # Must set all three: unpairedMsa, pairedMsa, templates
-        single_msa = create_single_seq_msa(sequence, output_dir, "A")
-        protein_entry["unpairedMsaPath"] = single_msa
-        protein_entry["pairedMsa"] = ""
-        protein_entry["templates"] = []
-    elif msa_mode == "precomputed" and msa_file:
+    if msa_mode == "precomputed" and msa_file:
         protein_entry["unpairedMsaPath"] = msa_file
         protein_entry["pairedMsa"] = ""
         protein_entry["templates"] = []
-
-    # If msa_mode == "search", don't add MSA fields (AF3 default behavior)
+    elif msa_mode == "search":
+        pass  # Don't add MSA fields — AF3 will run Jackhmmer
+    else:
+        # Default: skip MSA search (covers msa_mode=="none" and
+        # msa_mode=="precomputed" without msa_file as a safety fallback)
+        if output_dir:
+            single_msa = create_single_seq_msa(sequence, output_dir, "A")
+            protein_entry["unpairedMsaPath"] = single_msa
+            protein_entry["pairedMsa"] = ""
+            protein_entry["templates"] = []
 
     return {
         "name": job_name,

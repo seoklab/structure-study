@@ -274,6 +274,11 @@ def main():
     primary_metric = fields["primary_metric"].strip()
     msa_mode = fields["msa_mode"].strip()
 
+    # Validate: precomputed requires an msa_file; fall back to none for monomer
+    if msa_mode == "precomputed" and problem_type == "monomer":
+        print("WARNING: msa_mode 'precomputed' set for monomer without msa_file field. Falling back to 'none'.")
+        msa_mode = "none"
+
     # Determine PDB method and write file
     has_server_path = not is_empty_field(fields.get("method_1:_server_path", ""))
     has_upload = not is_empty_field(fields.get("method_2:_file_upload", ""))
