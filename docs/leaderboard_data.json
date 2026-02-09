@@ -1,6 +1,6 @@
 {
   "last_updated": "2026-02-07T04:27:24.788302Z",
-  "active_session": "test1",
+  "active_session": "2026feb10",
   "sessions": {
     "week1": {
       "name": "Week 1 - Scaffold Design",
@@ -21,10 +21,10 @@
         "problem_5"
       ]
     },
-    "test1": {
-      "name": "test1 - lab test",
+    "2026feb10": {
+      "name": "구조스터디- 2026.Feb.10",
       "status": "active",
-      "description": "test1",
+      "description": "Team1(세은유신지호)",
       "problems": [
         "problem_6"
       ]
@@ -2467,7 +2467,7 @@
         "rank": 13
       }
     ],
-    "test1": [
+    "2026feb10": [
       {
         "team": "qwer",
         "problems_completed": 1,
