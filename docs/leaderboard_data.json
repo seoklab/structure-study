@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-09T09:40:22.563787Z",
+  "last_updated": "2026-02-09T09:41:10.138300Z",
   "active_session": "2026feb10",
   "sessions": {
     "week1": {
@@ -26,7 +26,6 @@
       "status": "active",
       "description": "Team1(\uc138\uc740\uc720\uc2e0\uc9c0\ud638)",
       "problems": [
-        "problem_8",
         "problem_9",
         "problem_10",
         "problem_11",
