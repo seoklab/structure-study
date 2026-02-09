@@ -122,6 +122,49 @@ def pdb_has_atoms(pdb_path: str) -> bool:
     return False
 
 
+def sanitize_pdb(pdb_path: str) -> None:
+    """Sanitize a PDB file: mask residues to ALA, keep only backbone atoms, strip headers.
+
+    Overwrites the file in-place. Removes all identifying records (HEADER, TITLE,
+    SEQRES, HELIX, REMARK, DBREF, JRNL, etc.) and keeps only CRYST1, ORIGX, SCALE,
+    ATOM (backbone N/CA/C/O only), TER, and END.
+    """
+    keep_prefixes = ("CRYST1", "ORIGX", "SCALE")
+    backbone_atoms = {"N", "CA", "C", "O"}
+
+    with open(pdb_path) as f:
+        lines = f.readlines()
+
+    out = []
+    atom_serial = 1
+
+    for line in lines:
+        rec = line[:6].strip()
+
+        if rec in ("ATOM", "HETATM"):
+            atom_name = line[12:16].strip()
+            if atom_name not in backbone_atoms:
+                continue
+            # Renumber atom serial and mask residue name to ALA
+            new_line = f"ATOM  {atom_serial:>5}{line[11:17]}ALA{line[20:]}"
+            out.append(new_line)
+            atom_serial += 1
+        elif rec == "TER":
+            ter_line = f"TER   {atom_serial:>5}      ALA{line[20:]}"
+            out.append(ter_line)
+            atom_serial += 1
+        elif rec == "END":
+            out.append(line)
+        elif any(line.startswith(p) for p in keep_prefixes):
+            out.append(line)
+        # All other records (HEADER, TITLE, SEQRES, HELIX, REMARK, etc.) are dropped
+
+    with open(pdb_path, "w") as f:
+        f.writelines(out)
+
+    print(f"Sanitized PDB: masked to ALA, backbone only, headers stripped ({atom_serial - 1} atoms)")
+
+
 def get_next_problem_id(problems: list) -> str:
     """Scan existing problem IDs and return the next one (problem_N+1)."""
     max_num = 0
@@ -310,11 +353,22 @@ def main():
             f.write("\n")
         print(f"Wrote pasted PDB content to: {pdb_dest}")
 
+    # Count residues before sanitizing (CA atoms are preserved either way)
     residue_count = count_residues_from_pdb(pdb_dest)
     print(f"PDB: {pdb_filename} ({residue_count} residues)")
 
-    # Generate problem ID
+    # Sanitize: mask to ALA, backbone only, strip headers
+    sanitize_pdb(pdb_dest)
+
+    # Generate problem ID and rename file to generic name
     problem_id = get_next_problem_id(config.get("problems", []))
+    generic_filename = f"{problem_id}.pdb"
+    generic_dest = os.path.join(args.targets_dir, generic_filename)
+    os.rename(pdb_dest, generic_dest)
+    pdb_filename = generic_filename
+    pdb_dest = generic_dest
+    print(f"Renamed to generic filename: {pdb_filename}")
+
     display_name = f"{problem_id.replace('_', ' ').title()} - {problem_name}"
     print(f"New problem: {problem_id} ({display_name})")
 
