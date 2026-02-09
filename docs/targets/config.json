@@ -106,17 +106,6 @@
       "session": "week2"
     },
     {
-      "id": "problem_6",
-      "name": "testproblem",
-      "description": "Do not solve. Top7 from KIDDS",
-      "target_file": "Top7-scaffold.pdb",
-      "residue_count": 92,
-      "type": "monomer",
-      "primary_metric": "tm_score",
-      "msa_mode": "none",
-      "session": "2026feb10"
-    },
-    {
       "id": "problem_7",
       "name": "Problem 7 - 2-Helix with a loop",
       "description": "Design a sequence for a 2-helix with a loop (28 residues)",
