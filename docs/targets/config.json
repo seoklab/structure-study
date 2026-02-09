@@ -120,7 +120,7 @@
       "residue_count": 28,
       "type": "monomer",
       "primary_metric": "bb_lddt_cov",
-      "msa_mode": "precomputed",
+      "msa_mode": "none",
       "session": "2026feb10"
     }
   ],
