@@ -506,8 +506,15 @@
             });
         }
 
+        function isSessionActive() {
+            const sessions = leaderboardData.sessions || {};
+            const sessionInfo = sessions[currentSession];
+            return sessionInfo && sessionInfo.status === 'active';
+        }
+
         function renderProblemPanel(problemId, problem) {
             const rankings = problem.rankings || [];
+            const hideView = isSessionActive();
 
             if (rankings.length === 0) {
                 return `
@@ -548,7 +555,7 @@
                         <th class="sortable" data-key="iptm" data-type="number">ipTM</th>
                         <th class="sortable" data-key="ptm" data-type="number">pTM</th>
                         <th class="sortable" data-key="plddt" data-type="number">pLDDT</th>
-                        <th class="view-col">View</th>
+                        ${hideView ? '' : '<th class="view-col">View</th>'}
                     </tr>
                 `;
 
@@ -571,7 +578,7 @@
                             <td class="score-cell highlight">${formatScore(entry.iptm)}</td>
                             <td class="score-cell secondary">${formatScore(entry.ptm)}</td>
                             <td class="score-cell secondary">${formatScore(entry.plddt)}</td>
-                            <td>${viewLink}</td>
+                            ${hideView ? '' : `<td>${viewLink}</td>`}
                         </tr>
                     `;
                 }).join('');
@@ -592,7 +599,7 @@
                         <th class="sortable" data-key="rmsd" data-type="number" data-order="asc">RMSD</th>
                         <th class="sortable" data-key="ptm" data-type="number">pTM</th>
                         <th class="sortable" data-key="plddt" data-type="number">pLDDT</th>
-                        <th class="view-col">View</th>
+                        ${hideView ? '' : '<th class="view-col">View</th>'}
                     </tr>
                 `;
 
@@ -611,7 +618,7 @@
                             <td class="score-cell secondary">${formatScore(entry.rmsd)}</td>
                             <td class="score-cell secondary">${formatScore(entry.ptm)}</td>
                             <td class="score-cell secondary">${formatScore(entry.plddt)}</td>
-                            <td>${viewLink}</td>
+                            ${hideView ? '' : `<td>${viewLink}</td>`}
                         </tr>
                     `;
                 }).join('');
@@ -634,6 +641,7 @@
         function renderOverallPanel() {
             const overallRankings = leaderboardData.overall_rankings || {};
             const rankings = overallRankings[currentSession] || [];
+            const hideView = isSessionActive();
 
             if (rankings.length === 0) {
                 return `
@@ -683,7 +691,7 @@
                         <td class="participant-id">${escapeHtml(entry.team)}</td>
                         <td class="score-cell primary">${zScore}</td>
                         ${problemCells}
-                        <td>${viewLink}</td>
+                        ${hideView ? '' : `<td>${viewLink}</td>`}
                     </tr>
                 `;
             }).join('');
@@ -703,7 +711,7 @@
                                 <th class="sortable" data-key="team" data-type="string">Team</th>
                                 <th class="sortable" data-key="z_score" data-type="number">Z-Score</th>
                                 ${problemHeaders}
-                                <th class="view-col">View</th>
+                                ${hideView ? '' : '<th class="view-col">View</th>'}
                             </tr>
                         </thead>
                         <tbody>${tableRows}</tbody>
