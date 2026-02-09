@@ -30,7 +30,8 @@
       "problems": [
         "problem_6",
         "problem_7",
-        "problem_8"
+        "problem_8",
+        "problem_9"
       ]
     }
   },
@@ -130,6 +131,17 @@
       "description": "Design a sequence for a 2-helix with a loop (28 residues) without MSA",
       "target_file": "1cq0.pdb",
       "residue_count": 28,
+      "type": "monomer",
+      "primary_metric": "bb_lddt_cov",
+      "msa_mode": "none",
+      "session": "2026feb10"
+    },
+    {
+      "id": "problem_9",
+      "name": "Problem 9 - 1-Helix",
+      "description": "Design a sequence for a 2-helix with a loop (20 residues)",
+      "target_file": "2n16.pdb",
+      "residue_count": 200,
       "type": "monomer",
       "primary_metric": "bb_lddt_cov",
       "msa_mode": "none",
