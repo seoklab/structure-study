@@ -1,6 +1,6 @@
 {
   "submissions_open": true,
-  "active_session": "week1_test1",
+  "active_session": "2026feb10",
   "github_repo": "seoklab/structure-study",
   "_comment_primary_metric": "primary_metric: bb_lddt, bb_lddt_cov (lDDT\u00d7Coverage), binder_lddt (binder), interface_lddt, iptm, tm_score, etc. Used for z-score ranking.",
   "sessions": {
@@ -24,19 +24,12 @@
       ]
     },
     "2026feb10": {
-      "name": "\uad6c\uc870\uc2a4\ud130\ub514- 2026.Feb.10",
-      "status": "archived",
-      "description": "Team1(\uc138\uc740\uc720\uc2e0\uc9c0\ud638)",
+      "name": "구조스터디- 2026.Feb.10",
+      "status": "active",
+      "description": "Team1(세은유신지호)",
       "problems": [
         "problem_6"
       ]
-    },
-    "week1_test1": {
-      "name": "Week1 2 alpha helix with a loop",
-      "status": "active",
-      "description": "De novo protein design challenges",
-      "problems": []
-    }
   },
   "problems": [
     {
