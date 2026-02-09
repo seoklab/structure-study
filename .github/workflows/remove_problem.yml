@@ -1,0 +1,74 @@
+name: Remove Problem
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  remove-problem:
+    if: contains(github.event.issue.labels.*.name, 'remove-problem')
+    runs-on: [self-hosted, galaxy4]
+
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Parse and remove problem
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          python3 scripts/parse_remove_problem.py \
+            --issue-body "$ISSUE_BODY" \
+            --issue-number ${{ github.event.issue.number }} \
+            --config docs/targets/config.json
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/targets/config.json
+
+          git commit -m "Remove ${PROBLEM_ID} from session ${SESSION_KEY}"
+
+          for i in 1 2 3; do
+            if git push; then
+              echo "Push succeeded on attempt $i"
+              break
+            fi
+            echo "Push failed on attempt $i, rebasing..."
+            git pull --rebase
+          done
+
+      - name: Comment confirmation on issue
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BODY="## Problem Removed
+
+          | Field | Value |
+          |-------|-------|
+          | **Problem ID** | \`${PROBLEM_ID}\` |
+          | **Session** | \`${SESSION_KEY}\` |
+
+          The problem has been removed from the session and will no longer appear on the submit or leaderboard pages.
+
+          The problem entry and PDB file are preserved — it can be re-added later."
+
+          gh issue comment ${{ github.event.issue.number }} --body "$BODY"
+
+      - name: Comment failure on issue
+        if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} --body "## Problem Removal Failed
+
+          There was an error removing this problem. Please check the issue body format and try again.
+
+          See the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details."
+          gh issue edit ${{ github.event.issue.number }} --add-label "error"

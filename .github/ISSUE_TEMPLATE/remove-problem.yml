@@ -1,0 +1,32 @@
+name: Remove Problem
+description: Remove a problem from a session (hides it from submit and leaderboard)
+title: "Remove Problem: "
+labels: ["remove-problem"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Remove a Problem from a Session
+
+        This will remove the problem from the session's problem list,
+        hiding it from the submit and leaderboard pages.
+
+        The problem entry and PDB file are preserved and can be re-added later.
+
+  - type: input
+    id: problem_id
+    attributes:
+      label: Problem ID
+      description: The problem identifier (e.g. problem_7)
+      placeholder: "problem_7"
+    validations:
+      required: true
+
+  - type: input
+    id: session
+    attributes:
+      label: Session Key
+      description: The session to remove the problem from (e.g. 2026feb10)
+      placeholder: "2026feb10"
+    validations:
+      required: true
