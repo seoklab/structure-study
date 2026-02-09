@@ -32,7 +32,8 @@
         "problem_7",
         "problem_8",
         "problem_9",
-        "problem_10"
+        "problem_10",
+        "problem_11"
       ]
     }
   },
@@ -151,6 +152,17 @@
     {
       "id": "problem_10",
       "name": "Problem 10 - 1-Helix w/ beta-Sheet | Partial Prediction",
+      "description": "Design a sequence for a 1-helix with a beta sheet (56 residues)",
+      "target_file": "1pga.pdb",
+      "residue_count": 56,
+      "type": "monomer",
+      "primary_metric": "bb_lddt_cov",
+      "msa_mode": "none",
+      "session": "2026feb10"
+    },
+    {
+      "id": "problem_11",
+      "name": "Problem 11 - 1-Helix w/ beta-Sheet | Partial Prediction",
       "description": "Design a sequence for a 1-helix with a beta sheet (56 residues)",
       "target_file": "1pga.pdb",
       "residue_count": 56,
