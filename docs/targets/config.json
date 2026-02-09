@@ -24,11 +24,12 @@
       ]
     },
     "2026feb10": {
-      "name": "구조스터디- 2026.Feb.10",
+      "name": "\uad6c\uc870\uc2a4\ud130\ub514- 2026.Feb.10",
       "status": "active",
-      "description": "Team1(세은유신지호)",
+      "description": "Team1(\uc138\uc740\uc720\uc2e0\uc9c0\ud638)",
       "problems": [
-        "problem_6"
+        "problem_6",
+        "problem_7"
       ]
     }
   },
@@ -109,6 +110,17 @@
       "type": "monomer",
       "primary_metric": "tm_score",
       "msa_mode": "none",
+      "session": "2026feb10"
+    },
+    {
+      "id": "problem_7",
+      "name": "Problem 7 - 2-Helix with a loop",
+      "description": "Design a sequence for a 2-helix with a loop (28 residues)",
+      "target_file": "1cq0.pdb",
+      "residue_count": 28,
+      "type": "monomer",
+      "primary_metric": "bb_lddt_cov",
+      "msa_mode": "precomputed",
       "session": "2026feb10"
     }
   ],
