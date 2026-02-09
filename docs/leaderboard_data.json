@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-09T12:51:46.981373Z",
+  "last_updated": "2026-02-09T13:55:57.391662Z",
   "active_session": "2026feb10",
   "sessions": {
     "week1": {
@@ -1958,6 +1958,22 @@
         },
         {
           "rank": 2,
+          "participant_id": "half_beta_sheet_default",
+          "token": "9xplPheSSftWeew7BGafwxGbUPdY31uf",
+          "submitted_at": "2026-02-09T13:42:08.996Z",
+          "primary_score": 0.4153,
+          "primary_metric": "bb_lddt_cov",
+          "best_seq": "1",
+          "bb_lddt": 0.8307,
+          "bb_lddt_cov": 0.4153,
+          "tm_score": 0.40409,
+          "rmsd": 1.68,
+          "ptm": 0.52,
+          "plddt": 74.15,
+          "ranking_score": 0.89
+        },
+        {
+          "rank": 3,
           "participant_id": "beta_sheet_thr",
           "token": "fRVGBSjGFFcuMYFTZnQu-UvskoU527ge",
           "submitted_at": "2026-02-09T10:57:27.274Z",
