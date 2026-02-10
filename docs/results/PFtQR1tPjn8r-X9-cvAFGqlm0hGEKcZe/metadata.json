@@ -1,0 +1,52 @@
+{
+  "token": "PFtQR1tPjn8r-X9-cvAFGqlm0hGEKcZe",
+  "participant_id": "team_bonjae_2",
+  "total_problems": 1,
+  "completed_problems": 1,
+  "total_sequences": 2,
+  "all_complete": true,
+  "files": [
+    "team_bonjae_2_problem_11_seq1_summary_confidences.json",
+    "team_bonjae_2_problem_11_seq2_summary_confidences.json",
+    "team_bonjae_2_problem_11_seq1_ranking_scores.csv",
+    "submission.json",
+    "team_bonjae_2_problem_11_seq2_model.cif",
+    "team_bonjae_2_problem_11_seq2_ranking_scores.csv",
+    "team_bonjae_2_problem_11_seq1_model.cif",
+    "team_bonjae_2_problem_11_seq1_confidences.json",
+    "team_bonjae_2_problem_11_seq2_confidences.json"
+  ],
+  "problems": {
+    "problem_11": {
+      "files": [
+        "team_bonjae_2_problem_11_seq1_model.cif",
+        "team_bonjae_2_problem_11_seq1_confidences.json",
+        "team_bonjae_2_problem_11_seq1_summary_confidences.json",
+        "team_bonjae_2_problem_11_seq1_ranking_scores.csv",
+        "team_bonjae_2_problem_11_seq2_model.cif",
+        "team_bonjae_2_problem_11_seq2_confidences.json",
+        "team_bonjae_2_problem_11_seq2_summary_confidences.json",
+        "team_bonjae_2_problem_11_seq2_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "team_bonjae_2_problem_11_seq1_model.cif",
+            "team_bonjae_2_problem_11_seq1_confidences.json",
+            "team_bonjae_2_problem_11_seq1_summary_confidences.json",
+            "team_bonjae_2_problem_11_seq1_ranking_scores.csv"
+          ]
+        },
+        "2": {
+          "files": [
+            "team_bonjae_2_problem_11_seq2_model.cif",
+            "team_bonjae_2_problem_11_seq2_confidences.json",
+            "team_bonjae_2_problem_11_seq2_summary_confidences.json",
+            "team_bonjae_2_problem_11_seq2_ranking_scores.csv"
+          ]
+        }
+      }
+    }
+  },
+  "source_dir": "/home/j2ho/seoklab/structure-study/submissions/teambonjae2_49_698ac3fe_cqk7"
+}

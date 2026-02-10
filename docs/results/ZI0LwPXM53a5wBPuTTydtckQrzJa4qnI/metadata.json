@@ -1,0 +1,36 @@
+{
+  "token": "ZI0LwPXM53a5wBPuTTydtckQrzJa4qnI",
+  "participant_id": "team_iphone17",
+  "total_problems": 1,
+  "completed_problems": 1,
+  "total_sequences": 1,
+  "all_complete": true,
+  "files": [
+    "team_iphone17_problem_11_seq1_model.cif",
+    "team_iphone17_problem_11_seq1_ranking_scores.csv",
+    "submission.json",
+    "team_iphone17_problem_11_seq1_summary_confidences.json",
+    "team_iphone17_problem_11_seq1_confidences.json"
+  ],
+  "problems": {
+    "problem_11": {
+      "files": [
+        "team_iphone17_problem_11_seq1_model.cif",
+        "team_iphone17_problem_11_seq1_confidences.json",
+        "team_iphone17_problem_11_seq1_summary_confidences.json",
+        "team_iphone17_problem_11_seq1_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "team_iphone17_problem_11_seq1_model.cif",
+            "team_iphone17_problem_11_seq1_confidences.json",
+            "team_iphone17_problem_11_seq1_summary_confidences.json",
+            "team_iphone17_problem_11_seq1_ranking_scores.csv"
+          ]
+        }
+      }
+    }
+  },
+  "source_dir": "/home/j2ho/seoklab/structure-study/submissions/teamiphone17_51_698ac4e8_tmwv"
+}
