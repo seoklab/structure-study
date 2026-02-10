@@ -4,25 +4,6 @@
   "github_repo": "seoklab/structure-study",
   "_comment_primary_metric": "primary_metric: bb_lddt, bb_lddt_cov (lDDT\u00d7Coverage), binder_lddt (binder), interface_lddt, iptm, tm_score, etc. Used for z-score ranking.",
   "sessions": {
-    "week1": {
-      "name": "Week 1 - Scaffold Design",
-      "status": "archived",
-      "description": "Introductory scaffold design problems",
-      "problems": [
-        "problem_1",
-        "problem_2",
-        "problem_3"
-      ]
-    },
-    "week2": {
-      "name": "Week 2 - Binder Design",
-      "status": "archived",
-      "description": "Binder design challenges",
-      "problems": [
-        "problem_4",
-        "problem_5"
-      ]
-    },
     "2026feb10": {
       "name": "\uad6c\uc870\uc2a4\ud130\ub514- 2026.Feb.10",
       "status": "archived",
@@ -39,73 +20,6 @@
     }
   },
   "problems": [
-    {
-      "id": "problem_1",
-      "name": "Problem 1 - 3-Helix Bundle",
-      "description": "Design a sequence for a 3-helix bundle scaffold (73 residues)",
-      "target_file": "3H-scaffold.pdb",
-      "residue_count": 73,
-      "type": "monomer",
-      "primary_metric": "bb_lddt_cov",
-      "msa_mode": "none",
-      "session": "week1"
-    },
-    {
-      "id": "problem_2",
-      "name": "Problem 2 - 4-Helix Bundle",
-      "description": "Design a sequence for a 4-helix bundle scaffold (76 residues)",
-      "target_file": "4B1H-scaffold.pdb",
-      "residue_count": 76,
-      "type": "monomer",
-      "primary_metric": "bb_lddt_cov",
-      "msa_mode": "none",
-      "session": "week1"
-    },
-    {
-      "id": "problem_3",
-      "name": "Problem 3 - Top7 Fold",
-      "description": "Design a sequence for a mixed alpha/beta fold (90 residues)",
-      "target_file": "top7-scaffold.pdb",
-      "residue_count": 90,
-      "type": "monomer",
-      "primary_metric": "bb_lddt_cov",
-      "msa_mode": "none",
-      "session": "week1"
-    },
-    {
-      "id": "problem_4",
-      "name": "Problem 4 - Peptide Binder 1",
-      "description": "Design a peptide binder (30 residues) for GLP-1 receptor",
-      "target_file": "PepBinder1-scaffold.pdb",
-      "residue_count": 30,
-      "type": "binder",
-      "primary_metric": "tm_score",
-      "target_sequence": "TVSLWETVQKWREYRRQCQRSLTEDPPPATDLFCNRTFDEYACWPDGEPGSFVNVSCPWYLPWASSVPQGHVYRFCTAEGLWLQKDNSSLPWRDLSECEESKRGERSSPEEQLLFLYIIYTVGYALSFSALVIASAILLGFRHLHCTRNYIHLNLFASFILRALSVFIKDAALKWMYSTAAQQHQWDGLLSYQDSLSCRLVFLLMQYCVAANYYWLLVEGVYLYTLLAFSVFSEQWIFRLYVSIGWGVPLLFVVPWGIVKYLYEDEGCWTRNSNMNYWLIIRLPILFAIGVNFLIFVRVICIVVSKLKANLMCKTDIKCRLAKSTLTLIPLLGTHEVIFAFVMDEHARGTLRFIKLFTELSFTSFQGLMVAILYCFVNNEVQLEFRKSWERWRLE",
-      "target_msa_file": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/docs/targets/PepBinder1_target.a3m",
-      "participant_msa_mode": "none",
-      "expected_binder_length": [
-        20,
-        50
-      ],
-      "session": "week2"
-    },
-    {
-      "id": "problem_5",
-      "name": "Problem 5 - Peptide Binder 2",
-      "description": "Design a peptide binder (12 residues) for a GPCR target",
-      "target_file": "PepBinder2-scaffold.pdb",
-      "residue_count": 12,
-      "type": "binder",
-      "primary_metric": "tm_score",
-      "target_sequence": "MVAIQCIYALVCLVGLVGNALVIFVILRYAKMKTATNIYLLNLAVADELFMLSVPFVASSAALRHWPFGSVLCRAVLSVDGLNMFTSVFCLTVLSVDRYVAVVHPLRAATYRRPSVAKLINLGVWLASLLVTLPIAIFADTRPARGGQAVACNLQWPHPAWSAVFVVYTFLLGFLLPVLAIGLCYLLIVGKMRAVALRAGWQQRRRSEKKITRLVLMFVVVFVLCWMPFYVVQLLNLFVTSLDATVNHVSLILSYANSCANPILYGFLSDNFRRFF",
-      "target_msa_file": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/docs/targets/PepBinder2_target.a3m",
-      "participant_msa_mode": "none",
-      "expected_binder_length": [
-        10,
-        30
-      ],
-      "session": "week2"
-    },
     {
       "id": "problem_7",
       "name": "Problem 7 - 2-Helix with a loop",

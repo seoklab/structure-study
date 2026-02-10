@@ -310,40 +310,10 @@
             </div>
         </div>
 
-        <!-- Past Competitions -->
-        <div class="section">
+        <!-- Archived Sessions -->
+        <div class="section" id="archive-section" style="display:none;">
             <h2>Archive</h2>
-            <a href="archive-kidds-2026.html" class="card featured">
-                <h3>1st KIDDS Human ProteinMPNN Competition</h3>
-                <p class="info">February 3-4, 2026 | Gyeongju, Korea</p>
-                <span class="status completed">Completed</span>
-                <div class="winners-display">
-                    <div class="winners-label">Top Teams</div>
-                    <div class="winners-list">
-                        <div class="winner-item">
-                            <span class="winner-medal">🥇</span>
-                            <div class="winner-info">
-                                <span class="winner-team">team3</span>
-                                <span class="winner-place">1st Place</span>
-                            </div>
-                        </div>
-                        <div class="winner-item">
-                            <span class="winner-medal">🥈</span>
-                            <div class="winner-info">
-                                <span class="winner-team">team1</span>
-                                <span class="winner-place">2nd (Tied)</span>
-                            </div>
-                        </div>
-                        <div class="winner-item">
-                            <span class="winner-medal">🥈</span>
-                            <div class="winner-info">
-                                <span class="winner-team">team5</span>
-                                <span class="winner-place">2nd (Tied)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>
+            <div id="archive-cards"></div>
         </div>
 
         <footer>
@@ -374,11 +344,38 @@
                     document.getElementById('session-desc').textContent = 'Open a new session to get started';
                     document.getElementById('session-status').textContent = 'None';
                 }
+
+                // Render archived sessions
+                const archived = Object.entries(sessions)
+                    .filter(([key, s]) => s.status === 'archived')
+                    .reverse();
+
+                if (archived.length > 0) {
+                    document.getElementById('archive-section').style.display = '';
+                    const container = document.getElementById('archive-cards');
+                    archived.forEach(([key, s]) => {
+                        const problemCount = (s.problems || []).length;
+                        const card = document.createElement('a');
+                        card.href = 'leaderboard.html#' + key;
+                        card.className = 'card';
+                        card.innerHTML =
+                            '<h3>' + escapeHtml(s.name) + '</h3>' +
+                            '<p class="info">' + escapeHtml(s.description) + ' | ' + problemCount + ' problem' + (problemCount !== 1 ? 's' : '') + '</p>' +
+                            '<span class="status completed">Archived</span>';
+                        container.appendChild(card);
+                    });
+                }
             })
             .catch(() => {
                 document.getElementById('session-title').textContent = 'Failed to load';
                 document.getElementById('session-desc').textContent = 'Could not load config.json';
             });
+
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
     </script>
 
     <script>

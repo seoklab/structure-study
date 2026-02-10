@@ -397,8 +397,13 @@
                 }
                 leaderboardData = await response.json();
 
-                // Default to active session
-                currentSession = leaderboardData.active_session || Object.keys(leaderboardData.sessions || {})[0] || null;
+                // Default to active session, or use hash if present
+                const hashSession = window.location.hash.slice(1);
+                if (hashSession && leaderboardData.sessions && leaderboardData.sessions[hashSession]) {
+                    currentSession = hashSession;
+                } else {
+                    currentSession = leaderboardData.active_session || Object.keys(leaderboardData.sessions || {})[0] || null;
+                }
 
                 renderSessionSelector();
                 renderLeaderboard();
