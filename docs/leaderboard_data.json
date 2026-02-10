@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-10T04:33:10.612921Z",
+  "last_updated": "2026-02-10T04:59:08.975016Z",
   "active_session": "2026feb10",
   "sessions": {
     "week1": {
@@ -2016,6 +2016,22 @@
           "ptm": 0.38,
           "plddt": 65.63,
           "ranking_score": 0.88
+        },
+        {
+          "rank": 6,
+          "participant_id": "TEAM-3-YEOPYOEB-1",
+          "token": "NT406uOXEphAICZlzFd5SeNgBrXgHGZ2",
+          "submitted_at": "2026-02-10T04:55:34.562Z",
+          "primary_score": 0.3014,
+          "primary_metric": "bb_lddt_cov",
+          "best_seq": "1",
+          "bb_lddt": 0.5445,
+          "bb_lddt_cov": 0.3014,
+          "tm_score": 0.3338,
+          "rmsd": 3.88,
+          "ptm": 0.31,
+          "plddt": 49.71,
+          "ranking_score": 0.66
         }
       ]
     },
@@ -2594,9 +2610,9 @@
         "problem_tokens": {
           "problem_11": "80R9rrhOPxr7PuVZIe8rh7aLEgAl7aSn"
         },
-        "overall_z_score": 1.7266424367408677,
+        "overall_z_score": 1.9532457317388214,
         "problem_z_scores": {
-          "problem_11": 1.7266424367408677
+          "problem_11": 1.9532457317388214
         },
         "rank": 1
       },
@@ -2609,9 +2625,9 @@
         "problem_tokens": {
           "problem_11": "gw4bgA4Ipoc5I-fX6AS4WZJDsz43LIOn"
         },
-        "overall_z_score": -0.44777793284497963,
+        "overall_z_score": -0.22908233098666825,
         "problem_z_scores": {
-          "problem_11": -0.44777793284497963
+          "problem_11": -0.22908233098666825
         },
         "rank": 2
       },
@@ -2624,9 +2640,9 @@
         "problem_tokens": {
           "problem_11": "rA9q8Q_eE9DgWjqFnMk5Vsrp-U2Bmj7Q"
         },
-        "overall_z_score": -0.6243722247202627,
+        "overall_z_score": -0.40631884158372866,
         "problem_z_scores": {
-          "problem_11": -0.6243722247202627
+          "problem_11": -0.40631884158372866
         },
         "rank": 3
       },
@@ -2639,11 +2655,26 @@
         "problem_tokens": {
           "problem_11": "fRVGBSjGFFcuMYFTZnQu-UvskoU527ge"
         },
-        "overall_z_score": -0.6544922791756266,
+        "overall_z_score": -0.4365484333444424,
         "problem_z_scores": {
-          "problem_11": -0.6544922791756266
+          "problem_11": -0.4365484333444424
         },
         "rank": 4
+      },
+      {
+        "team": "TEAM-3-YEOPYOEB-1",
+        "problems_completed": 1,
+        "problem_scores": {
+          "problem_11": 0.3014
+        },
+        "problem_tokens": {
+          "problem_11": "NT406uOXEphAICZlzFd5SeNgBrXgHGZ2"
+        },
+        "overall_z_score": -0.8812961258239824,
+        "problem_z_scores": {
+          "problem_11": -0.8812961258239824
+        },
+        "rank": 5
       }
     ]
   }
