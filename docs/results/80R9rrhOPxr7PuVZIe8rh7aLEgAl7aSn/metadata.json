@@ -1,0 +1,36 @@
+{
+  "token": "80R9rrhOPxr7PuVZIe8rh7aLEgAl7aSn",
+  "participant_id": "reference",
+  "total_problems": 1,
+  "completed_problems": 1,
+  "total_sequences": 1,
+  "all_complete": true,
+  "files": [
+    "submission.json",
+    "reference_problem_11_seq1_confidences.json",
+    "reference_problem_11_seq1_summary_confidences.json",
+    "reference_problem_11_seq1_model.cif",
+    "reference_problem_11_seq1_ranking_scores.csv"
+  ],
+  "problems": {
+    "problem_11": {
+      "files": [
+        "reference_problem_11_seq1_model.cif",
+        "reference_problem_11_seq1_confidences.json",
+        "reference_problem_11_seq1_summary_confidences.json",
+        "reference_problem_11_seq1_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "reference_problem_11_seq1_model.cif",
+            "reference_problem_11_seq1_confidences.json",
+            "reference_problem_11_seq1_summary_confidences.json",
+            "reference_problem_11_seq1_ranking_scores.csv"
+          ]
+        }
+      }
+    }
+  },
+  "source_dir": "copied_from_kjPvll0tNZW9zhYrJvExZr85AtKlvxZs"
+}
