@@ -5,7 +5,7 @@
   "token": "Cu5IinL9gs5d-0_pqp9debMCeBcc1oy3",
   "model_file": "ProteinMPNN_day1_problem_2_seq5_model.cif",
   "reference_file": "4B1H-scaffold.pdb",
-  "evaluated_at": "2026-02-03T13:29:22.850206Z",
+  "evaluated_at": "2026-02-10T05:26:10.329956Z",
   "metrics": {
     "tm_score": 0.95717,
     "tm_score_ref": null,
@@ -30,7 +30,8 @@
         0.79
       ]
     ],
-    "fraction_disordered": 0.0
+    "fraction_disordered": 0.0,
+    "mean_plddt": 88.17
   },
   "primary_score": 0.95717,
   "primary_metric": "tm_score"

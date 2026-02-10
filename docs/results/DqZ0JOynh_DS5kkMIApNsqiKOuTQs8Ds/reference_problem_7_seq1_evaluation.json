@@ -5,7 +5,7 @@
   "token": "DqZ0JOynh_DS5kkMIApNsqiKOuTQs8Ds",
   "model_file": "reference_problem_7_seq1_model.cif",
   "reference_file": "problem_7.pdb",
-  "evaluated_at": "2026-02-09T07:01:32.806054Z",
+  "evaluated_at": "2026-02-10T05:25:52.857773Z",
   "metrics": {
     "tm_score": 0.36555,
     "tm_score_ref": null,

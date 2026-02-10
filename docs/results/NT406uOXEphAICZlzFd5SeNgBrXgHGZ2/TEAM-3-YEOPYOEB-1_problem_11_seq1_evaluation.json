@@ -5,7 +5,7 @@
   "token": "NT406uOXEphAICZlzFd5SeNgBrXgHGZ2",
   "model_file": "TEAM-3-YEOPYOEB-1_problem_11_seq1_model.cif",
   "reference_file": "problem_11.pdb",
-  "evaluated_at": "2026-02-10T04:59:07.463854Z",
+  "evaluated_at": "2026-02-10T05:25:36.526303Z",
   "metrics": {
     "tm_score": 0.3338,
     "tm_score_ref": null,

@@ -5,7 +5,7 @@
   "token": "FU2uWtIAKRULz5bIm0s4Dvrxi5zT60CY",
   "model_file": "team6_day1_round2_problem_1_seq5_model.cif",
   "reference_file": "3H-scaffold.pdb",
-  "evaluated_at": "2026-02-03T12:15:00.695357Z",
+  "evaluated_at": "2026-02-10T05:25:01.334207Z",
   "metrics": {
     "tm_score": 0.53125,
     "tm_score_ref": null,
@@ -30,7 +30,8 @@
         0.39
       ]
     ],
-    "fraction_disordered": 0.95
+    "fraction_disordered": 0.95,
+    "mean_plddt": 56.01
   },
   "primary_score": 0.53125,
   "primary_metric": "tm_score"

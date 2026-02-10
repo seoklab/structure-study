@@ -4,8 +4,8 @@
   "participant_id": "half_beta_sheet_default",
   "token": "9xplPheSSftWeew7BGafwxGbUPdY31uf",
   "model_file": "half_beta_sheet_default_problem_11_seq1_model.cif",
-  "reference_file": "1pga.pdb",
-  "evaluated_at": "2026-02-09T13:55:53.947917Z",
+  "reference_file": "problem_11.pdb",
+  "evaluated_at": "2026-02-10T05:25:48.864086Z",
   "metrics": {
     "tm_score": 0.40409,
     "tm_score_ref": null,

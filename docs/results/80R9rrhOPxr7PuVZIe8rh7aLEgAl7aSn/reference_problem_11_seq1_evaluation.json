@@ -4,8 +4,8 @@
   "participant_id": "reference",
   "token": "80R9rrhOPxr7PuVZIe8rh7aLEgAl7aSn",
   "model_file": "reference_problem_11_seq1_model.cif",
-  "reference_file": "1pga.pdb",
-  "evaluated_at": "2026-02-09T09:45:03.648575Z",
+  "reference_file": "problem_11.pdb",
+  "evaluated_at": "2026-02-10T05:26:33.080327Z",
   "metrics": {
     "tm_score": 0.9831,
     "tm_score_ref": null,
@@ -33,6 +33,6 @@
     "fraction_disordered": 0.0,
     "mean_plddt": 93.75
   },
-  "primary_score": 0.9859,
-  "primary_metric": "bb_lddt_cov"
+  "primary_score": 0.9831,
+  "primary_metric": "tm_score"
 }

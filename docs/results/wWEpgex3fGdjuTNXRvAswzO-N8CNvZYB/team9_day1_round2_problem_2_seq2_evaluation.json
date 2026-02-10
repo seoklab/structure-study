@@ -5,7 +5,7 @@
   "token": "wWEpgex3fGdjuTNXRvAswzO-N8CNvZYB",
   "model_file": "team9_day1_round2_problem_2_seq2_model.cif",
   "reference_file": "4B1H-scaffold.pdb",
-  "evaluated_at": "2026-02-03T15:08:00.603026Z",
+  "evaluated_at": "2026-02-10T05:26:24.932835Z",
   "metrics": {
     "tm_score": 0.3989,
     "tm_score_ref": null,

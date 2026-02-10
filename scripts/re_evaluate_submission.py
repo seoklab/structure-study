@@ -110,7 +110,7 @@ def run_evaluation(submission: dict, reference_file: Path, problem_type: str):
         output_file = result_dir / f"{submission['participant_id']}_{submission['problem_id']}_evaluation.json"
     
     cmd = [
-        "python", "scripts/evaluate_structure.py",
+        sys.executable, "scripts/evaluate_structure.py",
         "--model", str(model_file),
         "--reference", str(reference_file),
         "--problem-id", submission["problem_id"],
@@ -193,7 +193,7 @@ def main():
     # Update leaderboard if any evaluations succeeded
     if success > 0:
         print("\nUpdating leaderboard...")
-        subprocess.run(["python", "scripts/update_leaderboard.py"], check=False)
+        subprocess.run([sys.executable, "scripts/update_leaderboard.py"], check=False)
         print("Done!")
 
 

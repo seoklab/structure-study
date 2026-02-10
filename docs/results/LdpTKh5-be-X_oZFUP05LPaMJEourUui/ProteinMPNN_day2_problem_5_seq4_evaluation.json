@@ -5,7 +5,7 @@
   "token": "LdpTKh5-be-X_oZFUP05LPaMJEourUui",
   "model_file": "ProteinMPNN_day2_problem_5_seq4_model.cif",
   "reference_file": "PepBinder2-scaffold.pdb",
-  "evaluated_at": "2026-02-04T03:23:52.378493Z",
+  "evaluated_at": "2026-02-10T05:24:40.206093Z",
   "metrics": {
     "tm_score": 0.02318,
     "tm_score_ref": null,

@@ -4,8 +4,8 @@
   "participant_id": "reference",
   "token": "kjPvll0tNZW9zhYrJvExZr85AtKlvxZs",
   "model_file": "reference_problem_10_seq1_model.cif",
-  "reference_file": "1pga.pdb",
-  "evaluated_at": "2026-02-09T09:45:03.648575Z",
+  "reference_file": "problem_11.pdb",
+  "evaluated_at": "2026-02-10T05:25:34.136178Z",
   "metrics": {
     "tm_score": 0.9831,
     "tm_score_ref": null,

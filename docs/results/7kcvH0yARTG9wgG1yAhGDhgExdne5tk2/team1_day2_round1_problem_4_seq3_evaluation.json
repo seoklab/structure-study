@@ -5,7 +5,7 @@
   "token": "7kcvH0yARTG9wgG1yAhGDhgExdne5tk2",
   "model_file": "team1_day2_round1_problem_4_seq3_model.cif",
   "reference_file": "PepBinder1-scaffold.pdb",
-  "evaluated_at": "2026-02-04T03:22:40.023345Z",
+  "evaluated_at": "2026-02-10T05:25:16.696762Z",
   "metrics": {
     "tm_score": 0.07416,
     "tm_score_ref": null,

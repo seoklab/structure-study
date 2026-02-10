@@ -5,7 +5,7 @@
   "token": "BUUS7FI9gOqJ9y0pTpkNcv4eCt_5is6A",
   "model_file": "team8_day1_round2_problem_3_seq4_model.cif",
   "reference_file": "top7-scaffold.pdb",
-  "evaluated_at": "2026-02-03T14:24:30.473832Z",
+  "evaluated_at": "2026-02-10T05:24:46.933926Z",
   "metrics": {
     "tm_score": 0.29221,
     "tm_score_ref": null,
@@ -22,15 +22,16 @@
     "kabsch_aligned_rmsd": 2.52
   },
   "af3_metrics": {
-    "ptm": 0.43,
+    "ptm": 0.48,
     "iptm": null,
-    "ranking_score": 0.43,
+    "ranking_score": 0.78,
     "chain_pair_iptm": [
       [
-        0.43
+        0.48
       ]
     ],
-    "fraction_disordered": 0.0
+    "fraction_disordered": 0.6,
+    "mean_plddt": 60.14
   },
   "primary_score": 0.29221,
   "primary_metric": "tm_score"

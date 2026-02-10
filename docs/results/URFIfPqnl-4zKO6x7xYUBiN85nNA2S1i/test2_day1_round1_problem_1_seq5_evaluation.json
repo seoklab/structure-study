@@ -5,7 +5,7 @@
   "token": "URFIfPqnl-4zKO6x7xYUBiN85nNA2S1i",
   "model_file": "test2_day1_round1_problem_1_seq5_model.cif",
   "reference_file": "3H-scaffold.pdb",
-  "evaluated_at": "2026-02-03T05:37:06.070471Z",
+  "evaluated_at": "2026-02-10T05:25:03.514946Z",
   "metrics": {
     "tm_score": 0.45848,
     "tm_score_ref": null,
@@ -18,8 +18,8 @@
     "lddt_aligned_count": 49,
     "bb_lddt_cov": 0.3644,
     "coverage": 0.6712,
-    "global_rmsd": 3.04,
-    "kabsch_aligned_rmsd": 62.169
+    "global_rmsd": 17.969,
+    "kabsch_aligned_rmsd": 3.04
   },
   "af3_metrics": {
     "ptm": 0.32,

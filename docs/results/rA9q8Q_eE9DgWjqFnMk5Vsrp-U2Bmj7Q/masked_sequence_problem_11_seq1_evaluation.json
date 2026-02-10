@@ -5,7 +5,7 @@
   "token": "rA9q8Q_eE9DgWjqFnMk5Vsrp-U2Bmj7Q",
   "model_file": "masked_sequence_problem_11_seq1_model.cif",
   "reference_file": "problem_11.pdb",
-  "evaluated_at": "2026-02-10T04:33:09.523864Z",
+  "evaluated_at": "2026-02-10T05:25:48.973939Z",
   "metrics": {
     "tm_score": 0.40148,
     "tm_score_ref": null,

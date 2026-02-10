@@ -4,8 +4,8 @@
   "participant_id": "beta_sheet_thr",
   "token": "fRVGBSjGFFcuMYFTZnQu-UvskoU527ge",
   "model_file": "beta_sheet_thr_problem_11_seq1_model.cif",
-  "reference_file": "1pga.pdb",
-  "evaluated_at": "2026-02-09T11:01:39.742341Z",
+  "reference_file": "problem_11.pdb",
+  "evaluated_at": "2026-02-10T05:25:48.752750Z",
   "metrics": {
     "tm_score": 0.41739,
     "tm_score_ref": null,
