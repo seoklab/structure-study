@@ -55,6 +55,7 @@
             margin-bottom: 1rem;
         }
         .card {
+            position: relative;
             display: block;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -199,13 +200,16 @@
 
         /* Session icons on archive cards */
         .session-icons {
+            position: absolute;
+            right: 1.75rem;
+            top: 50%;
+            transform: translateY(-50%);
             display: flex;
             gap: 0.5rem;
-            margin-bottom: 0.5rem;
         }
         .session-icon {
-            width: 32px;
-            height: 32px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             object-fit: cover;
         }
@@ -379,9 +383,9 @@
                         card.className = 'card';
                         card.innerHTML =
                             '<h3>' + escapeHtml(s.name) + '</h3>' +
-                            iconsHtml +
                             '<p class="info">' + escapeHtml(s.description) + ' | ' + problemCount + ' problem' + (problemCount !== 1 ? 's' : '') + '</p>' +
-                            '<span class="status completed">Archived</span>';
+                            '<span class="status completed">Archived</span>' +
+                            iconsHtml;
                         container.appendChild(card);
                     });
                 }
