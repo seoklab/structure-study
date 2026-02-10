@@ -1,0 +1,36 @@
+{
+  "token": "rA9q8Q_eE9DgWjqFnMk5Vsrp-U2Bmj7Q",
+  "participant_id": "masked_sequence",
+  "total_problems": 1,
+  "completed_problems": 1,
+  "total_sequences": 1,
+  "all_complete": true,
+  "files": [
+    "masked_sequence_problem_11_seq1_confidences.json",
+    "masked_sequence_problem_11_seq1_summary_confidences.json",
+    "masked_sequence_problem_11_seq1_ranking_scores.csv",
+    "submission.json",
+    "masked_sequence_problem_11_seq1_model.cif"
+  ],
+  "problems": {
+    "problem_11": {
+      "files": [
+        "masked_sequence_problem_11_seq1_model.cif",
+        "masked_sequence_problem_11_seq1_confidences.json",
+        "masked_sequence_problem_11_seq1_summary_confidences.json",
+        "masked_sequence_problem_11_seq1_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "masked_sequence_problem_11_seq1_model.cif",
+            "masked_sequence_problem_11_seq1_confidences.json",
+            "masked_sequence_problem_11_seq1_summary_confidences.json",
+            "masked_sequence_problem_11_seq1_ranking_scores.csv"
+          ]
+        }
+      }
+    }
+  },
+  "source_dir": "/home/j2ho/seoklab/structure-study/submissions/maskedsequence_29_698aacb2_o9ie"
+}
