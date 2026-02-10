@@ -289,8 +289,34 @@ jobs:
 
           echo "results_updated=$RESULTS_UPDATED" >> $GITHUB_OUTPUT
 
+      - name: Sync any orphaned results from public_results
+        id: sync
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Catch results that were packaged but never committed
+          # (e.g., from previous runs where git push failed)
+          SYNCED=false
+          if [ -d "${PUBLIC_RESULTS}" ]; then
+            for token_dir in ${PUBLIC_RESULTS}/*/; do
+              [ ! -d "$token_dir" ] && continue
+              TOKEN=$(basename "$token_dir")
+              if [ ! -d "docs/results/${TOKEN}" ]; then
+                echo "Syncing orphaned result: $TOKEN"
+                mkdir -p "docs/results/${TOKEN}"
+                cp -r "${token_dir}"* "docs/results/${TOKEN}/"
+                SYNCED=true
+              fi
+            done
+          fi
+          if [ "$SYNCED" = "true" ]; then
+            echo "results_updated=true" >> $GITHUB_OUTPUT
+          else
+            echo "results_updated=${{ steps.check.outputs.results_updated }}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Update leaderboard
-        if: steps.check.outputs.results_updated == 'true'
+        if: steps.check.outputs.results_updated == 'true' || steps.sync.outputs.results_updated == 'true'
         run: |
           echo "Updating leaderboard data..."
 
@@ -353,7 +379,7 @@ jobs:
                 [ -n "$SEQ_ID" ] && SEQ_ARG="--seq-id $SEQ_ID"
 
                 # Run evaluation using TMalign + Python lDDT
-                python3 scripts/evaluate_structure.py \
+                python3.10 scripts/evaluate_structure.py \
                   --model "$MODEL_FILE" \
                   --reference "${TARGETS_DIR}/${REF_FILE}" \
                   --problem-id "$problem_id" \
@@ -369,19 +395,19 @@ jobs:
 
           # Update leaderboard
           echo "Regenerating leaderboard..."
-          python3 scripts/update_leaderboard.py \
+          python3.10 scripts/update_leaderboard.py \
             --results-dir "${RESULTS_DIR}" \
             --config "${GITHUB_WORKSPACE}/docs/targets/config.json" \
             --output "${GITHUB_WORKSPACE}/docs/leaderboard_data.json"
 
           # Update admin index
           echo "Regenerating admin index..."
-          python3 scripts/generate_admin_index.py
+          python3.10 scripts/generate_admin_index.py
 
           echo "Leaderboard update complete"
 
       - name: Commit and push results
-        if: steps.check.outputs.results_updated == 'true'
+        if: steps.check.outputs.results_updated == 'true' || steps.sync.outputs.results_updated == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
