@@ -1,0 +1,35 @@
+{
+  "token": "JXWjZr9AOVfw87-FjAC0Ne7pXE4xazKy",
+  "participant_id": "sumin",
+  "total_problems": 1,
+  "completed_problems": 1,
+  "total_sequences": 1,
+  "all_complete": true,
+  "files": [
+    "sumin_problem_2_ranking_scores.csv",
+    "submission.json",
+    "sumin_problem_2_summary_confidences.json",
+    "sumin_problem_2_model.cif"
+  ],
+  "problems": {
+    "problem_2": {
+      "files": [
+        "sumin_problem_2_model.cif",
+        "sumin_problem_2_summary_confidences.json",
+        "sumin_problem_2_summary_confidences.json",
+        "sumin_problem_2_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "sumin_problem_2_model.cif",
+            "sumin_problem_2_summary_confidences.json",
+            "sumin_problem_2_summary_confidences.json",
+            "sumin_problem_2_ranking_scores.csv"
+          ]
+        }
+      }
+    }
+  },
+  "source_dir": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions/sumin_mkzhmc8i_5338"
+}

@@ -1,0 +1,11 @@
+{
+  "token": "WiCFa751SvUIcRm6Qwmthj4vrE7uB3zp",
+  "files": [
+    "submission_6_model.cif",
+    "submission_6_confidences.json",
+    "submission_6_summary_confidences.json",
+    "submission_6_ranking_scores.csv",
+    "submission.json"
+  ],
+  "source_dir": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions/submission_6"
+}

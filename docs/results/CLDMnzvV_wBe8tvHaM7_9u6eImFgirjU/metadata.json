@@ -1,0 +1,69 @@
+{
+  "token": "CLDMnzvV_wBe8tvHaM7_9u6eImFgirjU",
+  "participant_id": "team2",
+  "total_problems": 5,
+  "completed_problems": 5,
+  "all_complete": true,
+  "files": [
+    "team2_problem_4_summary_confidences.json",
+    "team2_problem_3_model.cif",
+    "team2_problem_5_ranking_scores.csv",
+    "team2_problem_1_model.cif",
+    "team2_problem_4_model.cif",
+    "team2_problem_1_summary_confidences.json",
+    "team2_problem_4_ranking_scores.csv",
+    "submission.json",
+    "team2_problem_5_model.cif",
+    "team2_problem_2_model.cif",
+    "team2_problem_3_summary_confidences.json",
+    "team2_problem_2_summary_confidences.json",
+    "team2_problem_1_ranking_scores.csv",
+    "team2_problem_2_ranking_scores.csv",
+    "team2_problem_5_summary_confidences.json",
+    "team2_problem_3_ranking_scores.csv",
+    "team2_problem_5_confidences.json"
+  ],
+  "problems": {
+    "problem_1": {
+      "files": [
+        "team2_problem_1_model.cif",
+        "team2_problem_1_summary_confidences.json",
+        "team2_problem_1_summary_confidences.json",
+        "team2_problem_1_ranking_scores.csv"
+      ]
+    },
+    "problem_2": {
+      "files": [
+        "team2_problem_2_model.cif",
+        "team2_problem_2_summary_confidences.json",
+        "team2_problem_2_summary_confidences.json",
+        "team2_problem_2_ranking_scores.csv"
+      ]
+    },
+    "problem_3": {
+      "files": [
+        "team2_problem_3_model.cif",
+        "team2_problem_3_summary_confidences.json",
+        "team2_problem_3_summary_confidences.json",
+        "team2_problem_3_ranking_scores.csv"
+      ]
+    },
+    "problem_4": {
+      "files": [
+        "team2_problem_4_model.cif",
+        "team2_problem_4_summary_confidences.json",
+        "team2_problem_4_summary_confidences.json",
+        "team2_problem_4_ranking_scores.csv"
+      ]
+    },
+    "problem_5": {
+      "files": [
+        "team2_problem_5_model.cif",
+        "team2_problem_5_confidences.json",
+        "team2_problem_5_summary_confidences.json",
+        "team2_problem_5_ranking_scores.csv"
+      ]
+    }
+  },
+  "source_dir": "/data/galaxy4/user/j2ho/kidds2026/protein-competition/submissions/team2_mksesp82_u4lm"
+}
