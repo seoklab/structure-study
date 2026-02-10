@@ -1,0 +1,38 @@
+{
+  "problem_id": "problem_11",
+  "problem_type": "monomer",
+  "participant_id": "HIHI",
+  "token": "k5gIxylJI1bBlMoZ3ahnzTtdJJr38X9E",
+  "model_file": "HIHI_problem_11_seq1_model.cif",
+  "reference_file": "problem_11.pdb",
+  "evaluated_at": "2026-02-10T05:32:02.522236Z",
+  "metrics": {
+    "tm_score": 0.60987,
+    "tm_score_ref": null,
+    "rmsd": 2.59,
+    "aligned_length": 53,
+    "seq_identity": 0.0,
+    "bb_lddt": 0.7079,
+    "model_ca_count": 56,
+    "ref_ca_count": 56,
+    "lddt_aligned_count": 53,
+    "bb_lddt_cov": 0.67,
+    "coverage": 0.9464,
+    "global_rmsd": 3.711,
+    "kabsch_aligned_rmsd": 2.585
+  },
+  "af3_metrics": {
+    "ptm": 0.53,
+    "iptm": null,
+    "ranking_score": 0.53,
+    "chain_pair_iptm": [
+      [
+        0.53
+      ]
+    ],
+    "fraction_disordered": 0.0,
+    "mean_plddt": 69.46
+  },
+  "primary_score": 0.60987,
+  "primary_metric": "tm_score"
+}

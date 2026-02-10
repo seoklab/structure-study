@@ -1,0 +1,68 @@
+{
+  "token": "k5gIxylJI1bBlMoZ3ahnzTtdJJr38X9E",
+  "participant_id": "HIHI",
+  "total_problems": 1,
+  "completed_problems": 1,
+  "total_sequences": 3,
+  "all_complete": true,
+  "files": [
+    "HIHI_problem_11_seq1_ranking_scores.csv",
+    "HIHI_problem_11_seq3_summary_confidences.json",
+    "HIHI_problem_11_seq3_confidences.json",
+    "HIHI_problem_11_seq1_model.cif",
+    "HIHI_problem_11_seq2_confidences.json",
+    "HIHI_problem_11_seq2_model.cif",
+    "HIHI_problem_11_seq3_ranking_scores.csv",
+    "HIHI_problem_11_seq3_model.cif",
+    "HIHI_problem_11_seq2_ranking_scores.csv",
+    "HIHI_problem_11_seq1_summary_confidences.json",
+    "submission.json",
+    "HIHI_problem_11_seq2_summary_confidences.json",
+    "HIHI_problem_11_seq1_confidences.json"
+  ],
+  "problems": {
+    "problem_11": {
+      "files": [
+        "HIHI_problem_11_seq1_model.cif",
+        "HIHI_problem_11_seq1_confidences.json",
+        "HIHI_problem_11_seq1_summary_confidences.json",
+        "HIHI_problem_11_seq1_ranking_scores.csv",
+        "HIHI_problem_11_seq2_model.cif",
+        "HIHI_problem_11_seq2_confidences.json",
+        "HIHI_problem_11_seq2_summary_confidences.json",
+        "HIHI_problem_11_seq2_ranking_scores.csv",
+        "HIHI_problem_11_seq3_model.cif",
+        "HIHI_problem_11_seq3_confidences.json",
+        "HIHI_problem_11_seq3_summary_confidences.json",
+        "HIHI_problem_11_seq3_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "HIHI_problem_11_seq1_model.cif",
+            "HIHI_problem_11_seq1_confidences.json",
+            "HIHI_problem_11_seq1_summary_confidences.json",
+            "HIHI_problem_11_seq1_ranking_scores.csv"
+          ]
+        },
+        "2": {
+          "files": [
+            "HIHI_problem_11_seq2_model.cif",
+            "HIHI_problem_11_seq2_confidences.json",
+            "HIHI_problem_11_seq2_summary_confidences.json",
+            "HIHI_problem_11_seq2_ranking_scores.csv"
+          ]
+        },
+        "3": {
+          "files": [
+            "HIHI_problem_11_seq3_model.cif",
+            "HIHI_problem_11_seq3_confidences.json",
+            "HIHI_problem_11_seq3_summary_confidences.json",
+            "HIHI_problem_11_seq3_ranking_scores.csv"
+          ]
+        }
+      }
+    }
+  },
+  "source_dir": "/home/j2ho/seoklab/structure-study/submissions/hihi_42_698abf58_7epy"
+}

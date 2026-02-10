@@ -1,0 +1,38 @@
+{
+  "problem_id": "problem_11",
+  "problem_type": "monomer",
+  "participant_id": "team_iphone17",
+  "token": "rEzW_8SKAhvbKAKrPhZoRh-OafUX63_Y",
+  "model_file": "team_iphone17_problem_11_seq1_model.cif",
+  "reference_file": "problem_11.pdb",
+  "evaluated_at": "2026-02-10T05:32:05.222551Z",
+  "metrics": {
+    "tm_score": 0.39939,
+    "tm_score_ref": null,
+    "rmsd": 3.31,
+    "aligned_length": 39,
+    "seq_identity": 0.0,
+    "bb_lddt": 0.6004,
+    "model_ca_count": 56,
+    "ref_ca_count": 56,
+    "lddt_aligned_count": 39,
+    "bb_lddt_cov": 0.4182,
+    "coverage": 0.6964,
+    "global_rmsd": 12.192,
+    "kabsch_aligned_rmsd": 3.309
+  },
+  "af3_metrics": {
+    "ptm": 0.48,
+    "iptm": null,
+    "ranking_score": 0.56,
+    "chain_pair_iptm": [
+      [
+        0.48
+      ]
+    ],
+    "fraction_disordered": 0.16,
+    "mean_plddt": 71.13
+  },
+  "primary_score": 0.39939,
+  "primary_metric": "tm_score"
+}

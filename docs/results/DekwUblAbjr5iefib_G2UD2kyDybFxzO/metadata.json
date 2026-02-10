@@ -1,0 +1,36 @@
+{
+  "token": "DekwUblAbjr5iefib_G2UD2kyDybFxzO",
+  "participant_id": "team-se3",
+  "total_problems": 1,
+  "completed_problems": 1,
+  "total_sequences": 1,
+  "all_complete": true,
+  "files": [
+    "team-se3_problem_11_seq1_summary_confidences.json",
+    "submission.json",
+    "team-se3_problem_11_seq1_confidences.json",
+    "team-se3_problem_11_seq1_ranking_scores.csv",
+    "team-se3_problem_11_seq1_model.cif"
+  ],
+  "problems": {
+    "problem_11": {
+      "files": [
+        "team-se3_problem_11_seq1_model.cif",
+        "team-se3_problem_11_seq1_confidences.json",
+        "team-se3_problem_11_seq1_summary_confidences.json",
+        "team-se3_problem_11_seq1_ranking_scores.csv"
+      ],
+      "sequences": {
+        "1": {
+          "files": [
+            "team-se3_problem_11_seq1_model.cif",
+            "team-se3_problem_11_seq1_confidences.json",
+            "team-se3_problem_11_seq1_summary_confidences.json",
+            "team-se3_problem_11_seq1_ranking_scores.csv"
+          ]
+        }
+      }
+    }
+  },
+  "source_dir": "/home/j2ho/seoklab/structure-study/submissions/teamse3_46_698ac240_j0nk"
+}
