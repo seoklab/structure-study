@@ -197,6 +197,19 @@
             .card-row { grid-template-columns: 1fr; }
         }
 
+        /* Session icons on archive cards */
+        .session-icons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .session-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
         /* Snow effect */
         @keyframes snowfall {
             0% {
@@ -355,11 +368,18 @@
                     const container = document.getElementById('archive-cards');
                     archived.forEach(([key, s]) => {
                         const problemCount = (s.problems || []).length;
+                        const icons = s.icons || [];
+                        const iconsHtml = icons.length > 0
+                            ? '<div class="session-icons">' + icons.map(function(icon) {
+                                return '<img src="assets/seoklab-members/' + icon + '.png" alt="' + escapeHtml(icon) + '" class="session-icon">';
+                              }).join('') + '</div>'
+                            : '';
                         const card = document.createElement('a');
                         card.href = 'leaderboard.html#' + key;
                         card.className = 'card';
                         card.innerHTML =
                             '<h3>' + escapeHtml(s.name) + '</h3>' +
+                            iconsHtml +
                             '<p class="info">' + escapeHtml(s.description) + ' | ' + problemCount + ' problem' + (problemCount !== 1 ? 's' : '') + '</p>' +
                             '<span class="status completed">Archived</span>';
                         container.appendChild(card);
@@ -380,7 +400,7 @@
 
     <script>
         (function() {
-            var members = ['bh', 'hs', 'se', 'yb', 'bnn-bw', 'glass-bh', 'judy-hs'];
+            var members = ['bh', 'hs', 'se', 'yb', 'bnn-bw', 'glass-bh', 'judy-hs', 'pr-bhs', 'pr-hs'];
             var basePath = 'assets/seoklab-members/';
             var snowInterval = null;
             var stopped = false;

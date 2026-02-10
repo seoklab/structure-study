@@ -8,6 +8,7 @@
       "name": "\uad6c\uc870\uc2a4\ud130\ub514- 2026.Feb.10",
       "status": "archived",
       "description": "Team1(\uc138\uc740\uc720\uc2e0\uc9c0\ud638)",
+      "icons": ["pr-bhs", "pr-hs"],
       "problems": [
         "problem_11"
       ]
