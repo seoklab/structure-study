@@ -2,7 +2,7 @@ name: Remove Problem
 
 on:
   issues:
-    types: [opened, labeled]
+    types: [labeled]
 
 jobs:
   remove-problem:
