@@ -1,6 +1,6 @@
 {
   "submissions_open": true,
-  "active_session": "2026feb10",
+  "active_session": "2026feb24",
   "github_repo": "seoklab/structure-study",
   "_comment_primary_metric": "primary_metric: bb_lddt, bb_lddt_cov (lDDT\u00d7Coverage), binder_lddt (binder), interface_lddt, iptm, tm_score, etc. Used for z-score ranking.",
   "sessions": {
@@ -25,11 +25,17 @@
     },
     "2026feb10": {
       "name": "\uad6c\uc870\uc2a4\ud130\ub514- 2026.Feb.10",
-      "status": "active",
+      "status": "archived",
       "description": "Team1(\uc138\uc740\uc720\uc2e0\uc9c0\ud638)",
       "problems": [
         "problem_11"
       ]
+    },
+    "2026feb24": {
+      "name": "\uad6c\uc870\uc2a4\ud130\ub514 - 2026.Feb.24.",
+      "status": "active",
+      "description": "\ub2e4\uc74c \ud300?...",
+      "problems": []
     }
   },
   "problems": [
